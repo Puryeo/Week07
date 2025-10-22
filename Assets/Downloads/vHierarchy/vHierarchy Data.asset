@@ -21,8 +21,11 @@ MonoBehaviour:
         - globalObjectIdString: GlobalObjectId_V1-2-82bfe457301c88b4198782740ac460d9-1596635738-0
         - globalObjectIdString: GlobalObjectId_V1-2-82bfe457301c88b4198782740ac460d9-1244683975-0
         - globalObjectIdString: GlobalObjectId_V1-2-82bfe457301c88b4198782740ac460d9-1278429828051546335-1461208756
+        - globalObjectIdString: GlobalObjectId_V1-2-82bfe457301c88b4198782740ac460d9-1640685175-0
+        - globalObjectIdString: GlobalObjectId_V1-2-82bfe457301c88b4198782740ac460d9-8170384220303628758-1989570799
+        - globalObjectIdString: GlobalObjectId_V1-2-82bfe457301c88b4198782740ac460d9-1412439049-0
         values:
-        - colorIndex: 0
+        - colorIndex: 6
           iconNameOrGuid: Terrain Icon
           isIconRecursive: 0
           isColorRecursive: 0
@@ -34,7 +37,20 @@ MonoBehaviour:
           iconNameOrGuid: 
           isIconRecursive: 0
           isColorRecursive: 0
+        - colorIndex: 5
+          iconNameOrGuid: Rigidbody Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: Camera Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 9
+          iconNameOrGuid: Camera Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
   bookmarks: []
   bookmarkedScenePaths:
   - Assets/Scenes/JCH/JCH_first.unity
   - Assets/Scenes/Old/STAGE.unity
+  - Assets/Scenes/Old/JML/JMObservatory.unity

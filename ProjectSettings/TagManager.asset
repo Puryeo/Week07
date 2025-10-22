@@ -39,8 +39,8 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - Gear
+  - GearInner
   m_SortingLayers:
   - name: Default
     uniqueID: 0

@@ -60,6 +60,9 @@ public class BombCollisionDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (string.IsNullOrEmpty(other.gameObject.tag) || other.gameObject.tag == "Untagged")
+            return;
+
         // Bomb 태그 체크
         if (other.CompareTag(bombTag))
         {
