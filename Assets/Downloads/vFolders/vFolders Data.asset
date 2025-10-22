@@ -13,6 +13,36 @@ MonoBehaviour:
   m_Name: vFolders Data
   m_EditorClassIdentifier: 
   folderDatas_byGuid:
-    keys: []
-    values: []
+    keys:
+    - 9c53962885c2c4f449125a979d6ad240
+    - b0ebbaff1252a1341990853b2acd9005
+    - e31184800029ec541a2230cee5932e70
+    - 1146ce6ff67cb9247900b7537906e74b
+    - 492fca072ca7d1e4b9aca27071903cbc
+    - 58097e2f65b51874e8341aa6a3c8f731
+    values:
+    - iconNameOrGuid: SceneAsset Icon
+      colorIndex: 3
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: 
+      colorIndex: 8
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: 
+      colorIndex: 7
+      isIconRecursive: 0
+      isColorRecursive: 1
+    - iconNameOrGuid: PhysicsMaterial Icon
+      colorIndex: 0
+      isIconRecursive: 1
+      isColorRecursive: 0
+    - iconNameOrGuid: 
+      colorIndex: 4
+      isIconRecursive: 0
+      isColorRecursive: 0
+    - iconNameOrGuid: 
+      colorIndex: 1
+      isIconRecursive: 0
+      isColorRecursive: 0
   bookmarks: []
