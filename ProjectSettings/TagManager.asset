@@ -8,6 +8,7 @@ TagManager:
   - Bomb
   - LimitLine
   - FxTemporaire
+  - Rebound
   layers:
   - Default
   - TransparentFX
