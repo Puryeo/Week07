@@ -12,10 +12,10 @@ EditorBuildSettings:
     path: Assets/Scenes/Old/STAGE.unity
     guid: 42b55004bc5594441b0d1f027233aadd
   - enabled: 1
-    path: Assets/Scenes/JML/JMMachine.unity
+    path: Assets/Scenes/Old/JML/JMMachine.unity
     guid: d0be3a554447adb449011e524be0a3e0
   - enabled: 1
-    path: Assets/Scenes/JML/JMObservatory.unity
+    path: Assets/Scenes/Old/JML/JMObservatory.unity
     guid: 8871ec25d86ff014f920371075652e31
   - enabled: 1
     path: Assets/Scenes/Old/Sphinx.unity
@@ -33,10 +33,10 @@ EditorBuildSettings:
     path: Assets/Scenes/Old/DokripMoon.unity
     guid: 5d091182b5bf54249b0565d2cb54c621
   - enabled: 1
-    path: Assets/Scenes/JML/JMKey.unity
+    path: Assets/Scenes/Old/JML/JMKey.unity
     guid: 51e12b8a8051ba440a091e60cfb70ae1
   - enabled: 1
-    path: Assets/Scenes/JML/Tutorial.unity
+    path: Assets/Scenes/Old/JML/Tutorial.unity
     guid: 48b06755c8f8357458badc83f3018a3c
   - enabled: 1
     path: Assets/Scenes/Old/STAGE_Save.unity
