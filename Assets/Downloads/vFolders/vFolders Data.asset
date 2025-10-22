@@ -38,7 +38,7 @@ MonoBehaviour:
       isIconRecursive: 1
       isColorRecursive: 0
     - iconNameOrGuid: 
-      colorIndex: 4
+      colorIndex: 10
       isIconRecursive: 0
       isColorRecursive: 0
     - iconNameOrGuid: 
