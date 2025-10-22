@@ -590,7 +590,7 @@ Transform:
   m_GameObject: {fileID: 578777583}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0.68, y: 2, z: 0}
   m_LocalScale: {x: 3.3397, y: 2.5, z: 2.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2099,33 +2099,23 @@ MonoBehaviour:
   _frequencyHz: 1
   _isLooping: 1
   _isDebugLogging: 0
---- !u!54 &1341601482
-Rigidbody:
+--- !u!114 &1341601482
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1341601475}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2e7f7f77a2d41c49aa45a9c34c6a109, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _impulseMagnitude: 100
+  _forceMode: 2
+  _gizmoDuration: 0.5
+  _gizmoArrowLength: 1
+  _isDebugLogging: 0
 --- !u!1 &1412439049
 GameObject:
   m_ObjectHideFlags: 0
