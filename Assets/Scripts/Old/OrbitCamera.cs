@@ -17,12 +17,14 @@ public class OrbitCamera : MonoBehaviour
     [SerializeField] private float ySpeed = 120.0f;
 
     [Header("키보드 설정")]
-    // <<< 1번 요청: WASD 회전 속도 변수 추가
     [Tooltip("WASD 키를 사용한 수평/수직 회전 속도입니다.")]
     [SerializeField] private float keyOrbitSpeed = 60.0f;
 
+    [Header("패닝 설정")]
+    [Tooltip("휠 버튼을 사용한 카메라 이동 속도입니다.")]
+    [SerializeField] private float panSpeed = 0.5f;
+
     [Header("줌 설정")]
-    // <<< 3, 4번 요청: 줌 속도 툴팁 변경
     [Tooltip("마우스 휠 및 QE 키를 사용한 줌 속도입니다.")]
     [SerializeField] private float zoomSpeed = 5.0f;
     [SerializeField] private float keyZoomSpeed = 20.0f;
@@ -39,19 +41,18 @@ public class OrbitCamera : MonoBehaviour
     private float x = 0.0f;
     private float y = 0.0f;
 
-    // 스크립트가 시작될 때 한 번 호출됩니다.
+    // 타겟 오프셋 (패닝으로 이동한 위치)
+    private Vector3 targetOffset = Vector3.zero;
+
     void Start()
     {
-        // 현재 카메라의 오일러 각도를 초기값으로 설정합니다.
         Vector3 angles = transform.eulerAngles;
         x = angles.y;
         y = angles.x;
     }
 
-    // 모든 Update 함수가 호출된 후 프레임마다 호출됩니다.
     void LateUpdate()
     {
-        // 타겟이 설정되어 있는지 확인합니다.
         if (target)
         {
             // --- 1. 마우스 궤도 회전 (우클릭) ---
@@ -59,66 +60,64 @@ public class OrbitCamera : MonoBehaviour
             {
                 x += Input.GetAxis("Mouse X") * xSpeed;
                 y -= Input.GetAxis("Mouse Y") * ySpeed;
-
-                // <<< 2번 요청: 마우스 우클릭 중 휠 줌 기능 제거 (해당 코드 삭제)
             }
 
-            // --- 2. 키보드 궤도 회전 (WASD) ---
-            // <<< 1번 요청: WASD로 궤도 회전 기능 추가
+            // --- 2. 휠 버튼 패닝 (카메라 이동) ---
+            if (Input.GetMouseButton(2))
+            {
+                float panX = -Input.GetAxis("Mouse X") * panSpeed;
+                float panY = -Input.GetAxis("Mouse Y") * panSpeed;
+
+                // 현재 카메라의 right와 up 벡터를 기준으로 이동
+                targetOffset += transform.right * panX;
+                targetOffset += transform.up * panY;
+            }
+
+            // --- 3. 키보드 궤도 회전 (WASD) ---
             if (Input.GetKey(KeyCode.W))
             {
-                y += keyOrbitSpeed * Time.deltaTime; // 상
+                y += keyOrbitSpeed * Time.deltaTime;
             }
             if (Input.GetKey(KeyCode.S))
             {
-                y -= keyOrbitSpeed * Time.deltaTime; // 하
+                y -= keyOrbitSpeed * Time.deltaTime;
             }
             if (Input.GetKey(KeyCode.A))
             {
-                x += keyOrbitSpeed * Time.deltaTime; // 좌
+                x += keyOrbitSpeed * Time.deltaTime;
             }
             if (Input.GetKey(KeyCode.D))
             {
-                x -= keyOrbitSpeed * Time.deltaTime; // 우
+                x -= keyOrbitSpeed * Time.deltaTime;
             }
 
-            // --- 3. 줌 (휠 & QE) ---
-
-            // <<< 3번 요청: 좌클릭을 안 할 때 마우스 휠 줌
+            // --- 4. 줌 (휠 & QE) ---
             if (!CursorManager.Instance.isGrabbed || (CursorManager.Instance.isGrabbed && Input.GetMouseButton(1)))
             {
                 float scroll = Input.GetAxis("Mouse ScrollWheel");
                 distance -= scroll * zoomSpeed;
             }
 
-            // <<< 4번 요청: QE 키로 줌
             if (Input.GetKey(KeyCode.Q))
             {
-                distance += keyZoomSpeed * Time.deltaTime; // 줌 아웃
+                distance += keyZoomSpeed * Time.deltaTime;
             }
             if (Input.GetKey(KeyCode.E))
             {
-                distance -= keyZoomSpeed * Time.deltaTime; // 줌 인
+                distance -= keyZoomSpeed * Time.deltaTime;
             }
 
-            // --- 4. 값 제한 (Clamping) ---
-
-            // y(수직) 회전 각도를 지정된 최소/최대 값 사이로 제한합니다. (마우스, 키보드 입력 모두 적용)
+            // --- 5. 값 제한 (Clamping) ---
             y = ClampAngle(y, yMinLimit, yMaxLimit);
-
-            // 거리를 최소/최대 값 사이로 제한합니다. (휠, QE 입력 모두 적용)
             distance = Mathf.Clamp(distance, distanceMin, distanceMax);
 
-            // --- 5. 카메라 위치/회전 최종 적용 ---
-
-            // 계산된 회전 값으로 Quaternion을 생성합니다.
+            // --- 6. 카메라 위치/회전 최종 적용 ---
             Quaternion rotation = Quaternion.Euler(y, x, 0);
-
-            // 타겟 위치에서 계산된 거리와 회전 값을 적용하여 카메라의 목표 위치를 계산합니다.
             Vector3 negDistance = new Vector3(0.0f, 0.0f, -distance);
-            Vector3 position = rotation * negDistance + target.position;
 
-            // 계산된 위치와 회전 값을 카메라의 transform에 적용합니다.
+            // 타겟 위치에 오프셋을 더해서 패닝 효과 적용
+            Vector3 position = rotation * negDistance + target.position + targetOffset;
+
             transform.rotation = rotation;
             transform.position = position;
         }
