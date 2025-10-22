@@ -13,7 +13,28 @@ MonoBehaviour:
   m_Name: vHierarchy Data
   m_EditorClassIdentifier: 
   sceneDatas_byGuid:
-    keys: []
-    values: []
+    keys:
+    - 82bfe457301c88b4198782740ac460d9
+    values:
+    - goDatas_byGlobalId:
+        keys:
+        - globalObjectIdString: GlobalObjectId_V1-2-82bfe457301c88b4198782740ac460d9-1596635738-0
+        - globalObjectIdString: GlobalObjectId_V1-2-82bfe457301c88b4198782740ac460d9-1244683975-0
+        - globalObjectIdString: GlobalObjectId_V1-2-82bfe457301c88b4198782740ac460d9-1278429828051546335-1461208756
+        values:
+        - colorIndex: 0
+          iconNameOrGuid: Terrain Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 2
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 2
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
   bookmarks: []
-  bookmarkedScenePaths: []
+  bookmarkedScenePaths:
+  - Assets/Scenes/JCH/JCH_first.unity
+  - Assets/Scenes/Old/STAGE.unity
