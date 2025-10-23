@@ -8,12 +8,14 @@ TagManager:
   - Bomb
   - LimitLine
   - FxTemporaire
-  - Rebound
+  - Coin
+  - GhostHome
+  - Ghost
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Wall
   - Water
   - UI
   - ExplodeEffect
@@ -40,8 +42,8 @@ TagManager:
   - 
   - 
   - 
-  - Gear
-  - GearInner
+  - 
+  - 
   m_SortingLayers:
   - name: Default
     uniqueID: 0
