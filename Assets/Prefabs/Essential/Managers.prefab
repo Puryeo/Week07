@@ -128,6 +128,7 @@ MonoBehaviour:
     weight: 2
   - cloudGameObject: {fileID: 100000, guid: c2391e8a6bdf5424194b61e41952a40a, type: 3}
     weight: 1
+  cloudContainer: {fileID: 0}
   genStart: 20
   genMax: 20
   genPosXmin: -200
@@ -240,7 +241,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 119
 --- !u!1 &4685753656377830595
 GameObject:
   m_ObjectHideFlags: 0

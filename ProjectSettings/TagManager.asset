@@ -8,13 +8,14 @@ TagManager:
   - Bomb
   - LimitLine
   - FxTemporaire
-  - CannonBall
-  - Breakable
+  - Coin
+  - GhostHome
+  - Ghost
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Wall
   - Water
   - UI
   - ExplodeEffect
