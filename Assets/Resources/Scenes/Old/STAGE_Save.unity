@@ -260,7 +260,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 79c4a918be86aee499aabcb2e62cb1cb, type: 2}
   m_sharedMaterial: {fileID: -6479167395828202679, guid: 79c4a918be86aee499aabcb2e62cb1cb, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: -6479167395828202679, guid: 79c4a918be86aee499aabcb2e62cb1cb, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -841,6 +842,13 @@ MonoBehaviour:
   _stageTarget: {fileID: 1764066413}
   _stageGroupSO: {fileID: 11400000, guid: 1fcfdf969c3b34642b9376e8e6a95095, type: 2}
   _exitBtn: {fileID: 661346609}
+  _hiddenStageLock: {fileID: 0}
+  _hiddenStageName: JMKey
+  _unlockObject1: {fileID: 0}
+  _unlockObject2: {fileID: 0}
+  _hiddenObj2: {fileID: 0}
+  positionChangeThreshold: 1
+  starFillDelay: 0.3
 --- !u!4 &1263214933
 Transform:
   m_ObjectHideFlags: 0
