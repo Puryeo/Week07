@@ -24,6 +24,7 @@ MonoBehaviour:
     - bedc9029777f5aa48af43aea7a8df3a7
     - b8a30641ee1910f48bf435675079174b
     - 5f1a22f3e084ea24aa7d6faa62da309e
+    - 6a4a65d166ca16d4ebfa4a4511844270
     values:
     - iconNameOrGuid: SceneAsset Icon
       colorIndex: 3
@@ -65,9 +66,14 @@ MonoBehaviour:
       colorIndex: 5
       isIconRecursive: 0
       isColorRecursive: 0
+    - iconNameOrGuid: 
+      colorIndex: 2
+      isIconRecursive: 0
+      isColorRecursive: 0
   bookmarks:
   - guid: e270e1661b89b1e4eb6e19542bc2746d
   - guid: bedc9029777f5aa48af43aea7a8df3a7
   - guid: b8a30641ee1910f48bf435675079174b
   - guid: a369a412a71f984479b483905bc1ebac
   - guid: 5f1a22f3e084ea24aa7d6faa62da309e
+  - guid: 6a4a65d166ca16d4ebfa4a4511844270
