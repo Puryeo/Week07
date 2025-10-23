@@ -15,6 +15,7 @@ MonoBehaviour:
   sceneDatas_byGuid:
     keys:
     - 82bfe457301c88b4198782740ac460d9
+    - 4aebb3f096c62b94f80ab6d228990c5d
     values:
     - goDatas_byGlobalId:
         keys:
@@ -49,8 +50,41 @@ MonoBehaviour:
           iconNameOrGuid: Camera Icon
           isIconRecursive: 0
           isColorRecursive: 0
+    - goDatas_byGlobalId:
+        keys:
+        - globalObjectIdString: GlobalObjectId_V1-2-4aebb3f096c62b94f80ab6d228990c5d-1596635738-0
+        - globalObjectIdString: GlobalObjectId_V1-2-4aebb3f096c62b94f80ab6d228990c5d-1244683975-0
+        - globalObjectIdString: GlobalObjectId_V1-2-4aebb3f096c62b94f80ab6d228990c5d-1278429828051546335-1461208756
+        - globalObjectIdString: GlobalObjectId_V1-2-4aebb3f096c62b94f80ab6d228990c5d-1640685175-0
+        - globalObjectIdString: GlobalObjectId_V1-2-4aebb3f096c62b94f80ab6d228990c5d-8170384220303628758-1989570799
+        - globalObjectIdString: GlobalObjectId_V1-2-4aebb3f096c62b94f80ab6d228990c5d-1412439049-0
+        values:
+        - colorIndex: 6
+          iconNameOrGuid: Terrain Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 2
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 2
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 5
+          iconNameOrGuid: Rigidbody Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: Camera Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 9
+          iconNameOrGuid: Camera Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
   bookmarks: []
   bookmarkedScenePaths:
-  - Assets/Scenes/JCH/JCH_first.unity
   - Assets/Scenes/Old/STAGE.unity
   - Assets/Scenes/Old/JML/JMObservatory.unity
+  - Assets/Scenes/JCH/JCH_PinBall.unity
