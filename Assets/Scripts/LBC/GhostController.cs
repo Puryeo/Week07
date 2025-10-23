@@ -5,6 +5,7 @@ using System.Collections.Generic;
 /// 고스트의 AI 이동을 관리합니다.
 /// GridManager를 기반으로 경로를 찾아 이동하며, 상태에 따라 다른 행동을 수행합니다.
 /// 격자 기반 이동 시스템으로 대각선 이동을 방지하고 부드러운 이동을 보장합니다.
+/// XZ 평면(바닥에 눕힌 맵)에서 작동합니다.
 /// </summary>
 [RequireComponent(typeof(GhostState))]
 [RequireComponent(typeof(Rigidbody))]
@@ -106,8 +107,10 @@ public class GhostController : MonoBehaviour
         rb.useGravity = false;
         rb.isKinematic = true;
 
-        // 회전 고정 (2D 이동)
-        rb.constraints = RigidbodyConstraints.FreezeRotation | RigidbodyConstraints.FreezePositionZ;
+        // 회전 고정 (XZ 평면 이동 - Y축 회전만 허용)
+        rb.constraints = RigidbodyConstraints.FreezeRotationX |
+                        RigidbodyConstraints.FreezeRotationZ |
+                        RigidbodyConstraints.FreezePositionY;
 
         // 플레이어 자동 찾기
         if (autoFindPlayer && targetPlayer == null)
@@ -340,10 +343,10 @@ public class GhostController : MonoBehaviour
     /// <summary>
     /// 격자 기반으로 이동합니다.
     /// 4방향(상하좌우)만 이동하여 대각선 이동을 완전히 방지합니다.
-    /// X축 또는 Y축 중 하나의 축으로만 이동하여 정통 팩맨 스타일의 격자 이동을 구현합니다.
+    /// XZ 평면에서 X축 또는 Z축 중 하나의 축으로만 이동하여 정통 팩맨 스타일의 격자 이동을 구현합니다.
     /// 
     /// 동작 원리:
-    /// 1. 현재 위치와 목표 위치의 X축, Y축 차이를 계산
+    /// 1. 현재 위치와 목표 위치의 X축, Z축 차이를 계산
     /// 2. 차이가 더 큰 축을 선택하여 그 방향으로만 이동
     /// 3. 한 번에 한 축으로만 이동하므로 대각선 이동이 발생하지 않음
     /// 4. 격자 중심에 정확히 도착하면 다음 격자로 이동
@@ -387,23 +390,23 @@ public class GhostController : MonoBehaviour
             return;
         }
 
-        // *** 핵심 로직: 4방향 이동만 허용 ***
-        // X축과 Y축 중 더 큰 차이가 있는 축으로만 이동
+        // 핵심 로직: 4방향 이동만 허용 (XZ 평면)
+        // X축과 Z축 중 더 큰 차이가 있는 축으로만 이동
         // 이렇게 하면 한 번에 한 방향으로만 이동하여 대각선 이동을 완전히 차단합니다
         Vector3 movementDirection = Vector3.zero;
 
         float absX = Mathf.Abs(directionToTarget.x);
-        float absY = Mathf.Abs(directionToTarget.y);
+        float absZ = Mathf.Abs(directionToTarget.z);
 
-        if (absX > absY)
+        if (absX > absZ)
         {
             // X축으로만 이동 (좌우)
             movementDirection = new Vector3(Mathf.Sign(directionToTarget.x), 0, 0);
         }
         else
         {
-            // Y축으로만 이동 (상하)
-            movementDirection = new Vector3(0, Mathf.Sign(directionToTarget.y), 0);
+            // Z축으로만 이동 (앞뒤)
+            movementDirection = new Vector3(0, 0, Mathf.Sign(directionToTarget.z));
         }
 
         // 이동 거리 계산 (목표를 넘어가지 않도록 제한)
@@ -415,9 +418,9 @@ public class GhostController : MonoBehaviour
         {
             remainingDistance = Mathf.Abs(directionToTarget.x);
         }
-        else if (movementDirection.y != 0)
+        else if (movementDirection.z != 0)
         {
-            remainingDistance = Mathf.Abs(directionToTarget.y);
+            remainingDistance = Mathf.Abs(directionToTarget.z);
         }
 
         // 목표를 넘어가지 않도록 제한
@@ -542,10 +545,10 @@ public class GhostController : MonoBehaviour
 
         switch (corner)
         {
-            case 0: x = 0; z = 0; break;           // 왼쪽 아래
-            case 1: x = 28; z = 0; break;          // 오른쪽 아래
-            case 2: x = 0; z = 31; break;          // 왼쪽 위
-            case 3: x = 28; z = 31; break;         // 오른쪽 위
+            case 0: x = 0; z = 0; break;           // 왼쪽 앞
+            case 1: x = 28; z = 0; break;          // 오른쪽 앞
+            case 2: x = 0; z = 31; break;          // 왼쪽 뒤
+            case 3: x = 28; z = 31; break;         // 오른쪽 뒤
             default: x = 0; z = 0; break;
         }
 
@@ -555,6 +558,7 @@ public class GhostController : MonoBehaviour
     /// <summary>
     /// 플레이어의 이동 방향을 추정합니다.
     /// Ambusher AI가 팩맨의 앞을 막기 위해 사용합니다.
+    /// XZ 평면의 속도를 기반으로 방향을 추정합니다.
     /// </summary>
     private Vector2Int GetPlayerMovementDirection()
     {
@@ -567,14 +571,14 @@ public class GhostController : MonoBehaviour
         {
             Vector3 velocity = playerRb.linearVelocity;
 
-            // X-Y 평면 속도를 그리드 방향으로 변환
-            if (Mathf.Abs(velocity.x) > Mathf.Abs(velocity.y))
+            // X-Z 평면 속도를 그리드 방향으로 변환
+            if (Mathf.Abs(velocity.x) > Mathf.Abs(velocity.z))
             {
                 return velocity.x > 0 ? Vector2Int.right : Vector2Int.left;
             }
             else
             {
-                return velocity.y > 0 ? Vector2Int.up : Vector2Int.down;
+                return velocity.z > 0 ? Vector2Int.up : Vector2Int.down;
             }
         }
 

@@ -2246,12 +2246,12 @@ GameObject:
   m_Component:
   - component: {fileID: 223269146}
   m_Layer: 0
-  m_Name: ChostHome
+  m_Name: GhostHome
   m_TagString: GhostHome
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &223269146
 Transform:
   m_ObjectHideFlags: 0
@@ -2260,8 +2260,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 223269145}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 16.5, z: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0.25, y: 1.5, z: 16.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2270,7 +2270,7 @@ Transform:
   - {fileID: 720238178}
   - {fileID: 2005260741}
   m_Father: {fileID: 716972944}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &223338798
 GameObject:
   m_ObjectHideFlags: 0
@@ -7555,7 +7555,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 973818052527701141, guid: 68bc422ed8557a640bde2677ad533732, type: 3}
       propertyPath: normalSpeed
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 973818052527701141, guid: 68bc422ed8557a640bde2677ad533732, type: 3}
       propertyPath: frightenedSpeed
@@ -7571,15 +7571,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: 68bc422ed8557a640bde2677ad533732, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.06
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: 68bc422ed8557a640bde2677ad533732, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: 68bc422ed8557a640bde2677ad533732, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: 68bc422ed8557a640bde2677ad533732, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7623,7 +7623,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7674291022937086034, guid: 68bc422ed8557a640bde2677ad533732, type: 3}
       propertyPath: m_Constraints
-      value: 120
+      value: 116
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7962,15 +7962,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1150223379315553194, guid: 8dfabfa4451fbc54ab80a1ab2e598eae, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.56
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: 8dfabfa4451fbc54ab80a1ab2e598eae, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.13
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: 8dfabfa4451fbc54ab80a1ab2e598eae, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: 8dfabfa4451fbc54ab80a1ab2e598eae, type: 3}
       propertyPath: m_LocalRotation.w
@@ -8002,7 +8002,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1885668034664150905, guid: 8dfabfa4451fbc54ab80a1ab2e598eae, type: 3}
       propertyPath: m_Constraints
-      value: 120
+      value: 116
       objectReference: {fileID: 0}
     - target: {fileID: 2525152899704330928, guid: 8dfabfa4451fbc54ab80a1ab2e598eae, type: 3}
       propertyPath: homePosition
@@ -8022,7 +8022,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9150892465539682833, guid: 8dfabfa4451fbc54ab80a1ab2e598eae, type: 3}
       propertyPath: normalSpeed
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9150892465539682833, guid: 8dfabfa4451fbc54ab80a1ab2e598eae, type: 3}
       propertyPath: frightenedSpeed
@@ -8470,7 +8470,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &769019333
 Transform:
   m_ObjectHideFlags: 0
@@ -10009,7 +10009,7 @@ Transform:
   m_GameObject: {fileID: 900937544}
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12587,15 +12587,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1150223379315553194, guid: a9e7ef8223c18c643824fdfec81102ba, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.62
+      value: -1.5
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: a9e7ef8223c18c643824fdfec81102ba, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.13
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: a9e7ef8223c18c643824fdfec81102ba, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: a9e7ef8223c18c643824fdfec81102ba, type: 3}
       propertyPath: m_LocalRotation.w
@@ -12627,7 +12627,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1168626624650418232, guid: a9e7ef8223c18c643824fdfec81102ba, type: 3}
       propertyPath: m_Constraints
-      value: 120
+      value: 116
       objectReference: {fileID: 0}
     - target: {fileID: 2525152899704330928, guid: a9e7ef8223c18c643824fdfec81102ba, type: 3}
       propertyPath: homePosition
@@ -12647,7 +12647,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8001254395215881134, guid: a9e7ef8223c18c643824fdfec81102ba, type: 3}
       propertyPath: normalSpeed
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8001254395215881134, guid: a9e7ef8223c18c643824fdfec81102ba, type: 3}
       propertyPath: frightenedSpeed
@@ -14320,7 +14320,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1262839081
 Transform:
   m_ObjectHideFlags: 0
@@ -14353,8 +14353,8 @@ MonoBehaviour:
   cellSize: 1
   boardTransform: {fileID: 223269146}
   gridOffsetX: 0.5
-  gridOffsetY: -0.5
-  gridOffsetZ: -1
+  gridOffsetY: 0.5
+  gridOffsetZ: -0.5
   enablePathSmoothing: 0
   simplificationTolerance: 0.3
   showGridGizmos: 1
@@ -22587,15 +22587,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1150223379315553194, guid: e84ede80a5acf54458f6776b6425d870, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.02
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: e84ede80a5acf54458f6776b6425d870, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 2.75
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: e84ede80a5acf54458f6776b6425d870, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1150223379315553194, guid: e84ede80a5acf54458f6776b6425d870, type: 3}
       propertyPath: m_LocalRotation.w
@@ -22643,7 +22643,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6846662401429880832, guid: e84ede80a5acf54458f6776b6425d870, type: 3}
       propertyPath: normalSpeed
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6846662401429880832, guid: e84ede80a5acf54458f6776b6425d870, type: 3}
       propertyPath: frightenedSpeed
@@ -22659,7 +22659,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7263311572926285004, guid: e84ede80a5acf54458f6776b6425d870, type: 3}
       propertyPath: m_Constraints
-      value: 120
+      value: 116
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

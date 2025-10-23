@@ -3,12 +3,13 @@ using System.Collections.Generic;
 
 /// <summary>
 /// 팩맨 게임을 위한 격자 기반 경로 찾기 시스템입니다.
-/// 세로로 세운 판(Y-Z 평면) 위에서 29x32 그리드를 관리하며, A* 알고리즘으로 경로를 찾습니다.
+/// 바닥에 눕힌 판(X-Z 평면) 위에서 29x32 그리드를 관리하며, A* 알고리즘으로 경로를 찾습니다.
 /// 
 /// [개선 사항]
 /// - 4방향(상하좌우)만 이동 가능하도록 강제
 /// - 경로 스무딩 기본 비활성화로 벽 뚫기 방지
 /// - 벽 감지 정확도 향상
+/// - XZ 평면 기반으로 좌표 변환 수정
 /// </summary>
 public class GridManager : SingletonObject<GridManager>
 {
@@ -22,7 +23,7 @@ public class GridManager : SingletonObject<GridManager>
     [Tooltip("각 그리드 셀의 실제 크기")]
     [SerializeField] private float cellSize = 1f;
 
-    [Tooltip("그리드가 위치할 판의 Transform (세로로 세운 판)")]
+    [Tooltip("그리드가 위치할 판의 Transform (바닥에 눕힌 판)")]
     [SerializeField] private Transform boardTransform;
 
     [Header("그리드 위치 조정")]
@@ -91,7 +92,7 @@ public class GridManager : SingletonObject<GridManager>
     {
         gridData = new bool[gridWidth, gridHeight];
 
-        // 판의 중심점 계산 (세로로 세운 판이므로 Y-Z 평면)
+        // 판의 중심점 계산 (바닥에 눕힌 판이므로 X-Z 평면)
         if (boardTransform != null)
         {
             gridCenter = boardTransform.position;
@@ -137,7 +138,6 @@ public class GridManager : SingletonObject<GridManager>
                     if (col.CompareTag("Draggable") ||
                         col.CompareTag("Ghost") ||
                         col.CompareTag("Coin"))
-                        //col.CompareTag("PowerPellet"))
                     {
                         continue;
                     }
@@ -178,24 +178,26 @@ public class GridManager : SingletonObject<GridManager>
 
     /// <summary>
     /// 그리드 좌표를 월드 좌표로 변환합니다.
-    /// 세로로 세운 판이므로 X-Z 그리드를 X-Y 월드 좌표로 매핑합니다.
+    /// 바닥에 눕힌 판이므로 X-Z 그리드를 X-Z 월드 좌표로 매핑합니다.
+    /// Y축은 고정된 높이를 유지합니다.
     /// </summary>
     public Vector3 GridToWorldPosition(int gridX, int gridZ)
     {
         float worldX = gridCenter.x + (gridX - gridWidth / 2f) * cellSize;
-        float worldY = gridCenter.y + (gridZ - gridHeight / 2f) * cellSize;
+        float worldZ = gridCenter.z + (gridZ - gridHeight / 2f) * cellSize;
 
-        return new Vector3(worldX, worldY, gridCenter.z);
+        return new Vector3(worldX, gridCenter.y, worldZ);
     }
 
     /// <summary>
     /// 월드 좌표를 그리드 좌표로 변환합니다.
-    /// 세로로 세운 판이므로 X-Y 월드 좌표를 X-Z 그리드로 매핑합니다.
+    /// 바닥에 눕힌 판이므로 X-Z 월드 좌표를 X-Z 그리드로 매핑합니다.
+    /// Y축은 무시하고 XZ 평면상의 위치만 고려합니다.
     /// </summary>
     public Vector2Int WorldToGridPosition(Vector3 worldPosition)
     {
         int gridX = Mathf.RoundToInt((worldPosition.x - gridCenter.x) / cellSize + gridWidth / 2f);
-        int gridZ = Mathf.RoundToInt((worldPosition.y - gridCenter.y) / cellSize + gridHeight / 2f);
+        int gridZ = Mathf.RoundToInt((worldPosition.z - gridCenter.z) / cellSize + gridHeight / 2f);
 
         return new Vector2Int(gridX, gridZ);
     }
@@ -328,8 +330,8 @@ public class GridManager : SingletonObject<GridManager>
 
         Vector2Int[] directions = new Vector2Int[]
         {
-            new Vector2Int(0, 1),   // 위
-            new Vector2Int(0, -1),  // 아래
+            new Vector2Int(0, 1),   // 앞
+            new Vector2Int(0, -1),  // 뒤
             new Vector2Int(-1, 0),  // 왼쪽
             new Vector2Int(1, 0)    // 오른쪽
         };
@@ -422,13 +424,13 @@ public class GridManager : SingletonObject<GridManager>
             openList.Remove(currentNode);
             closedSet.Add(currentNode.position);
 
-            // *** 중요: 4방향(상하좌우)만 탐색 - 대각선 이동 완전 방지 ***
+            // 중요: 4방향(상하좌우)만 탐색 - 대각선 이동 완전 방지
             Vector2Int[] directions = new Vector2Int[]
             {
-                new Vector2Int(0, 1),   // 위
-                new Vector2Int(0, -1),  // 아래
-                new Vector2Int(-1, 0),  // 왼쪽
-                new Vector2Int(1, 0)    // 오른쪽
+                new Vector2Int(0, 1),   // 앞 (Z+)
+                new Vector2Int(0, -1),  // 뒤 (Z-)
+                new Vector2Int(-1, 0),  // 왼쪽 (X-)
+                new Vector2Int(1, 0)    // 오른쪽 (X+)
             };
 
             foreach (Vector2Int dir in directions)
@@ -647,6 +649,7 @@ public class GridManager : SingletonObject<GridManager>
     /// <summary>
     /// Scene 뷰에서 그리드를 시각화합니다.
     /// Play 모드에서는 실제 벽/통로 데이터를 색상으로 표시합니다.
+    /// XZ 평면에 맞게 그리드를 그립니다.
     /// </summary>
     private void OnDrawGizmos()
     {
@@ -702,13 +705,14 @@ public class GridManager : SingletonObject<GridManager>
     /// <summary>
     /// 특정 중심점을 기준으로 그리드 좌표를 월드 좌표로 변환합니다.
     /// OnDrawGizmos에서 에디터/플레이 모드에 관계없이 그리드를 그리기 위해 사용합니다.
+    /// XZ 평면에 맞게 변환합니다.
     /// </summary>
     private Vector3 GridToWorldPositionWithCenter(int gridX, int gridZ, Vector3 center)
     {
         float worldX = center.x + (gridX - gridWidth / 2f) * cellSize;
-        float worldY = center.y + (gridZ - gridHeight / 2f) * cellSize;
+        float worldZ = center.z + (gridZ - gridHeight / 2f) * cellSize;
 
-        return new Vector3(worldX, worldY, center.z);
+        return new Vector3(worldX, center.y, worldZ);
     }
 
     // ===== Public 유틸리티 메서드 =====

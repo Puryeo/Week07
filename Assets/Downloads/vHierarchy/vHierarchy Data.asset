@@ -214,6 +214,7 @@ MonoBehaviour:
         - globalObjectIdString: GlobalObjectId_V1-2-6258708990ffd9e43bb293a2dbd8ff76-1262839080-0
         - globalObjectIdString: GlobalObjectId_V1-2-6258708990ffd9e43bb293a2dbd8ff76-900937544-0
         - globalObjectIdString: GlobalObjectId_V1-2-6258708990ffd9e43bb293a2dbd8ff76-2055961719-0
+        - globalObjectIdString: GlobalObjectId_V1-2-6258708990ffd9e43bb293a2dbd8ff76-769019332-0
         values:
         - colorIndex: 2
           iconNameOrGuid: Folder Icon
@@ -309,6 +310,10 @@ MonoBehaviour:
           isColorRecursive: 0
         - colorIndex: 0
           iconNameOrGuid: Folder Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: StandaloneInputModule Icon
           isIconRecursive: 0
           isColorRecursive: 0
   bookmarks: []
