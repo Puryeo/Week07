@@ -16,11 +16,6 @@ public interface IExplodable
     Renderer GetRenderer();
 
     /// <summary>
-    /// 이 객체를 폭발시킵니다.
-    /// </summary>
-    void Explode();
-
-    /// <summary>
     /// 폭발 후 호출되는 콜백입니다. 구현체에서 자유롭게 처리합니다.
     /// </summary>
     void AfterExploded();

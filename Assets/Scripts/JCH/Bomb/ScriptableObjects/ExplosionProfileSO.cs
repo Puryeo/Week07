@@ -21,8 +21,8 @@ public class ExplosionProfileSO : ScriptableObject
     [SerializeField] private LayerMask _explosionLayerMask = -1;
 
     [Header("Visual Effects")]
-    [Tooltip("폭발 시 생성할 VFX 프리팹입니다.")]
-    [SerializeField] private GameObject _vfxPrefab;
+    [Tooltip("폭발 시 사용할 VFX 타입입니다.")]
+    [SerializeField] private ExplosionVfxType _vfxType = ExplosionVfxType.Default;
 
     [Tooltip("점멸 효과에 사용할 색상입니다.")]
     [SerializeField] private Color _tickingColor = Color.red;
@@ -37,7 +37,7 @@ public class ExplosionProfileSO : ScriptableObject
     public float ExplosionRadius => _explosionRadius;
     public float UpwardModifier => _upwardModifier;
     public LayerMask ExplosionLayerMask => _explosionLayerMask;
-    public GameObject VfxPrefab => _vfxPrefab;
+    public ExplosionVfxType VfxType => _vfxType;
     public Color TickingColor => _tickingColor;
     public float CameraShakeIntensity => _cameraShakeIntensity;
     #endregion

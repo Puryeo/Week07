@@ -128,7 +128,7 @@ public class NewBombCollisionDetector : MonoBehaviour
         Log($"{gameObject.name}이(가) {explodableMono.name}을(를) 감지! 폭발 트리거.");
 
         _triggeredExplodables.Add(explodable);
-        explodable.Explode();
+        NewBombExplodeSystem.Instance.Execute(explodable);
     }
     #endregion
 

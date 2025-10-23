@@ -15,6 +15,10 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     [SerializeField] private ExplosionProfileSO _explosionProfile;
 
     [TabGroup("Ticking")]
+    [Tooltip("점멸 효과 사용 여부입니다.")]
+    [SerializeField] private bool _useTickingEffect = true;
+
+    [TabGroup("Ticking")]
     [Tooltip("점멸 주기(초)입니다.")]
     [SerializeField] private float _tickingInterval = 1.0f;
 
@@ -26,7 +30,14 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     private Renderer _cachedRenderer;
     private MaterialPropertyBlock _materialPropertyBlock;
     private Color _originalColor;
-    private Coroutine _tickingCoroutine;
+
+    // Ticking 상태 관리
+    private bool _isTickingActive;
+    private float _tickingElapsedTime;
+    private float _tickingTargetDuration;
+    private float _tickingNextToggleTime;
+    private bool _isCurrentlyBright;
+
     private static readonly int ColorPropertyID = Shader.PropertyToID("_BaseColor");
     #endregion
 
@@ -44,6 +55,14 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     private void Start()
     {
         LateInitialize();
+    }
+
+    private void Update()
+    {
+        if (_isTickingActive && _useTickingEffect)
+        {
+            UpdateTicking();
+        }
     }
 
     private void OnDestroy()
@@ -77,7 +96,12 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
             _originalColor = _materialPropertyBlock.GetColor(ColorPropertyID);
         }
 
-        _tickingCoroutine = null;
+        // Ticking 상태 초기화
+        _isTickingActive = false;
+        _tickingElapsedTime = 0f;
+        _tickingTargetDuration = 0f;
+        _tickingNextToggleTime = 0f;
+        _isCurrentlyBright = false;
 
         Log("초기화 완료: Renderer 및 MaterialPropertyBlock 준비됨");
     }
@@ -126,27 +150,14 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     }
 
     /// <summary>
-    /// 이 객체를 폭발시킵니다.
-    /// </summary>
-    public void Explode()
-    {
-        if (NewBombExplodeSystem.Instance == null)
-        {
-            LogError("NewBombExplodeSystem 인스턴스를 찾을 수 없습니다!");
-            return;
-        }
-
-        Log($"{gameObject.name} 폭발 요청");
-        NewBombExplodeSystem.Instance.Execute(this);
-    }
-
-    /// <summary>
     /// 폭발 후 호출되는 콜백입니다.
     /// </summary>
     public void AfterExploded()
     {
+        Log($"{gameObject.name} 파괴");
+
         gameObject.SetActive(false);
-        Log($"{gameObject.name} 비활성화");
+        GameObject.Destroy(gameObject);
     }
 
     /// <summary>
@@ -155,12 +166,25 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     /// <param name="duration">점멸 지속 시간(초)</param>
     public void StartTicking(float duration)
     {
-        if (_tickingCoroutine != null)
+        if (!_useTickingEffect)
         {
-            StopCoroutine(_tickingCoroutine);
+            Log("점멸 효과가 비활성화되어 있습니다.");
+            return;
         }
 
-        _tickingCoroutine = StartCoroutine(TickingCoroutine(duration));
+        _isTickingActive = true;
+        _tickingElapsedTime = 0f;
+        _tickingTargetDuration = duration;
+        _tickingNextToggleTime = _tickingInterval * 0.5f;
+        _isCurrentlyBright = false;
+
+        // 초기 색상을 원본으로 설정
+        if (_cachedRenderer != null && _materialPropertyBlock != null)
+        {
+            _materialPropertyBlock.SetColor(ColorPropertyID, _originalColor);
+            _cachedRenderer.SetPropertyBlock(_materialPropertyBlock);
+        }
+
         Log($"점멸 시작: {duration}초");
     }
 
@@ -169,11 +193,8 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     /// </summary>
     public void StopTicking()
     {
-        if (_tickingCoroutine != null)
-        {
-            StopCoroutine(_tickingCoroutine);
-            _tickingCoroutine = null;
-        }
+        _isTickingActive = false;
+        _tickingElapsedTime = 0f;
 
         if (_cachedRenderer != null && _materialPropertyBlock != null)
         {
@@ -185,39 +206,44 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     }
     #endregion
 
-    #region Private Methods - Coroutine
+    #region Private Methods - Update Logic
     /// <summary>
-    /// 점멸 효과 코루틴
+    /// Update에서 호출되는 점멸 로직입니다.
     /// </summary>
-    private IEnumerator TickingCoroutine(float duration)
+    private void UpdateTicking()
     {
         if (_cachedRenderer == null || _materialPropertyBlock == null || _explosionProfile == null)
         {
             LogError("점멸 효과에 필요한 컴포넌트가 누락되었습니다!");
-            yield break;
+            _isTickingActive = false;
+            return;
         }
 
-        Color tickingColor = _explosionProfile.TickingColor;
-        float elapsedTime = 0f;
+        _tickingElapsedTime += Time.deltaTime;
 
-        while (elapsedTime < duration)
+        // 목표 시간 도달 시 종료
+        if (_tickingElapsedTime >= _tickingTargetDuration)
         {
-            // 점멸 색상으로 변경
-            _materialPropertyBlock.SetColor(ColorPropertyID, tickingColor);
-            _cachedRenderer.SetPropertyBlock(_materialPropertyBlock);
-            yield return new WaitForSeconds(_tickingInterval / 2);
-
-            // 원본 색상으로 복원
+            _isTickingActive = false;
             _materialPropertyBlock.SetColor(ColorPropertyID, _originalColor);
             _cachedRenderer.SetPropertyBlock(_materialPropertyBlock);
-            yield return new WaitForSeconds(_tickingInterval / 2);
-
-            elapsedTime += _tickingInterval;
+            Log("점멸 완료");
+            return;
         }
 
-        Log("점멸 완료");
+        // 색상 전환 타이밍 체크
+        if (_tickingElapsedTime >= _tickingNextToggleTime)
+        {
+            _isCurrentlyBright = !_isCurrentlyBright;
+            _tickingNextToggleTime += _tickingInterval * 0.5f;
+
+            Color targetColor = _isCurrentlyBright ? _explosionProfile.TickingColor : _originalColor;
+            _materialPropertyBlock.SetColor(ColorPropertyID, targetColor);
+            _cachedRenderer.SetPropertyBlock(_materialPropertyBlock);
+        }
     }
     #endregion
+
 
     #region Private Methods - Debug Logging
     /// <summary>일반 로그 출력</summary>

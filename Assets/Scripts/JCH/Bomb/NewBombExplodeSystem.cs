@@ -15,8 +15,12 @@ public class NewBombExplodeSystem : MonoBehaviour
     [Tooltip("카메라 셰이크를 위한 Cinemachine Impulse Source입니다.")]
     [SerializeField] private CinemachineImpulseSource _impulseSource;
 
+    [TabGroup("VFX Pool Settings")]
+    [Tooltip("VFX 풀링 시스템입니다.")]
+    [SerializeField] private TypedObjectPool<ExplosionVfxType> _vfxPool;
+
     [TabGroup("VFX Settings")]
-    [Tooltip("VFX가 자동으로 소멸되는 시간(초)입니다.")]
+    [Tooltip("VFX가 자동으로 풀에 반환되는 시간(초)입니다.")]
     [SerializeField] private float _vfxLifetime = 3.0f;
 
     [TabGroup("Hitstop Settings")]
@@ -42,6 +46,7 @@ public class NewBombExplodeSystem : MonoBehaviour
 
     private HashSet<IExplodable> _explodedTargets;
     private HashSet<Rigidbody> _processedRigidbodies;
+    private Dictionary<GameObject, float> _activeVfxInstances;
     #endregion
 
     #region Properties
@@ -78,6 +83,11 @@ public class NewBombExplodeSystem : MonoBehaviour
         LateInitialize();
     }
 
+    private void Update()
+    {
+        UpdateVfxLifetime();
+    }
+
     private void OnDestroy()
     {
         Cleanup();
@@ -106,10 +116,24 @@ public class NewBombExplodeSystem : MonoBehaviour
 
         _explodedTargets = new HashSet<IExplodable>();
         _processedRigidbodies = new HashSet<Rigidbody>();
+        _activeVfxInstances = new Dictionary<GameObject, float>();
+        if (_vfxPool == null)
+        {
+            _vfxPool = new TypedObjectPool<ExplosionVfxType>();
+        }
+
+        if (_vfxPool != null)
+        {
+            _vfxPool.Initialize(transform);
+            Log("VFX 풀 초기화 완료");
+        }
+        else
+        {
+            LogWarning("VFX Pool이 할당되지 않았습니다!");
+        }
 
         Log("초기화 완료: 폭발 시스템 준비됨");
     }
-
     /// <summary>외부 의존성이 필요한 초기화</summary>
     public void LateInitialize()
     {
@@ -131,8 +155,15 @@ public class NewBombExplodeSystem : MonoBehaviour
 
         StopAllCoroutines();
 
+        if (_vfxPool != null && _vfxPool.IsInitialized)
+        {
+            _vfxPool.ReturnAllActiveObjects();
+            Log("VFX 풀 정리 완료");
+        }
+
         _explodedTargets?.Clear();
         _processedRigidbodies?.Clear();
+        _activeVfxInstances?.Clear();
 
         Log("Cleanup: 폭발 시스템 정리 완료");
     }
@@ -177,7 +208,7 @@ public class NewBombExplodeSystem : MonoBehaviour
 
         _explodedTargets.Add(target);
 
-        CreateExplosionVFX(explosionWorldPosition, profile.VfxPrefab);
+        CreateExplosionVFX(explosionWorldPosition, profile.VfxType);
         TriggerCameraShake(profile.CameraShakeIntensity);
         ApplyExplosionForceInRadius(profile, explosionWorldPosition);
 
@@ -221,60 +252,89 @@ public class NewBombExplodeSystem : MonoBehaviour
 
     #region Private Methods - VFX
     /// <summary>
-    /// 폭발 VFX를 생성합니다.
+    /// 폭발 VFX를 풀에서 가져와 생성합니다.
     /// </summary>
     /// <param name="explosionWorldPosition">폭발 위치 (월드 좌표)</param>
-    /// <param name="vfxPrefab">생성할 VFX 프리팹</param>
-    private void CreateExplosionVFX(Vector3 explosionWorldPosition, GameObject vfxPrefab)
+    /// <param name="vfxType">생성할 VFX 타입</param>
+    private void CreateExplosionVFX(Vector3 explosionWorldPosition, ExplosionVfxType vfxType)
     {
-        if (vfxPrefab == null)
+        if (vfxType == ExplosionVfxType.None)
         {
-            Log("VFX 프리팹이 할당되지 않았습니다.");
+            Log("VFX 타입이 None입니다.");
             return;
         }
 
-        GameObject vfxInstance = Instantiate(vfxPrefab, explosionWorldPosition, Quaternion.identity);
-
-        ParticleSystem particleSystem = vfxInstance.GetComponent<ParticleSystem>();
-        if (particleSystem != null)
+        if (_vfxPool == null || !_vfxPool.IsInitialized)
         {
-            var main = particleSystem.main;
-            if (main.simulationSpace == ParticleSystemSimulationSpace.Local)
-            {
-                var mainModule = particleSystem.main;
-                mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
-            }
+            LogError("VFX 풀이 초기화되지 않았습니다!");
+            return;
+        }
 
-            particleSystem.Play();
-            Log($"ParticleSystem 재생: {explosionWorldPosition}");
+        GameObject vfxInstance = _vfxPool.SpawnObject(vfxType, explosionWorldPosition, Quaternion.identity);
+
+        if (vfxInstance == null)
+        {
+            LogError($"VFX 생성 실패: {vfxType}");
+            return;
+        }
+
+        ParticleSystem[] particleSystems = vfxInstance.GetComponentsInChildren<ParticleSystem>(true);
+        if (particleSystems.Length > 0)
+        {
+            foreach (var ps in particleSystems)
+            {
+                var main = ps.main;
+                if (main.simulationSpace == ParticleSystemSimulationSpace.Local)
+                {
+                    var mainModule = ps.main;
+                    mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
+                }
+
+                ps.Play();
+            }
+            Log($"{particleSystems.Length}개의 ParticleSystem 재생: {explosionWorldPosition}");
         }
         else
         {
-            ParticleSystem[] particleSystems = vfxInstance.GetComponentsInChildren<ParticleSystem>();
-            if (particleSystems.Length > 0)
-            {
-                foreach (var ps in particleSystems)
-                {
-                    var main = ps.main;
-                    if (main.simulationSpace == ParticleSystemSimulationSpace.Local)
-                    {
-                        var mainModule = ps.main;
-                        mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
-                    }
+            LogWarning($"VFX에 ParticleSystem이 없습니다: {vfxType}");
+        }
 
-                    ps.Play();
-                }
-                Log($"{particleSystems.Length}개의 ParticleSystem 재생: {explosionWorldPosition}");
-            }
-            else
+        _activeVfxInstances[vfxInstance] = Time.time;
+    }
+
+    /// <summary>
+    /// Update에서 VFX 수명을 체크하고 만료된 VFX를 풀로 반환합니다.
+    /// </summary>
+    private void UpdateVfxLifetime()
+    {
+        if (_activeVfxInstances.Count == 0) return;
+
+        float currentTime = Time.time;
+        List<GameObject> expiredVfx = new List<GameObject>();
+
+        foreach (var kvp in _activeVfxInstances)
+        {
+            if (kvp.Key == null)
             {
-                LogWarning("VFX 프리팹에 ParticleSystem 컴포넌트가 없습니다!");
+                expiredVfx.Add(kvp.Key);
+                continue;
+            }
+
+            float elapsedTime = currentTime - kvp.Value;
+            if (elapsedTime >= _vfxLifetime)
+            {
+                expiredVfx.Add(kvp.Key);
             }
         }
 
-        if (_vfxLifetime > 0)
+        foreach (var vfx in expiredVfx)
         {
-            Destroy(vfxInstance, _vfxLifetime);
+            if (vfx != null && _vfxPool != null)
+            {
+                _vfxPool.ReturnObject(vfx);
+                Log($"VFX 풀 반환: {vfx.name}");
+            }
+            _activeVfxInstances.Remove(vfx);
         }
     }
     #endregion

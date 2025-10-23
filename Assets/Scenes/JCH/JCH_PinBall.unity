@@ -382,7 +382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1a1effbda95a8f448e1765ae6cbe665, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _bombTag: Bomb
+  _useTriggerMode: 1
   _isDebugLogging: 0
 --- !u!65 &469004056
 BoxCollider:
@@ -476,6 +476,7 @@ GameObject:
   - component: {fileID: 1023265810}
   - component: {fileID: 1023265809}
   - component: {fileID: 1023265808}
+  - component: {fileID: 1023265812}
   m_Layer: 30
   m_Name: Cube
   m_TagString: Draggable
@@ -600,6 +601,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1023265806}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1023265812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1023265806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 137791e7440fecc4d8da8d91054a4b9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _explosionProfile: {fileID: 11400000, guid: 41be5f759a5fb644282164f5d466a361, type: 2}
+  _useTickingEffect: 0
+  _tickingInterval: 0
+  _isDebugLogging: 0
 --- !u!1 &1033588997
 GameObject:
   m_ObjectHideFlags: 0
@@ -718,7 +735,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1086603278}
   - component: {fileID: 1086603280}
-  - component: {fileID: 1086603279}
+  - component: {fileID: 1086603281}
   m_Layer: 0
   m_Name: BomdDetector
   m_TagString: Untagged
@@ -741,26 +758,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1640685179}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1086603279
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1086603277}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b58131bb2ab0df44991ae7e0fa05f71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bombTag: Bomb
-  draggableTag: Drabbable
-  onBombCollision:
-    m_PersistentCalls:
-      m_Calls: []
-  explosionVFX: {fileID: 0}
-  vfxLifetime: 3
-  draggableDestroyDelay: 0.5
 --- !u!135 &1086603280
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -782,6 +779,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.51
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1086603281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086603277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1a1effbda95a8f448e1765ae6cbe665, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _useTriggerMode: 1
+  _isDebugLogging: 0
 --- !u!1001 &1216782087
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1009,20 +1020,68 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 2211033014074681901, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 6615268351107095612, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1278429828051546335, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6490076851541513249}
-    - targetCorrespondingSourceObject: {fileID: 6615268351107095612, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7949673573355187761}
-    m_AddedComponents: []
+      addedObject: {fileID: 1461208758}
   m_SourcePrefab: {fileID: 100100000, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
---- !u!4 &1461208757 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6615268351107095612, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
+--- !u!1 &1461208757 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1278429828051546335, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
   m_PrefabInstance: {fileID: 1461208756}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1461208758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1461208757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3d61e1355410244ca0865ee6c2150c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _impulseSource: {fileID: 3510440999784270630}
+  _vfxLifetime: 2
+  _hitstopDelaySeconds: 0.5
+  _hitstopDuration: 0.2
+  _timeScaleRecoveryDuration: 1
+  _timeScaleRecoveryCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.530074
+      value: 0.5450566
+      inSlope: 1.4945734
+      outSlope: 1.4945734
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  _isDebugLogging: 0
 --- !u!1 &1512758811
 GameObject:
   m_ObjectHideFlags: 0
@@ -1659,23 +1718,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!1 &1250836555584981337
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6490076851541513249}
-  - component: {fileID: 5564051035954822839}
-  m_Layer: 0
-  m_Name: ClimaxController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!4 &1986785981280374893
 Transform:
   m_ObjectHideFlags: 0
@@ -1708,23 +1750,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!1 &2992361503933855007
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7949673573355187761}
-  - component: {fileID: 5395414012562068994}
-  m_Layer: 0
-  m_Name: BombManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &3346289022415266136
 GameObject:
   m_ObjectHideFlags: 0
@@ -1793,7 +1818,7 @@ MonoBehaviour:
       DecayTime: 0.7
       ScaleWithImpact: 1
       HoldForever: 0
-    ImpactRadius: 100000
+    ImpactRadius: 1000
     DirectionMode: 0
     DissipationMode: 2
     DissipationDistance: 100
@@ -1887,99 +1912,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &5395414012562068994
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2992361503933855007}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0dace97e2407914fad19372b69ded6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bombTag: Bomb
-  draggableTag: Draggable
-  enableAutoDebugLog: 1
---- !u!114 &5564051035954822839
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1250836555584981337}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 38cb529d76da563429c752a1e588a6aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  jengaBlocksContainer: {fileID: 0}
-  floorBlocksContainer: {fileID: 0}
-  bombTag: Bomb
-  bombObjects:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  tickingDuration: 0.2
-  explosionForce: 5000
-  explosionRadius: 10
-  upwardModifier: 2
-  explosionDelayFrames: 00000000280000002800000028000000780000007800000078000000
-  impulseSource: {fileID: 3510440999784270630}
-  explosionVFXPrefab: {fileID: 417761080263594737, guid: 75fb28b0e13410546ab129e154dd95c6, type: 3}
-  vfxLifetime: 3
-  hitstopDelayFrames: 20
-  hitstopDuration: 0.1
-  timeScaleRecoveryDuration: 0.5
-  timeScaleRecoveryCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  floorRigidbodySettings:
-    mass: 5
-    linearDamping: 0.5
-    angularDamping: 0.2
-    interpolation: 1
-    collisionDetectionMode: 2
---- !u!4 &6490076851541513249
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1250836555584981337}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1461208757}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &6689983705886517519
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2078,21 +2010,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!4 &7949673573355187761
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2992361503933855007}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.468811, y: -10.774994, z: -8.618301}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1461208757}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &8499679313679656372
 MeshRenderer:
   m_ObjectHideFlags: 0
