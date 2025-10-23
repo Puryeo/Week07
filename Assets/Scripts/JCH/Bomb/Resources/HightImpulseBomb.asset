@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a647e6a7cecb5994682666bc4f182719, type: 3}
   m_Name: HightImpulseBomb
   m_EditorClassIdentifier: 
-  _explosionForce: 1000
-  _explosionRadius: 15
-  _upwardModifier: 2
+  _explosionForce: 3000
+  _explosionRadius: 5
+  _upwardModifier: 10
   _explosionLayerMask:
     serializedVersion: 2
     m_Bits: 3221225591
   _vfxType: 1
   _tickingColor: {r: 1, g: 0, b: 0, a: 0.99215686}
-  _cameraShakeIntensity: 2
+  _cameraShakeIntensity: 1

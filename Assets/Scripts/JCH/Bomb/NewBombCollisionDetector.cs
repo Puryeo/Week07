@@ -18,16 +18,7 @@ public class NewBombCollisionDetector : MonoBehaviour
     #endregion
 
     #region Private Fields
-    private HashSet<IExplodable> _triggeredExplodables;
     private Collider _triggerCollider;
-    #endregion
-
-    #region Properties
-    /// <summary>트리거된 Explodable 객체의 개수를 반환합니다.</summary>
-    public int TriggeredExplodableCount => _triggeredExplodables?.Count ?? 0;
-
-    /// <summary>디버그 로깅 활성화 여부</summary>
-    public bool IsDebugLogging => _isDebugLogging;
     #endregion
 
     #region Unity Lifecycle
@@ -66,7 +57,6 @@ public class NewBombCollisionDetector : MonoBehaviour
     /// <summary>의존성이 필요 없는 내부 초기화</summary>
     public void Initialize()
     {
-        _triggeredExplodables = new HashSet<IExplodable>();
         _triggerCollider = GetComponent<Collider>();
 
         if (_triggerCollider == null)
@@ -86,17 +76,7 @@ public class NewBombCollisionDetector : MonoBehaviour
     /// <summary>소멸 프로세스</summary>
     public void Cleanup()
     {
-        _triggeredExplodables?.Clear();
         Log("Cleanup: 충돌 감지 시스템 정리 완료");
-    }
-    #endregion
-
-    #region Public Methods - Explodable Management
-    /// <summary>트리거된 Explodable 개수를 초기화합니다.</summary>
-    public void ResetExplodableCount()
-    {
-        _triggeredExplodables.Clear();
-        Log("트리거된 Explodable 기록 초기화");
     }
     #endregion
 
@@ -112,12 +92,6 @@ public class NewBombCollisionDetector : MonoBehaviour
             return;
         }
 
-        if (_triggeredExplodables.Contains(explodable))
-        {
-            Log("이미 트리거된 explodable입니다. 무시합니다.");
-            return;
-        }
-
         MonoBehaviour explodableMono = explodable as MonoBehaviour;
         if (explodableMono == null)
         {
@@ -127,7 +101,7 @@ public class NewBombCollisionDetector : MonoBehaviour
 
         Log($"{gameObject.name}이(가) {explodableMono.name}을(를) 감지! 폭발 트리거.");
 
-        _triggeredExplodables.Add(explodable);
+        
         NewBombExplodeSystem.Instance.Execute(explodable);
     }
     #endregion
@@ -176,7 +150,7 @@ public class NewBombCollisionDetector : MonoBehaviour
     private void OnValidate()
     {
         // Collider 존재 여부 확인
-        Collider col = GetComponent<Collider>();
+        Collider col = gameObject.GetComponent<Collider>();
         if (col == null)
         {
             LogWarning("Collider 컴포넌트가 필요합니다!", true);

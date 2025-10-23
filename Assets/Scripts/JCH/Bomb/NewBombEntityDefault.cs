@@ -14,6 +14,9 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     [Tooltip("이 폭탄의 폭발 설정 프로필입니다.")]
     [SerializeField] private ExplosionProfileSO _explosionProfile;
 
+    [TabGroup("Explosion")]
+    [SerializeField] private bool _destroyAfterExplosion = true;
+
     [TabGroup("Ticking")]
     [Tooltip("점멸 효과 사용 여부입니다.")]
     [SerializeField] private bool _useTickingEffect = true;
@@ -68,17 +71,6 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     private void OnDestroy()
     {
         Cleanup();
-    }
-    #endregion
-
-    #region Gizmo
-    private void OnDrawGizmosSelected()
-    {
-        if (_explosionProfile != null)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireSphere(transform.position, _explosionProfile.ExplosionRadius);
-        }
     }
     #endregion
 
@@ -165,10 +157,17 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     /// </summary>
     public void AfterExploded()
     {
-        Log($"{gameObject.name} 파괴");
-
-        gameObject.SetActive(false);
-        GameObject.Destroy(gameObject);
+        if (_destroyAfterExplosion)
+        {
+            Log($"{gameObject.name} 파괴");
+            gameObject.SetActive(false);
+            GameObject.Destroy(gameObject);
+        }
+        else
+        {
+            Log($"{gameObject.name} 재사용 가능 상태로 복원");
+            StopTicking();
+        }
     }
 
     /// <summary>
@@ -279,4 +278,20 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
         Debug.LogError($"<color=cyan>[{GetType().Name}]</color> {message}", this);
     }
     #endregion
+
+#if UNITY_EDITOR
+    #region Editor Gizmos
+    private void OnDrawGizmosSelected()
+    {
+        if (_explosionProfile == null) return;
+
+        // 폭발 범위 표시
+        UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.2f);
+        UnityEditor.Handles.DrawSolidDisc(transform.position, Vector3.up, _explosionProfile.ExplosionRadius);
+
+        Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, _explosionProfile.ExplosionRadius);
+    }
+    #endregion
+#endif
 }

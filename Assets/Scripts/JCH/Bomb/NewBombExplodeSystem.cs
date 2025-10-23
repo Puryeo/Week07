@@ -44,8 +44,6 @@ public class NewBombExplodeSystem : MonoBehaviour
     private static NewBombExplodeSystem _instance;
     private static bool _isQuitting = false;
 
-    private HashSet<IExplodable> _explodedTargets;
-    private HashSet<Rigidbody> _processedRigidbodies;
     private Dictionary<GameObject, float> _activeVfxInstances;
     #endregion
 
@@ -114,8 +112,6 @@ public class NewBombExplodeSystem : MonoBehaviour
             return;
         }
 
-        _explodedTargets = new HashSet<IExplodable>();
-        _processedRigidbodies = new HashSet<Rigidbody>();
         _activeVfxInstances = new Dictionary<GameObject, float>();
         if (_vfxPool == null)
         {
@@ -161,8 +157,6 @@ public class NewBombExplodeSystem : MonoBehaviour
             Log("VFX 풀 정리 완료");
         }
 
-        _explodedTargets?.Clear();
-        _processedRigidbodies?.Clear();
         _activeVfxInstances?.Clear();
 
         Log("Cleanup: 폭발 시스템 정리 완료");
@@ -170,21 +164,11 @@ public class NewBombExplodeSystem : MonoBehaviour
     #endregion
 
     #region Public Methods - Explosion Control
-    /// <summary>
-    /// 개별 폭발을 즉시 실행합니다.
-    /// </summary>
-    /// <param name="target">폭발시킬 IExplodable 객체</param>
     public void Execute(IExplodable target)
     {
         if (target == null)
         {
             LogError("폭발 대상이 null입니다.");
-            return;
-        }
-
-        if (_explodedTargets.Contains(target))
-        {
-            Log("이미 폭발한 객체입니다. 무시합니다.");
             return;
         }
 
@@ -206,15 +190,11 @@ public class NewBombExplodeSystem : MonoBehaviour
 
         Log($"폭발 실행: {targetMono.name} at {explosionWorldPosition}");
 
-        _explodedTargets.Add(target);
-
         CreateExplosionVFX(explosionWorldPosition, profile.VfxType);
         TriggerCameraShake(profile.CameraShakeIntensity);
         ApplyExplosionForceInRadius(profile, explosionWorldPosition);
 
-        // 점멸 중지는 Entity가 처리 (삭제됨)
         target.StopTicking();
-
         target.AfterExploded();
 
         Log($"폭발 완료: {targetMono.name}");
@@ -237,16 +217,6 @@ public class NewBombExplodeSystem : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(SequentialExplosionCoroutine(targets, delayInterval, tickingDuration));
         Log($"순차 폭발 시퀀스 시작: {targets.Count}개 대상");
-    }
-
-    /// <summary>
-    /// 처리된 폭발 및 Rigidbody 기록을 초기화합니다.
-    /// </summary>
-    public void ResetProcessedExplodables()
-    {
-        _explodedTargets.Clear();
-        _processedRigidbodies.Clear();
-        Log("처리된 폭발 기록 초기화");
     }
     #endregion
 
@@ -358,11 +328,6 @@ public class NewBombExplodeSystem : MonoBehaviour
     #endregion
 
     #region Private Methods - Physics
-    /// <summary>
-    /// Physics 쿼리로 범위 내 Rigidbody를 찾아 폭발력을 적용합니다.
-    /// </summary>
-    /// <param name="profile">폭발 설정 프로필</param>
-    /// <param name="explosionWorldPosition">폭발 중심 위치 (월드 좌표)</param>
     private void ApplyExplosionForceInRadius(ExplosionProfileSO profile, Vector3 explosionWorldPosition)
     {
         Collider[] colliders = Physics.OverlapSphere(
@@ -370,13 +335,14 @@ public class NewBombExplodeSystem : MonoBehaviour
             profile.ExplosionRadius,
             profile.ExplosionLayerMask);
 
+        HashSet<Rigidbody> processedInThisExplosion = new HashSet<Rigidbody>();
         int processedCount = 0;
 
         foreach (var col in colliders)
         {
             Rigidbody rb = col.GetComponent<Rigidbody>();
 
-            if (rb != null && !_processedRigidbodies.Contains(rb))
+            if (rb != null && !processedInThisExplosion.Contains(rb))
             {
                 rb.AddExplosionForce(
                     profile.ExplosionForce,
@@ -384,7 +350,7 @@ public class NewBombExplodeSystem : MonoBehaviour
                     profile.ExplosionRadius,
                     profile.UpwardModifier);
 
-                _processedRigidbodies.Add(rb);
+                processedInThisExplosion.Add(rb);
                 processedCount++;
             }
         }
@@ -394,12 +360,6 @@ public class NewBombExplodeSystem : MonoBehaviour
     #endregion
 
     #region Private Methods - Sequential Explosion
-    /// <summary>
-    /// 순차 폭발 코루틴
-    /// </summary>
-    /// <param name="targets">폭발시킬 IExplodable 리스트</param>
-    /// <param name="delayInterval">각 폭발 사이의 지연 시간(초)</param>
-    /// <param name="tickingDuration">점멸 지속 시간(초)</param>
     private IEnumerator SequentialExplosionCoroutine(List<IExplodable> targets, float delayInterval, float tickingDuration)
     {
         List<IExplodable> validTargets = new List<IExplodable>();
@@ -409,7 +369,7 @@ public class NewBombExplodeSystem : MonoBehaviour
             if (target == null) continue;
 
             MonoBehaviour targetMono = target as MonoBehaviour;
-            if (targetMono != null && targetMono.gameObject.activeInHierarchy && !_explodedTargets.Contains(target))
+            if (targetMono != null && targetMono.gameObject.activeInHierarchy)
             {
                 validTargets.Add(target);
             }
@@ -423,25 +383,19 @@ public class NewBombExplodeSystem : MonoBehaviour
 
         Log($"{validTargets.Count}개의 대상 순차 폭발 준비");
 
-        // 모든 Entity에 점멸 시작 요청
         foreach (var target in validTargets)
         {
             target.StartTicking(tickingDuration);
         }
 
-        if(tickingDuration > 0.001f)
+        if (tickingDuration > 0.001f)
         {
-            //점멸 대기
             yield return new WaitForSeconds(tickingDuration);
         }
 
-        // 순차 폭발 실행
         foreach (var target in validTargets)
         {
-            if (!_explodedTargets.Contains(target))
-            {
-                Execute(target);
-            }
+            Execute(target);
 
             if (delayInterval > 0)
             {
@@ -449,7 +403,6 @@ public class NewBombExplodeSystem : MonoBehaviour
             }
         }
 
-        // 히트스탑 연출
         yield return StartCoroutine(HitStopCoroutine());
 
         Log("순차 폭발 완료");
