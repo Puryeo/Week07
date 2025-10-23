@@ -224,6 +224,26 @@ public class BrickBreakerBall : MonoBehaviour
             return;
         }
         
+        // ✅ 추가: Breakable 태그 체크
+        if (collision.gameObject.CompareTag("Breakable"))
+        {
+            BreakableBrick brick = collision.gameObject.GetComponent<BreakableBrick>();
+            if (brick != null && collision.contacts.Length > 0)
+            {
+                Vector3 hitPoint = collision.contacts[0].point;
+                brick.OnHit(hitPoint);
+                
+                if (showDebugLogs)
+                {
+                    Debug.Log($"[BrickBreakerBall] Breakable 충돌: {collision.gameObject.name} (HP: {brick.CurrentHP}/{brick.MaxHP})");
+                }
+            }
+            else if (brick == null)
+            {
+                Debug.LogError($"[BrickBreakerBall] {collision.gameObject.name}에 BreakableBrick 컴포넌트가 없습니다!");
+            }
+        }
+        
         // VFX 생성
         if (collisionVFXPrefab != null && collision.contacts.Length > 0)
         {
@@ -251,9 +271,6 @@ public class BrickBreakerBall : MonoBehaviour
             // 코너 감지: 입사각이 너무 작으면 (거의 수직 충돌) 약간의 랜덤성 추가
             if (incidentAngle < cornerDetectionAngle)
             {
-                // 법선에 수직인 벡터 생성 (2D)
-                Vector3 tangent = new Vector3(-normal.y, normal.x, 0f);
-                
                 // 약간의 각도 추가 (±5~15도)
                 float randomAngle = Random.Range(5f, 15f) * (Random.value > 0.5f ? 1f : -1f);
                 normal = Quaternion.Euler(0f, 0f, randomAngle) * normal;

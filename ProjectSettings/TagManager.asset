@@ -9,6 +9,7 @@ TagManager:
   - LimitLine
   - FxTemporaire
   - CannonBall
+  - Breakable
   layers:
   - Default
   - TransparentFX

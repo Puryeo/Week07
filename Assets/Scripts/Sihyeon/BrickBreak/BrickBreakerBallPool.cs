@@ -124,7 +124,7 @@ public class BrickBreakerBallPool : MonoBehaviour
     /// <summary>
     /// 풀에서 공을 가져옵니다.
     /// </summary>
-    /// <param name="position">공의 초기 위치</param>
+    /// <param name="position">공의 초기 위치 (월드 좌표)</param>
     /// <param name="launchDirection">발사 방향 (정규화됨)</param>
     /// <returns>BrickBreakerBall 컴포넌트 (실패 시 null)</returns>
     public BrickBreakerBall GetBall(Vector3 position, Vector3 launchDirection)
@@ -148,9 +148,12 @@ public class BrickBreakerBallPool : MonoBehaviour
             return null;
         }
         
+        // ✅ 수정: 부모를 null로 설정하여 월드 좌표계 사용
+        ball.transform.SetParent(null);
+        
         // 공 활성화 및 설정
         ball.gameObject.SetActive(true);
-        ball.transform.position = position;
+        ball.transform.position = position; // 이제 월드 좌표로 정상 작동
         ball.transform.rotation = Quaternion.identity;
         
         activeBalls.Add(ball);
@@ -158,7 +161,7 @@ public class BrickBreakerBallPool : MonoBehaviour
         // 발사
         ball.Launch(launchDirection);
         
-        Debug.Log($"[BrickBreakerBallPool] 공 가져오기: {ball.gameObject.name} | 활성: {ActiveBallCount}, 대기: {AvailableBallCount}");
+        Debug.Log($"[BrickBreakerBallPool] 공 가져오기: {ball.gameObject.name} (위치: {position}) | 활성: {ActiveBallCount}, 대기: {AvailableBallCount}");
         
         return ball;
     }
