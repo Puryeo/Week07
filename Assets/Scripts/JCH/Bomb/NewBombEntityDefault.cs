@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// IExplodable 인터페이스를 구현하는 기본 폭탄 엔티티입니다.
@@ -9,15 +10,15 @@ using System.Collections;
 public class NewBombEntityDefault : MonoBehaviour, IExplodable
 {
     #region Serialized Fields
-    [Header("Explosion Settings")]
+    [TabGroup("Explosion")]
     [Tooltip("이 폭탄의 폭발 설정 프로필입니다.")]
     [SerializeField] private ExplosionProfileSO _explosionProfile;
 
-    [Header("Ticking Settings")]
+    [TabGroup("Ticking")]
     [Tooltip("점멸 주기(초)입니다.")]
     [SerializeField] private float _tickingInterval = 1.0f;
 
-    [Header("Debug Settings")]
+    [TabGroup("Debug")]
     [SerializeField] private bool _isDebugLogging = false;
     #endregion
 

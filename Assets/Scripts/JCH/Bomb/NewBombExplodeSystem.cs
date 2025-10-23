@@ -157,7 +157,7 @@ public class NewBombExplodeSystem : MonoBehaviour
             return;
         }
 
-        ExplosionProfile profile = target.GetExplosionProfile();
+        ExplosionProfileSO profile = target.GetExplosionProfile();
         if (profile == null)
         {
             LogError("ExplosionProfile이 null입니다.");
@@ -303,7 +303,7 @@ public class NewBombExplodeSystem : MonoBehaviour
     /// </summary>
     /// <param name="profile">폭발 설정 프로필</param>
     /// <param name="explosionWorldPosition">폭발 중심 위치 (월드 좌표)</param>
-    private void ApplyExplosionForceInRadius(ExplosionProfile profile, Vector3 explosionWorldPosition)
+    private void ApplyExplosionForceInRadius(ExplosionProfileSO profile, Vector3 explosionWorldPosition)
     {
         Collider[] colliders = Physics.OverlapSphere(
             explosionWorldPosition,

@@ -3,29 +3,28 @@ using System.Collections.Generic;
 using Sirenix.OdinInspector;
 
 /// <summary>
-/// 폭탄 태그 오브젝트 의 충돌을 감지하고
-/// NewBombManager에 폭발을 요청합니다.
+/// IExplodable 인터페이스를 가진 객체의 충돌을 감지하고 폭발을 트리거합니다.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class NewBombCollisionDetector : MonoBehaviour
 {
     #region Serialized Fields
-    [TabGroup("Tag Settings")]
-    [Tooltip("폭발을 트리거할 오브젝트의 태그입니다.")]
-    [SerializeField] private string _bombTag = "Bomb";
+    [TabGroup("Collision")]
+    [Tooltip("true: OnTriggerEnter 사용, false: OnCollisionEnter 사용")]
+    [SerializeField] private bool _useTriggerMode = true;
 
-    [Header("Debug")]
+    [TabGroup("Debug")]
     [SerializeField] private bool _isDebugLogging = false;
     #endregion
 
     #region Private Fields
-    private HashSet<GameObject> _triggeredDraggables;
+    private HashSet<IExplodable> _triggeredExplodables;
     private Collider _triggerCollider;
     #endregion
 
     #region Properties
-    /// <summary>트리거된 Draggable 오브젝트의 개수를 반환합니다.</summary>
-    public int TriggeredDraggableCount => _triggeredDraggables?.Count ?? 0;
+    /// <summary>트리거된 Explodable 객체의 개수를 반환합니다.</summary>
+    public int TriggeredExplodableCount => _triggeredExplodables?.Count ?? 0;
 
     /// <summary>디버그 로깅 활성화 여부</summary>
     public bool IsDebugLogging => _isDebugLogging;
@@ -44,16 +43,17 @@ public class NewBombCollisionDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (string.IsNullOrEmpty(other.gameObject.tag) || other.gameObject.tag == "Untagged")
-            return;
+        if (!_useTriggerMode) return;
+        HandleCollision(other.gameObject, other.ClosestPoint(transform.position));
+    }
 
-        // Bomb 태그 체크
-        if (other.CompareTag(_bombTag))
-        {
-            GameObject bomb = other.gameObject;
-            Vector3 contactWorldPosition = other.ClosestPoint(transform.position);
-            HandleBombTrigger(bomb, contactWorldPosition);
-        }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (_useTriggerMode) return;
+        Vector3 contactWorldPosition = collision.contacts.Length > 0
+            ? collision.contacts[0].point
+            : collision.transform.position;
+        HandleCollision(collision.gameObject, contactWorldPosition);
     }
 
     private void OnDestroy()
@@ -66,18 +66,12 @@ public class NewBombCollisionDetector : MonoBehaviour
     /// <summary>의존성이 필요 없는 내부 초기화</summary>
     public void Initialize()
     {
-        _triggeredDraggables = new HashSet<GameObject>();
+        _triggeredExplodables = new HashSet<IExplodable>();
         _triggerCollider = GetComponent<Collider>();
 
-        // Collider 검증 및 Trigger 설정 확인
         if (_triggerCollider == null)
         {
             LogError($"{gameObject.name}에 Collider가 없습니다!");
-        }
-        else if (!_triggerCollider.isTrigger)
-        {
-            LogWarning($"{gameObject.name}의 Collider가 Trigger로 설정되어 있지 않습니다. 자동으로 Trigger를 활성화합니다.", true);
-            _triggerCollider.isTrigger = true;
         }
 
         Log("초기화 완료: 충돌 감지 시스템 준비됨");
@@ -92,44 +86,62 @@ public class NewBombCollisionDetector : MonoBehaviour
     /// <summary>소멸 프로세스</summary>
     public void Cleanup()
     {
-        _triggeredDraggables?.Clear();
+        _triggeredExplodables?.Clear();
         Log("Cleanup: 충돌 감지 시스템 정리 완료");
     }
     #endregion
 
-    #region Public Methods - Draggable Management
-    /// <summary>트리거된 Draggable 개수를 초기화합니다.</summary>
-    public void ResetDraggableCount()
+    #region Public Methods - Explodable Management
+    /// <summary>트리거된 Explodable 개수를 초기화합니다.</summary>
+    public void ResetExplodableCount()
     {
-        // 빈 구현
+        _triggeredExplodables.Clear();
+        Log("트리거된 Explodable 기록 초기화");
     }
     #endregion
 
     #region Private Methods - Trigger Handling
-    /// <summary>폭탄 트리거 처리</summary>
-    /// <param name="bomb">감지된 폭탄 GameObject</param>
+    /// <summary>IExplodable 트리거 처리</summary>
+    /// <param name="explodable">감지된 IExplodable 객체</param>
     /// <param name="contactWorldPosition">충돌 지점 월드 좌표</param>
-    private void HandleBombTrigger(GameObject bomb, Vector3 contactWorldPosition)
+    private void HandleExplodableTrigger(IExplodable explodable, Vector3 contactWorldPosition)
     {
-        Log($"{gameObject.name}이(가) 폭탄 {bomb.name}을(를) 감지! 폭발 요청 전송.");
-
-        // NewBombManager에 폭발 요청
-        if (NewBombManager.Instance != null)
+        if (explodable == null)
         {
-            NewBombController bombController = bomb.GetComponent<NewBombController>();
-            if (bombController != null)
-            {
-                NewBombManager.Instance.RequestExplosion(bombController);
-                Log($"NewBombManager에 폭발 요청: {bomb.name}");
-            }
-            else
-            {
-                LogWarning($"{bomb.name}에 NewBombController 컴포넌트가 없습니다!");
-            }
+            LogWarning("감지된 explodable이 null입니다.");
+            return;
         }
-        else
+
+        if (_triggeredExplodables.Contains(explodable))
         {
-            LogError("NewBombManager 인스턴스를 찾을 수 없습니다!");
+            Log("이미 트리거된 explodable입니다. 무시합니다.");
+            return;
+        }
+
+        MonoBehaviour explodableMono = explodable as MonoBehaviour;
+        if (explodableMono == null)
+        {
+            LogError("IExplodable이 MonoBehaviour가 아닙니다!");
+            return;
+        }
+
+        Log($"{gameObject.name}이(가) {explodableMono.name}을(를) 감지! 폭발 트리거.");
+
+        _triggeredExplodables.Add(explodable);
+        explodable.Explode();
+    }
+    #endregion
+
+    #region Private Methods - Collision Handling
+    /// <summary>충돌/트리거 공통 처리</summary>
+    /// <param name="gameObject">충돌한 GameObject</param>
+    /// <param name="contactWorldPosition">접촉 지점 월드 좌표</param>
+    private void HandleCollision(GameObject gameObject, Vector3 contactWorldPosition)
+    {
+        IExplodable explodable = gameObject.GetComponent<IExplodable>();
+        if (explodable != null)
+        {
+            HandleExplodableTrigger(explodable, contactWorldPosition);
         }
     }
     #endregion
@@ -163,57 +175,47 @@ public class NewBombCollisionDetector : MonoBehaviour
     #region Editor Validation
     private void OnValidate()
     {
-        // 태그 존재 여부 확인
-        if (!IsTagValid(_bombTag))
-        {
-            LogWarning($"'{_bombTag}' 태그가 Tag Manager에 등록되어 있지 않습니다.", true);
-        }
-        // Collider가 Trigger인지 확인
+        // Collider 존재 여부 확인
         Collider col = GetComponent<Collider>();
-        if (col != null && !col.isTrigger)
+        if (col == null)
         {
-            LogWarning("Collider의 'Is Trigger'를 활성화해야 합니다!", true);
+            LogWarning("Collider 컴포넌트가 필요합니다!", true);
+            return;
         }
-    }
 
-    private bool IsTagValid(string tag)
-    {
-        try
+        // Trigger 모드 검증
+        if (_useTriggerMode && !col.isTrigger)
         {
-            GameObject.FindGameObjectWithTag(tag);
-            return true;
+            LogWarning("Trigger 모드 사용 시 Collider의 'Is Trigger'를 활성화해야 합니다!", true);
         }
-        catch
+        else if (!_useTriggerMode && col.isTrigger)
         {
-            return false;
+            LogWarning("Collision 모드 사용 시 Collider의 'Is Trigger'를 비활성화해야 합니다!", true);
         }
     }
 
     private void OnDrawGizmosSelected()
     {
-        // 트리거 범위 시각화 (Collider 기준)
         Collider col = GetComponent<Collider>();
         if (col != null)
         {
-            Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
+            Gizmos.color = _useTriggerMode
+                ? new Color(1f, 0.5f, 0f, 0.5f)  // 주황색 (Trigger)
+                : new Color(0f, 1f, 0.5f, 0.5f); // 청록색 (Collision)
 
-            // Box Collider
             if (col is BoxCollider boxCol)
             {
                 Gizmos.matrix = transform.localToWorldMatrix;
                 Gizmos.DrawWireCube(boxCol.center, boxCol.size);
             }
-            // Sphere Collider
             else if (col is SphereCollider sphereCol)
             {
                 Gizmos.DrawWireSphere(transform.position + sphereCol.center, sphereCol.radius * transform.lossyScale.x);
             }
-            // Capsule Collider
             else if (col is CapsuleCollider capsuleCol)
             {
                 Gizmos.DrawWireSphere(transform.position + capsuleCol.center, capsuleCol.radius * transform.lossyScale.x);
             }
-            // 기타 Collider
             else
             {
                 Gizmos.DrawWireSphere(transform.position, col.bounds.extents.magnitude);
