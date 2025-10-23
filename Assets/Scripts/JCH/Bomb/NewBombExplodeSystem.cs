@@ -124,7 +124,7 @@ public class NewBombExplodeSystem : MonoBehaviour
 
         if (_vfxPool != null)
         {
-            _vfxPool.Initialize(transform);
+            _vfxPool.Initialize();
             Log("VFX 풀 초기화 완료");
         }
         else
@@ -429,8 +429,11 @@ public class NewBombExplodeSystem : MonoBehaviour
             target.StartTicking(tickingDuration);
         }
 
-        // 점멸 대기
-        yield return new WaitForSeconds(tickingDuration);
+        if(tickingDuration > 0.001f)
+        {
+            //점멸 대기
+            yield return new WaitForSeconds(tickingDuration);
+        }
 
         // 순차 폭발 실행
         foreach (var target in validTargets)

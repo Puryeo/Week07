@@ -71,6 +71,17 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
     }
     #endregion
 
+    #region Gizmo
+    private void OnDrawGizmosSelected()
+    {
+        if (_explosionProfile != null)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(transform.position, _explosionProfile.ExplosionRadius);
+        }
+    }
+    #endregion
+
     #region Initialization and Cleanup
     /// <summary>의존성이 필요 없는 내부 초기화</summary>
     public void Initialize()
@@ -243,7 +254,6 @@ public class NewBombEntityDefault : MonoBehaviour, IExplodable
         }
     }
     #endregion
-
 
     #region Private Methods - Debug Logging
     /// <summary>일반 로그 출력</summary>
