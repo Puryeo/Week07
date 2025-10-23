@@ -8,7 +8,7 @@ public interface IExplodable
     /// <summary>
     /// 이 객체의 폭발 설정 프로필을 반환합니다.
     /// </summary>
-    ExplosionProfile GetExplosionProfile();
+    ExplosionProfileSO GetExplosionProfile();
 
     /// <summary>
     /// 점멸 효과를 위한 Renderer를 반환합니다.

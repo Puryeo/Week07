@@ -4,7 +4,7 @@
 /// 폭발 설정 데이터를 담는 ScriptableObject입니다.
 /// </summary>
 [CreateAssetMenu(fileName = "ExplosionProfile", menuName = "Bomb System/Explosion Profile")]
-public class ExplosionProfile : ScriptableObject
+public class ExplosionProfileSO : ScriptableObject
 {
     #region Serialized Fields
     [Header("Physics Settings")]
