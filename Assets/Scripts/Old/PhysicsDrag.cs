@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PhysicsDrag : SingletonObject<PhysicsDrag>
 {
@@ -179,7 +179,10 @@ public class PhysicsDrag : SingletonObject<PhysicsDrag>
                 grabJoint.damper = springDamper;
 
                 grabJoint.breakForce = jointBreakForce;
-                grabbedRb.gameObject.AddComponent<JointBreakDetector>();
+                var JointBreakDetector =   grabJoint.gameObject.GetComponent<JointBreakDetector>();
+                if(JointBreakDetector == null)
+                    grabJoint.gameObject.AddComponent<JointBreakDetector>();
+
                 CreateLineRenderer(ref line1);
 
                 Vector3 targetPoint = ray.GetPoint(currentGrabDistance);
