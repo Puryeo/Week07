@@ -2,7 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// 수박 게임의 전체 흐름을 관리하는 게임 매니저입니다.
-/// 과일 생성, 게임 오버, 점수 등을 관리합니다.
+/// 과일 생성, 게임 오버 등을 관리합니다.
 /// 싱글톤 패턴으로 구현되었습니다.
 /// </summary>
 public class WatermelonGameManager : MonoBehaviour
@@ -21,7 +21,7 @@ public class WatermelonGameManager : MonoBehaviour
     [SerializeField] private float spawnRangeZ = 3f;
     
     [Header("Fruit Generation Settings")]
-    [Tooltip("자동으로 생성할 과일 타입 범위입니다. (Apple ~ 설정한 타입까지만 생성)")]
+    [Tooltip("자동으로 생성할 과일 타입 범위입니다. (Grape ~ 설정한 타입까지만 생성)")]
     [SerializeField] private FruitMergeData.FruitType maxSpawnFruitType = FruitMergeData.FruitType.Lemon;
     
     [Tooltip("게임 시작 시 자동으로 과일을 생성합니다.")]
@@ -37,10 +37,6 @@ public class WatermelonGameManager : MonoBehaviour
     [Tooltip("게임 오버 체크 간격(초)입니다.")]
     [SerializeField] private float gameOverCheckInterval = 1f;
     
-    [Header("Score Settings")]
-    [Tooltip("과일 합치기 시 획득하는 점수 배율입니다.")]
-    [SerializeField] private int[] fruitScores = { 10, 20, 30, 50, 100, 0 }; // Apple ~ Bomb
-    
     [Header("Debug Settings")]
     [Tooltip("디버그 로그를 출력합니다.")]
     [SerializeField] private bool showDebugLogs = false;
@@ -54,16 +50,10 @@ public class WatermelonGameManager : MonoBehaviour
     
     // 게임 상태
     private bool isGameOver = false;
-    private int currentScore = 0;
     private float gameOverCheckTimer = 0f;
     
     // 참조
     private WatermelonObjectPool objectPool;
-    
-    /// <summary>
-    /// 현재 점수를 반환합니다.
-    /// </summary>
-    public int CurrentScore => currentScore;
     
     /// <summary>
     /// 게임 오버 상태를 반환합니다.
@@ -107,7 +97,7 @@ public class WatermelonGameManager : MonoBehaviour
             Invoke(nameof(SpawnRandomFruit), autoSpawnDelay);
         }
         
-        Debug.Log("[WatermelonGameManager] 게임 매니저 초기화 완료 (3D 모드)");
+        Debug.Log("[WatermelonGameManager] 게임 매니저 초기화 완료 (3D 모드, 8단계)");
     }
     
     private void Update()
@@ -139,7 +129,11 @@ public class WatermelonGameManager : MonoBehaviour
             SpawnRandomFruit();
         }
         
-        // 숫자 키 1~6: 특정 과일 생성
+        // 숫자 키 0~7: 특정 과일 생성
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            SpawnFruit(FruitMergeData.FruitType.Grape, GetRandomSpawnPosition());
+        }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             SpawnFruit(FruitMergeData.FruitType.Apple, GetRandomSpawnPosition());
@@ -158,9 +152,13 @@ public class WatermelonGameManager : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha5))
         {
-            SpawnFruit(FruitMergeData.FruitType.Watermelon, GetRandomSpawnPosition());
+            SpawnFruit(FruitMergeData.FruitType.Durian, GetRandomSpawnPosition());
         }
         if (Input.GetKeyDown(KeyCode.Alpha6))
+        {
+            SpawnFruit(FruitMergeData.FruitType.Watermelon, GetRandomSpawnPosition());
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             SpawnFruit(FruitMergeData.FruitType.Bomb, GetRandomSpawnPosition());
         }
@@ -189,7 +187,7 @@ public class WatermelonGameManager : MonoBehaviour
             return;
         }
         
-        // 랜덤 과일 타입 선택 (Apple ~ maxSpawnFruitType)
+        // 랜덤 과일 타입 선택 (Grape ~ maxSpawnFruitType)
         int randomTypeIndex = Random.Range(0, (int)maxSpawnFruitType + 1);
         FruitMergeData.FruitType randomType = (FruitMergeData.FruitType)randomTypeIndex;
         
@@ -244,25 +242,6 @@ public class WatermelonGameManager : MonoBehaviour
     }
     
     /// <summary>
-    /// 점수를 추가합니다.
-    /// </summary>
-    public void AddScore(FruitMergeData.FruitType mergedType)
-    {
-        int typeIndex = (int)mergedType;
-        
-        if (typeIndex >= 0 && typeIndex < fruitScores.Length)
-        {
-            int score = fruitScores[typeIndex];
-            currentScore += score;
-            
-            if (showDebugLogs)
-            {
-                Debug.Log($"[WatermelonGameManager] {mergedType} 합치기 완료! +{score}점 (총점: {currentScore})");
-            }
-        }
-    }
-    
-    /// <summary>
     /// 게임 오버를 체크합니다.
     /// </summary>
     private void CheckGameOver()
@@ -300,7 +279,7 @@ public class WatermelonGameManager : MonoBehaviour
         
         isGameOver = true;
         
-        Debug.Log($"[WatermelonGameManager] ===== 게임 오버! ===== 최종 점수: {currentScore}");
+        Debug.Log($"[WatermelonGameManager] ===== 게임 오버! =====");
         
         // TODO: 게임 오버 UI 표시
         // TODO: 게임 오버 사운드 재생
@@ -319,7 +298,6 @@ public class WatermelonGameManager : MonoBehaviour
             objectPool.ReturnAllFruits();
         }
         
-        currentScore = 0;
         isGameOver = false;
         gameOverCheckTimer = 0f;
         
@@ -355,13 +333,6 @@ public class WatermelonGameManager : MonoBehaviour
         {
             spawnRangeZ = 3f;
             Debug.LogWarning("[WatermelonGameManager] spawnRangeZ는 0 이상이어야 합니다. 기본값(3)으로 설정합니다.");
-        }
-        
-        // 점수 배열 크기 검증
-        int fruitTypeCount = System.Enum.GetValues(typeof(FruitMergeData.FruitType)).Length;
-        if (fruitScores.Length != fruitTypeCount)
-        {
-            Debug.LogWarning($"[WatermelonGameManager] fruitScores 배열 크기({fruitScores.Length})가 과일 타입 개수({fruitTypeCount})와 일치하지 않습니다!");
         }
     }
     
@@ -402,8 +373,7 @@ public class WatermelonGameManager : MonoBehaviour
         
         // 게임 상태 표시
         Vector3 labelPos = transform.position + Vector3.up * 5f;
-        string gameInfo = $"=== Game Status (3D Mode) ===\n" +
-                         $"Score: {currentScore}\n" +
+        string gameInfo = $"=== Game Status (3D, 8 Stages) ===\n" +
                          $"Game Over: {isGameOver}\n" +
                          $"Max Spawn Type: {maxSpawnFruitType}";
         

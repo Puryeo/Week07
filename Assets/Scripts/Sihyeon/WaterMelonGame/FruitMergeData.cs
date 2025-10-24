@@ -13,20 +13,22 @@ public class FruitMergeData : MonoBehaviour
     /// </summary>
     public enum FruitType
     {
-        Apple = 0,      // 사과 (1단계)
-        Orange = 1,     // 오렌지 (2단계)
-        Lemon = 2,      // 레몬 (3단계)
-        Melon = 3,      // 멜론 (4단계)
-        Watermelon = 4, // 수박 (5단계)
-        Bomb = 5        // 폭탄 (6단계, 최종)
+        Grape = 0,      // 포도 (0단계) ← 새로 추가
+        Apple = 1,      // 사과 (1단계)
+        Orange = 2,     // 오렌지 (2단계)
+        Lemon = 3,      // 레몬 (3단계)
+        Melon = 4,      // 멜론 (4단계)
+        Durian = 5,     // 두리안 (5단계) ← 새로 추가
+        Watermelon = 6, // 수박 (6단계)
+        Bomb = 7        // 폭탄 (7단계, 최종)
     }
     
     [Header("Fruit Settings")]
     [Tooltip("현재 과일의 종류입니다.")]
-    [SerializeField] private FruitType fruitType = FruitType.Apple;
+    [SerializeField] private FruitType fruitType = FruitType.Grape;
     
     [Tooltip("합쳐졌을 때 생성될 다음 단계 과일의 종류입니다.")]
-    [SerializeField] private FruitType nextFruitType = FruitType.Orange;
+    [SerializeField] private FruitType nextFruitType = FruitType.Apple;
     
     [Header("Merge Settings")]
     [Tooltip("합치기 가능 여부입니다. 폭탄(최종 단계)은 false로 설정합니다.")]
@@ -134,15 +136,18 @@ public class FruitMergeData : MonoBehaviour
     /// </summary>
     public void Activate(Vector3 position)
     {
-        transform.position = position; // Z축 제약 해제 - 원래 position 그대로 사용
+        transform.position = position;
         isMerging = false;
         
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
+            // 🔥 수정: isKinematic을 먼저 false로 설정
+            rb.isKinematic = false;
+            
+            // 이제 안전하게 velocity 설정
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
-            rb.isKinematic = false;
         }
         
         Collider col = GetComponent<Collider>();
@@ -200,7 +205,7 @@ public class FruitMergeData : MonoBehaviour
         
         // 과일 타입 레이블
         UnityEditor.Handles.Label(transform.position + Vector3.up * 1.5f, 
-            $"{fruitType} (Lv.{(int)fruitType + 1})");
+            $"{fruitType} (Lv.{(int)fruitType})");
     }
 #endif
 }

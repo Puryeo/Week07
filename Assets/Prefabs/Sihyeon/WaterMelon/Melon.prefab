@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -129,12 +129,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e952c7c1977ff1e4998606c301e160de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fruitType: 3
-  nextFruitType: 4
+  fruitType: 4
+  nextFruitType: 5
   canMerge: 1
   mergeFXPrefab: {fileID: 0}
   mass: 1
-  physicsMaterial: {fileID: 0}
+  physicsMaterial: {fileID: 13400000, guid: 9db28854fd7da5043a74d648043195d2, type: 2}
   showDebugLogs: 0
 --- !u!114 &6181379793891197598
 MonoBehaviour:
@@ -148,7 +148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff84922e20d676744b099eb1287da691, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mergeSpeed: 5
   mergeDuration: 0.3
   mergeCurve:
     serializedVersion: 2
@@ -175,6 +174,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   collisionCooldown: 0.1
+  spawnOffsetMultiplier: 1.2
   collisionVFXPrefab: {fileID: 0}
   vfxLifetime: 2
   showDebugLogs: 0

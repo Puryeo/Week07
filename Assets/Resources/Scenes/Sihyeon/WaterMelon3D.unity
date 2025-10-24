@@ -637,11 +637,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ca61cb443896443815b2ec3318cbaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grapePrefab: {fileID: 6967113263237796278, guid: afe2bcee019725345b99efc9bfc4631b, type: 3}
   applePrefab: {fileID: 8650560305927811645, guid: 63be662dd37022b428786b1ffdad55f7, type: 3}
   orangePrefab: {fileID: 7109667637143604552, guid: df17b3f40a348a84d9514bc2de76a64c, type: 3}
   lemonPrefab: {fileID: 6165148154580354248, guid: 791021aa6645933439ea48340d5682c2, type: 3}
   melonPrefab: {fileID: 2552633870909344606, guid: ce36ccf2d95e1224cacf8cff0c44e189, type: 3}
-  watermelonPrefab: {fileID: 6967113263237796278, guid: b011b7d8e3f06c74c90584883bb01cf7, type: 3}
+  durianPrefab: {fileID: 6967113263237796278, guid: b011b7d8e3f06c74c90584883bb01cf7, type: 3}
+  watermelonPrefab: {fileID: 6967113263237796278, guid: 3a43bb09b0d7d384ab3ed026f3a0669f, type: 3}
   bombPrefab: {fileID: 819832223992964024, guid: 23a54da7000c17040be67a0be31693ab, type: 3}
   initialPoolSizePerType: 5
   autoExpand: 1
@@ -1342,7 +1344,6 @@ MonoBehaviour:
   autoSpawnDelay: 1
   gameOverLineY: 8
   gameOverCheckInterval: 1
-  fruitScores: 0a000000140000001e000000320000006400000000000000
   showDebugLogs: 0
   showGizmos: 1
 --- !u!4 &1944629801

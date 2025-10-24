@@ -3,12 +3,15 @@ using System.Collections.Generic;
 
 /// <summary>
 /// 수박 게임의 과일 오브젝트 풀링 시스템입니다.
-/// 6종류의 과일을 각각 풀링하여 효율적으로 관리합니다.
+/// 8종류의 과일을 각각 풀링하여 효율적으로 관리합니다.
 /// 싱글톤 패턴으로 구현되었습니다.
 /// </summary>
 public class WatermelonObjectPool : MonoBehaviour
 {
     [Header("Fruit Prefabs")]
+    [Tooltip("포도 프리팹 (0단계)")]
+    [SerializeField] private GameObject grapePrefab;
+    
     [Tooltip("사과 프리팹 (1단계)")]
     [SerializeField] private GameObject applePrefab;
     
@@ -21,10 +24,13 @@ public class WatermelonObjectPool : MonoBehaviour
     [Tooltip("멜론 프리팹 (4단계)")]
     [SerializeField] private GameObject melonPrefab;
     
-    [Tooltip("수박 프리팹 (5단계)")]
+    [Tooltip("두리안 프리팹 (5단계)")]
+    [SerializeField] private GameObject durianPrefab;
+    
+    [Tooltip("수박 프리팹 (6단계)")]
     [SerializeField] private GameObject watermelonPrefab;
     
-    [Tooltip("폭탄 프리팹 (6단계, 최종)")]
+    [Tooltip("폭탄 프리팹 (7단계, 최종)")]
     [SerializeField] private GameObject bombPrefab;
     
     [Header("Pool Settings")]
@@ -124,10 +130,12 @@ public class WatermelonObjectPool : MonoBehaviour
         // 프리팹 매핑
         fruitPrefabs = new Dictionary<FruitMergeData.FruitType, GameObject>
         {
+            { FruitMergeData.FruitType.Grape, grapePrefab },
             { FruitMergeData.FruitType.Apple, applePrefab },
             { FruitMergeData.FruitType.Orange, orangePrefab },
             { FruitMergeData.FruitType.Lemon, lemonPrefab },
             { FruitMergeData.FruitType.Melon, melonPrefab },
+            { FruitMergeData.FruitType.Durian, durianPrefab },
             { FruitMergeData.FruitType.Watermelon, watermelonPrefab },
             { FruitMergeData.FruitType.Bomb, bombPrefab }
         };
@@ -195,7 +203,7 @@ public class WatermelonObjectPool : MonoBehaviour
     /// 풀에서 과일을 가져옵니다.
     /// </summary>
     /// <param name="type">과일 타입</param>
-    /// <param name="position">생성 위치 (월드 좌표, Z축은 자동으로 0 고정)</param>
+    /// <param name="position">생성 위치 (월드 좌표)</param>
     /// <returns>생성된 과일 GameObject (실패 시 null)</returns>
     public GameObject GetFruit(FruitMergeData.FruitType type, Vector3 position)
     {
@@ -241,12 +249,12 @@ public class WatermelonObjectPool : MonoBehaviour
         FruitMergeData fruitData = fruitObj.GetComponent<FruitMergeData>();
         if (fruitData != null)
         {
-            fruitData.Activate(position); // Z축 0 고정은 Activate 내부에서 처리
+            fruitData.Activate(position);
         }
         else
         {
             // FruitMergeData가 없으면 수동 활성화
-            fruitObj.transform.position = new Vector3(position.x, position.y, 0f);
+            fruitObj.transform.position = position;
             fruitObj.SetActive(true);
             
             Debug.LogWarning($"[WatermelonObjectPool] {fruitObj.name}에 FruitMergeData 컴포넌트가 없습니다!");
@@ -418,4 +426,86 @@ public class WatermelonObjectPool : MonoBehaviour
         UnityEditor.Handles.Label(labelPos, poolInfo);
     }
 #endif
+
+    /// <summary>
+    /// 🔥 원래 타입을 명시적으로 지정하여 과일을 풀로 반환합니다.
+    /// (병합 중 타입이 변경된 경우 사용)
+    /// </summary>
+    /// <param name="fruitObj">반환할 과일 GameObject</param>
+    /// <param name="originalType">오브젝트가 원래 속했던 타입</param>
+    public void ReturnFruitByOriginalType(GameObject fruitObj, FruitMergeData.FruitType originalType)
+    {
+        if (fruitObj == null)
+        {
+            Debug.LogWarning("[WatermelonObjectPool] null 과일을 반환하려고 했습니다.");
+            return;
+        }
+        
+        // FruitMergeData 확인
+        FruitMergeData fruitData = fruitObj.GetComponent<FruitMergeData>();
+        if (fruitData == null)
+        {
+            Debug.LogWarning($"[WatermelonObjectPool] {fruitObj.name}에 FruitMergeData 컴포넌트가 없습니다!");
+            Destroy(fruitObj);
+            return;
+        }
+        
+        // 🔥 현재 타입과 원래 타입 비교
+        FruitMergeData.FruitType currentType = fruitData.CurrentFruitType;
+        
+        if (currentType != originalType)
+        {
+            if (showDebugLogs)
+            {
+                Debug.LogWarning($"[WatermelonObjectPool] 타입 불일치 감지: {fruitObj.name} " +
+                               $"(현재: {currentType}, 원래: {originalType}) - 원래 타입으로 반환");
+            }
+        }
+        
+        // 🔥 원래 타입의 활성 풀에서 제거
+        if (!activeFruits.ContainsKey(originalType))
+        {
+            Debug.LogError($"[WatermelonObjectPool] {originalType} 풀이 존재하지 않습니다!");
+            return;
+        }
+        
+        if (!activeFruits[originalType].Contains(fruitObj))
+        {
+            Debug.LogWarning($"[WatermelonObjectPool] {fruitObj.name}은(는) {originalType} 활성 풀에 없습니다. " +
+                            $"(현재 타입: {currentType})");
+            
+            // 🔥 현재 타입 풀에서도 확인
+            if (currentType != originalType && activeFruits.ContainsKey(currentType) && 
+                activeFruits[currentType].Contains(fruitObj))
+            {
+                if (showDebugLogs)
+                {
+                    Debug.Log($"[WatermelonObjectPool] {currentType} 풀에서 발견됨. 해당 풀에서 제거합니다.");
+                }
+                activeFruits[currentType].Remove(fruitObj);
+            }
+            else
+            {
+                return;
+            }
+        }
+        else
+        {
+            // 원래 타입 풀에서 제거
+            activeFruits[originalType].Remove(fruitObj);
+        }
+        
+        // 과일 비활성화
+        fruitData.Deactivate();
+        fruitObj.transform.SetParent(poolParent);
+        
+        // 🔥 원래 타입의 대기 풀에 추가
+        availableFruits[originalType].Enqueue(fruitObj);
+        
+        if (showDebugLogs)
+        {
+            Debug.Log($"[WatermelonObjectPool] {originalType} 반환: {fruitObj.name} | " +
+                     $"활성: {GetActiveFruitCount(originalType)}, 대기: {GetAvailableFruitCount(originalType)}");
+        }
+    }
 }
