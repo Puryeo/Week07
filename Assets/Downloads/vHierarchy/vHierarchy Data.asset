@@ -313,5 +313,4 @@ MonoBehaviour:
           isColorRecursive: 0
   bookmarks: []
   bookmarkedScenePaths:
-  - Assets/Scenes/JCH/JCH_first.unity
   - Assets/Scenes/Old/STAGE.unity
