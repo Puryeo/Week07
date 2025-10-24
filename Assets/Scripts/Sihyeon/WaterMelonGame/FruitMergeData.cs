@@ -13,12 +13,12 @@ public class FruitMergeData : MonoBehaviour
     /// </summary>
     public enum FruitType
     {
-        Grape = 0,      // 포도 (0단계) ← 새로 추가
+        Grape = 0,      // 포도 (0단계)
         Apple = 1,      // 사과 (1단계)
         Orange = 2,     // 오렌지 (2단계)
         Lemon = 3,      // 레몬 (3단계)
         Melon = 4,      // 멜론 (4단계)
-        Durian = 5,     // 두리안 (5단계) ← 새로 추가
+        Durian = 5,     // 두리안 (5단계)
         Watermelon = 6, // 수박 (6단계)
         Bomb = 7        // 폭탄 (7단계, 최종)
     }
@@ -34,15 +34,11 @@ public class FruitMergeData : MonoBehaviour
     [Tooltip("합치기 가능 여부입니다. 폭탄(최종 단계)은 false로 설정합니다.")]
     [SerializeField] private bool canMerge = true;
     
-    [Tooltip("합쳐질 때 생성할 파티클 이펙트 프리팹입니다.")]
+    [Tooltip("합쳐질 떄 생성할 파티클 이펙트 프리팹입니다.")]
     [SerializeField] private GameObject mergeFXPrefab;
     
-    [Header("Physics Settings")]
-    [Tooltip("과일의 질량입니다. (Rigidbody.mass)")]
-    [SerializeField] private float mass = 1f;
-    
-    [Tooltip("과일의 물리 재질입니다. (튕김, 마찰 등)")]
-    [SerializeField] private PhysicsMaterial physicsMaterial;
+    [Tooltip("스폰 후 병합 면역 시간(초)입니다. 공중 병합 방지용입니다.")]
+    [SerializeField] private float mergeImmunityDuration = 0.5f;
     
     [Header("Debug")]
     [Tooltip("디버그 로그를 출력합니다.")]
@@ -50,6 +46,9 @@ public class FruitMergeData : MonoBehaviour
     
     // 합치기 진행 중인지 여부 (중복 방지용)
     private bool isMerging = false;
+    
+    // 스폰 시간 (면역 시간 계산용)
+    private float spawnTime = 0f;
     
     /// <summary>
     /// 현재 과일의 타입을 반환합니다.
@@ -75,6 +74,11 @@ public class FruitMergeData : MonoBehaviour
     /// 현재 합치기 진행 중인지 여부를 반환합니다.
     /// </summary>
     public bool IsMerging => isMerging;
+    
+    /// <summary>
+    /// 병합 면역 시간이 끝났는지 확인합니다.
+    /// </summary>
+    public bool CanMergeNow => canMerge && (Time.time - spawnTime > mergeImmunityDuration);
     
     /// <summary>
     /// 합치기 상태를 설정합니다.
@@ -103,7 +107,6 @@ public class FruitMergeData : MonoBehaviour
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.mass = mass;
             rb.linearDamping = 0f;
             rb.angularDamping = 0.05f;
             rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -114,19 +117,7 @@ public class FruitMergeData : MonoBehaviour
             
             if (showDebugLogs)
             {
-                Debug.Log($"[FruitMergeData] {gameObject.name} Rigidbody 초기화 완료 (mass: {mass}, 3D 모드)");
-            }
-        }
-        
-        // Collider에 PhysicsMaterial 적용 (있으면)
-        Collider col = GetComponent<Collider>();
-        if (col != null && physicsMaterial != null)
-        {
-            col.material = physicsMaterial;
-            
-            if (showDebugLogs)
-            {
-                Debug.Log($"[FruitMergeData] {gameObject.name} Collider 초기화 완료 (Type: {col.GetType().Name})");
+                Debug.Log($"[FruitMergeData] {gameObject.name} Rigidbody 초기화 완료 (mass: {rb.mass}, 3D 모드)");
             }
         }
     }
@@ -138,14 +129,15 @@ public class FruitMergeData : MonoBehaviour
     {
         transform.position = position;
         isMerging = false;
+        spawnTime = Time.time; // 🔥 스폰 시간 기록
         
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
-            // 🔥 수정: isKinematic을 먼저 false로 설정
+            // isKinematic을 먼저 false로 설정
             rb.isKinematic = false;
             
-            // 이제 안전하게 velocity 설정
+            // 안전하게 velocity 설정
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
@@ -160,7 +152,7 @@ public class FruitMergeData : MonoBehaviour
         
         if (showDebugLogs)
         {
-            Debug.Log($"[FruitMergeData] {gameObject.name} 활성화됨 at {position}");
+            Debug.Log($"[FruitMergeData] {gameObject.name} 활성화됨 at {position} (면역 시간: {mergeImmunityDuration}초)");
         }
     }
     
@@ -190,6 +182,13 @@ public class FruitMergeData : MonoBehaviour
         if (fruitType != FruitType.Bomb)
         {
             nextFruitType = (FruitType)((int)fruitType + 1);
+        }
+        
+        // 면역 시간 검증
+        if (mergeImmunityDuration < 0f)
+        {
+            mergeImmunityDuration = 0.5f;
+            Debug.LogWarning("[FruitMergeData] mergeImmunityDuration은 0 이상이어야 합니다. 기본값(0.5초)으로 설정합니다.");
         }
     }
     

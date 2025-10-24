@@ -142,6 +142,13 @@ public class FruitMergeController : MonoBehaviour
             return false;
         }
         
+        // 🔥 면역 시간 체크 (공중 병합 방지)
+        if (!fruitData.CanMergeNow || !otherData.CanMergeNow)
+        {
+            LogDebug($"병합 면역 시간 중: {gameObject.name} 또는 {other.gameObject.name}");
+            return false;
+        }
+        
         // 병합 가능한지
         if (!fruitData.CanMerge || !otherData.CanMerge)
         {

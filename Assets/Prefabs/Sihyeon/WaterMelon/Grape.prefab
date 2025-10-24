@@ -133,8 +133,6 @@ MonoBehaviour:
   nextFruitType: 1
   canMerge: 1
   mergeFXPrefab: {fileID: 0}
-  mass: 1
-  physicsMaterial: {fileID: 13400000, guid: 9db28854fd7da5043a74d648043195d2, type: 2}
   showDebugLogs: 0
 --- !u!114 &2772221665539947869
 MonoBehaviour:

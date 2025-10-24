@@ -98,7 +98,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6165148154580354248}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 2.5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -133,8 +133,6 @@ MonoBehaviour:
   nextFruitType: 4
   canMerge: 1
   mergeFXPrefab: {fileID: 0}
-  mass: 1
-  physicsMaterial: {fileID: 13400000, guid: 9db28854fd7da5043a74d648043195d2, type: 2}
   showDebugLogs: 0
 --- !u!114 &7959329100545511941
 MonoBehaviour:
