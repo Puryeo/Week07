@@ -326,5 +326,4 @@ MonoBehaviour:
         values: []
   bookmarks: []
   bookmarkedScenePaths:
-  - Assets/Scenes/JCH/JCH_first.unity
-  - Assets/Scenes/Old/STAGE.unity
+  - Assets/Resources/Scenes/Old/Title.unity

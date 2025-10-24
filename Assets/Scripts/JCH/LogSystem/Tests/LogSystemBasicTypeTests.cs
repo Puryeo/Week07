@@ -1,4 +1,6 @@
-﻿// LogSystemBasicTypeTests.cs
+
+#if UNITY_EDITOR
+// LogSystemBasicTypeTests.cs
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
@@ -127,3 +129,4 @@ public class LogSystemBasicTypeTests
     }
     #endregion
 }
+#endif
