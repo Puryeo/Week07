@@ -9,7 +9,7 @@ public class LogRuntime : MonoBehaviour
 {
     #region Private Fields
     private const int BUFFER_SIZE = 1000;
-    private const float FLUSH_INTERVAL_SECONDS = 30f;
+    private const float FLUSH_INTERVAL_SECONDS = 5.0f;
     private const float BUFFER_THRESHOLD = 0.8f;
 
     private LogEntry[] _ringBuffer;
@@ -29,6 +29,9 @@ public class LogRuntime : MonoBehaviour
 
     /// <summary>버퍼 용량</summary>
     public int BufferCapacity => BUFFER_SIZE;
+
+    /// <summary>플러시 인터벌 (초)</summary>
+    public float FlushIntervalSeconds => FLUSH_INTERVAL_SECONDS;
     #endregion
 
     #region Unity Lifecycle

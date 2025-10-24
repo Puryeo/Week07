@@ -65,28 +65,28 @@ public class LogSystemFlushTests
     }
     #endregion
 
-    #region Test Methods - 30 Second Timer
+    #region Test Methods - Flush Timer
     /// <summary>
-    /// 시나리오 3-2: 30초 타이머 플러시
+    /// 시나리오 3-2: 플러시 인터벌 타이머 테스트
     /// </summary>
     [UnityTest]
-    public IEnumerator Test_Flush_30Second_Timer()
+    public IEnumerator Test_Flush_Timer()
     {
         // Given: 100개 로그 (임계값 미만)
         _runtime.ClearBufferForTest();
-
         for (int i = 0; i < 100; i++)
         {
             LogSystem.PushLog(LogLevel.INFO, "Test", i);
         }
-
         Assert.AreEqual(100, _runtime.CurrentLogCount);
 
-        // When: 31초 대기
-        yield return new WaitForSeconds(31f);
+        // When: (인터벌 + 1초) 대기
+        float waitTime = _runtime.FlushIntervalSeconds + 1f;
+        yield return new WaitForSeconds(waitTime);
 
         // Then: 자동 플러시 발생
-        Assert.AreEqual(0, _runtime.CurrentLogCount, "30초 경과 시 자동 플러시되어야 합니다");
+        Assert.AreEqual(0, _runtime.CurrentLogCount,
+            $"{_runtime.FlushIntervalSeconds}초 경과 시 자동 플러시되어야 합니다");
     }
     #endregion
 
