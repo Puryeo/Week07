@@ -124,7 +124,7 @@ public class TetrisLineChecker : MonoBehaviour
         }
 
         // 디버그 로그
-        Debug.Log($"높이 {yHeight}에서 감지된 큐브: {cubesInLine.Count}개");
+        // Debug.Log($"높이 {yHeight}에서 감지된 큐브: {cubesInLine.Count}개");
 
         // 큐브가 정확히 10개인지 확인 (테트리스 가로 라인)
         if (cubesInLine.Count != 10)
@@ -164,7 +164,7 @@ public class TetrisLineChecker : MonoBehaviour
 
     private void RemoveLine(HashSet<GameObject> cubes, float height, bool isBombLine)
     {
-        Debug.Log($"라인 제거! 높이: {height}, 큐브 수: {cubes.Count}, 폭탄라인: {isBombLine}");
+        // Debug.Log($"라인 제거! 높이: {height}, 큐브 수: {cubes.Count}, 폭탄라인: {isBombLine}");
 
         // 모든 큐브 비활성화
         foreach (GameObject cube in cubes)
@@ -174,12 +174,12 @@ public class TetrisLineChecker : MonoBehaviour
 
             if (rb != null)
             {
-                Debug.Log($"rb linear velocity magnitude: {rb.linearVelocity.magnitude}");
+                // Debug.Log($"rb linear velocity magnitude: {rb.linearVelocity.magnitude}");
             }
 
             if (rb != null && rb.linearVelocity.magnitude < 0.001f)
             {
-                Debug.Log($"큐브 비활성화: {cube.name}");
+                // Debug.Log($"큐브 비활성화: {cube.name}");
                 cube.SetActive(false);
 
                 // 콜라이더 구조가 변경되었을 때 물리 시스템 갱신

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc10894df3b3c742a44a1a61aacb4bd, type: 3}
   m_Name: Tetris
   m_EditorClassIdentifier: 
-  _stageImage: {fileID: 21300000, guid: a53b127ddfbc7ef45b7b63b6bf8f1204, type: 3}
-  _stageName: TertisMap
-  _sceneName: TertisMap
+  _stageImage: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
+  _stageName: "\uD14C\uD2B8\uB9AC\uC2A4"
+  _sceneName: TetrisMap
   _clearStar: 3
-  _isTried: 0
-  _stageImagePath: 
-  _scenePath: Assets/Scenes/OSH/TertisMap.unity
+  _isTried: 1
+  _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/TertisMap.png
+  _scenePath: Assets/Scenes/OSH/TetrisMap.unity

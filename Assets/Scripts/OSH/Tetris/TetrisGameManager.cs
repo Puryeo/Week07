@@ -59,14 +59,12 @@ public class TetrisGameManager : MonoBehaviour
     {
         if (blockSpawner == null)
         {
-            Debug.LogError("[TetrisGameManager] blockSpawner가 설정되지 않았습니다!");
             enabled = false;
             return;
         }
 
         if (lineChecker == null)
         {
-            Debug.LogError("[TetrisGameManager] lineChecker가 설정되지 않았습니다!");
             enabled = false;
             return;
         }
@@ -102,50 +100,18 @@ public class TetrisGameManager : MonoBehaviour
     private void OnLineRemoved(float height, bool isBombLine)
     {
         totalLinesCleared++;
-        Debug.Log($"[TetrisGameManager] 라인 제거됨 - 높이: {height}, 총 라인: {totalLinesCleared}");
 
         // 라인 제거할 때마다 폭탄 블록 1개 소환 (제한 없음)
         if (spawnBombOnLineClear)
         {
             blockSpawner.SpawnBombBlock();
-            Debug.Log($"[TetrisGameManager] 폭탄 블록 소환 (총 라인: {totalLinesCleared})");
         }
 
         // 2줄 이상 지우면 일반 블록 스폰 중지
         if (totalLinesCleared >= linesToStopNormalSpawn)
         {
             blockSpawner.StopSpawning();
-            Debug.Log($"[TetrisGameManager] 일반 블록 스폰 중지 ({linesToStopNormalSpawn}줄 도달)");
         }
-    }
-
-    #endregion
-
-    #region Public Methods
-
-    /// <summary>
-    /// 게임 상태 정보 반환
-    /// </summary>
-    public string GetGameStateInfo()
-    {
-        return $"총 라인 제거: {totalLinesCleared}, 폭탄 블록: {blockSpawner.GetSpawnedBombBlocks().Count}개";
-    }
-
-    /// <summary>
-    /// 라인 카운터 리셋 (테스트용)
-    /// </summary>
-    public void ResetLineCounter()
-    {
-        totalLinesCleared = 0;
-        Debug.Log("[TetrisGameManager] 라인 카운터 리셋");
-    }
-
-    /// <summary>
-    /// 폭탄 블록 수동 소환 (테스트용)
-    /// </summary>
-    public void SpawnBombBlockManually()
-    {
-        blockSpawner.SpawnBombBlock();
     }
 
     #endregion

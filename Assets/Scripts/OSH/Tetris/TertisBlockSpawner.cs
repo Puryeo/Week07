@@ -88,7 +88,6 @@ public class TetrisBlockSpawner : MonoBehaviour
     {
         if (blockPrefabs == null || blockPrefabs.Length != 7)
         {
-            Debug.LogError("[TetrisBlockSpawner] blockPrefabs는 정확히 7개여야 합니다!");
             enabled = false;
             return;
         }
@@ -97,27 +96,19 @@ public class TetrisBlockSpawner : MonoBehaviour
         {
             if (blockPrefabs[i] == null)
             {
-                Debug.LogError($"[TetrisBlockSpawner] blockPrefabs[{i}]가 null입니다!");
                 enabled = false;
                 return;
             }
         }
 
-        if (bombBlockPrefab == null)
-        {
-            Debug.LogWarning("[TetrisBlockSpawner] bombBlockPrefab이 설정되지 않았습니다. 폭탄 블록을 소환할 수 없습니다.");
-        }
-
         if (spawnPoint == null)
         {
-            Debug.LogError("[TetrisBlockSpawner] spawnPoint가 설정되지 않았습니다!");
             enabled = false;
             return;
         }
 
         if (previewPoints == null || previewPoints.Length != 4)
         {
-            Debug.LogError("[TetrisBlockSpawner] previewPoints는 정확히 4개여야 합니다!");
             enabled = false;
             return;
         }
@@ -126,15 +117,9 @@ public class TetrisBlockSpawner : MonoBehaviour
         {
             if (previewPoints[i] == null)
             {
-                Debug.LogError($"[TetrisBlockSpawner] previewPoints[{i}]가 null입니다!");
                 enabled = false;
                 return;
             }
-        }
-
-        if (bombSpawnPoint == null)
-        {
-            Debug.LogWarning("[TetrisBlockSpawner] bombSpawnPoint가 설정되지 않았습니다. 폭탄 블록을 소환할 수 없습니다.");
         }
     }
 
@@ -214,13 +199,11 @@ public class TetrisBlockSpawner : MonoBehaviour
     {
         if (bombBlockPrefab == null)
         {
-            Debug.LogWarning("[TetrisBlockSpawner] bombBlockPrefab이 설정되지 않았습니다!");
             return;
         }
 
         if (bombSpawnPoint == null)
         {
-            Debug.LogWarning("[TetrisBlockSpawner] bombSpawnPoint가 설정되지 않았습니다!");
             return;
         }
 
@@ -231,7 +214,6 @@ public class TetrisBlockSpawner : MonoBehaviour
         );
 
         spawnedBombBlocks.Add(bombBlock);
-        Debug.Log($"[TetrisBlockSpawner] 폭탄 블록 소환됨 (총 {spawnedBombBlocks.Count}개)");
     }
 
     #endregion
@@ -323,7 +305,6 @@ public class TetrisBlockSpawner : MonoBehaviour
     public void SetSpawnInterval(float interval)
     {
         spawnInterval = Mathf.Max(0.1f, interval);
-        Debug.Log($"[TetrisBlockSpawner] 소환 간격 변경: {spawnInterval}초");
     }
 
     public string GetQueueInfo()
@@ -360,10 +341,6 @@ public class TetrisBlockSpawner : MonoBehaviour
         {
             SpawnBlockManually();
         }
-        else
-        {
-            Debug.LogWarning("[TetrisBlockSpawner] 플레이 모드에서만 사용 가능합니다.");
-        }
     }
 
     [ContextMenu("Test: Spawn Bomb Block")]
@@ -373,10 +350,6 @@ public class TetrisBlockSpawner : MonoBehaviour
         {
             SpawnBombBlock();
         }
-        else
-        {
-            Debug.LogWarning("[TetrisBlockSpawner] 플레이 모드에서만 사용 가능합니다.");
-        }
     }
 
     [ContextMenu("Test: Print Queue Info")]
@@ -384,12 +357,6 @@ public class TetrisBlockSpawner : MonoBehaviour
     {
         if (Application.isPlaying)
         {
-            Debug.Log($"[TetrisBlockSpawner] {GetQueueInfo()}");
-            Debug.Log($"[TetrisBlockSpawner] 현재 Bag: [{string.Join(", ", currentBag)}]");
-        }
-        else
-        {
-            Debug.LogWarning("[TetrisBlockSpawner] 플레이 모드에서만 사용 가능합니다.");
         }
     }
 #endif
