@@ -37,7 +37,7 @@ public class LogSave : ILogSaver
 
     #region Public Methods - ILogSaver Implementation
     /// <summary>
-    /// 로그 엔트리 배열을 비동기로 CSV 파일에 저장
+    /// 로그 엔트리 배열을 비동기로 CSV 파일에 저장 (UTF-8 with BOM)
     /// </summary>
     /// <param name="entries">로그 엔트리 배열</param>
     /// <param name="count">저장할 엔트리 개수</param>
@@ -56,7 +56,7 @@ public class LogSave : ILogSaver
                 sb.AppendLine(csvLine);
             }
 
-            await File.AppendAllTextAsync(_sessionFilePath, sb.ToString());
+            await File.AppendAllTextAsync(_sessionFilePath, sb.ToString(), System.Text.Encoding.UTF8);
         }
         catch (Exception ex)
         {
@@ -88,14 +88,14 @@ public class LogSave : ILogSaver
     }
 
     /// <summary>
-    /// CSV 헤더 작성
+    /// CSV 헤더 작성 (UTF-8 with BOM)
     /// </summary>
     private void WriteHeader()
     {
         try
         {
             string header = "LogType,Timestamp,Key,Value";
-            File.WriteAllText(_sessionFilePath, header + Environment.NewLine);
+            File.WriteAllText(_sessionFilePath, header + Environment.NewLine, System.Text.Encoding.UTF8);
         }
         catch (Exception ex)
         {
@@ -104,10 +104,10 @@ public class LogSave : ILogSaver
     }
     #endregion
 
-    #region Private Methods - CSV Formatting
-    /// <summary>
-    /// LogEntry를 CSV 행으로 변환
-    /// </summary>
+        #region Private Methods - CSV Formatting
+        /// <summary>
+        /// LogEntry를 CSV 행으로 변환
+        /// </summary>
     private string EntryToCsvLine(LogEntry entry)
     {
         string timestamp = ConvertTimestamp(entry.RealtimeSeconds);
