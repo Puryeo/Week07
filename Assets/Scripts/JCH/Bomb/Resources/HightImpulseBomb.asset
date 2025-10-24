@@ -17,7 +17,7 @@ MonoBehaviour:
   _upwardModifier: 10
   _explosionLayerMask:
     serializedVersion: 2
-    m_Bits: 3221225591
+    m_Bits: 119
   _vfxType: 1
   _tickingColor: {r: 1, g: 0, b: 0, a: 0.99215686}
   _cameraShakeIntensity: 1

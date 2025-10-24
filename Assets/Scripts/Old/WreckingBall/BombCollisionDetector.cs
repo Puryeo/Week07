@@ -15,11 +15,11 @@ public class BombCollisionDetector : MonoBehaviour
     [SerializeField] private string bombTag = "Bomb";
     [Tooltip("낙하 감지할 Draggable 오브젝트의 태그입니다.")]
     [SerializeField] private string draggableTag = "Draggable";
-    
+
     [Header("Events")]
     [Tooltip("충돌 시 발생하는 UnityEvent입니다. Inspector에서 연결할 수 있습니다.")]
     [SerializeField] private UnityEvent<GameObject> onBombCollision;
-    
+
     [Header("Visual Effects")]
     [Tooltip("충돌 지점에 생성할 폭발 이펙트 프리팹입니다.")]
     [SerializeField] private GameObject explosionVFX;
@@ -45,7 +45,7 @@ public class BombCollisionDetector : MonoBehaviour
     private void Awake()
     {
         triggerCollider = GetComponent<Collider>();
-        
+
         // Collider 검증 및 Trigger 설정 확인
         if (triggerCollider == null)
         {
@@ -77,6 +77,17 @@ public class BombCollisionDetector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 외부에서 폭탄 폭발을 트리거할 수 있는 public 메서드
+    /// </summary>
+    public void TriggerBombExplosion(GameObject bomb)
+    {
+        if (bomb != null)
+        {
+            HandleBombTrigger(bomb, bomb.transform.position);
+        }
+    }
+
     private void HandleBombTrigger(GameObject bomb, Vector3 contactPoint)
     {
         Debug.Log($"[BombCollisionDetector] {gameObject.name}이(가) 폭탄 {bomb.name}을(를) 감지! 폭발 요청 전송.");
@@ -85,7 +96,7 @@ public class BombCollisionDetector : MonoBehaviour
         if (explosionVFX != null)
         {
             GameObject vfxInstance = Instantiate(explosionVFX, contactPoint, Quaternion.identity);
-            
+
             // ParticleSystem 컴포넌트 찾아서 재생
             ParticleSystem particleSystem = vfxInstance.GetComponent<ParticleSystem>();
             if (particleSystem != null)
@@ -98,7 +109,7 @@ public class BombCollisionDetector : MonoBehaviour
                     var mainModule = particleSystem.main;
                     mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
                 }
-                
+
                 particleSystem.Play();
                 Debug.Log($"[BombCollisionDetector] ParticleSystem 재생: {contactPoint}");
             }
@@ -117,7 +128,7 @@ public class BombCollisionDetector : MonoBehaviour
                             var mainModule = ps.main;
                             mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
                         }
-                        
+
                         ps.Play();
                     }
                     Debug.Log($"[BombCollisionDetector] {particleSystems.Length}개의 ParticleSystem 재생: {contactPoint}");
@@ -127,7 +138,7 @@ public class BombCollisionDetector : MonoBehaviour
                     Debug.LogWarning($"[BombCollisionDetector] VFX 프리팹에 ParticleSystem 컴포넌트가 없습니다!");
                 }
             }
-            
+
             // 자동 소멸
             if (vfxLifetime > 0)
             {
@@ -216,7 +227,7 @@ public class BombCollisionDetector : MonoBehaviour
         if (col != null)
         {
             Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
-            
+
             // Box Collider
             if (col is BoxCollider boxCol)
             {

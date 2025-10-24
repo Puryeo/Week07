@@ -16,6 +16,6 @@ MonoBehaviour:
   _stageName: "\uC774\uC9D1\uD2B8 : \uC2A4\uD551\uD06C\uC2A4"
   _sceneName: Sphinx
   _clearStar: 0
-  _isTried: 1
+  _isTried: 0
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/Sphinx.png
   _scenePath: Assets/Scenes/Sphinx.unity
