@@ -5,23 +5,19 @@ using System.Collections.Generic;
 
 /// <summary>
 /// LimitLine에 부착되어 폭탄 및 Draggable 오브젝트의 충돌을 감지하고 이벤트를 발생시킵니다.
-/// OnTriggerEnter를 사용하여 Bomb 및 Draggable 태그를 가진 오브젝트를 감지합니다.
+/// 충돌한 콜라이더의 '부모 루트' 태그를 기준으로 Draggable 여부를 판단합니다.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class BombCollisionDetector : MonoBehaviour
 {
     [Header("Collision Detection")]
-    [Tooltip("폭발을 트리거할 오브젝트의 태그입니다.")]
     [SerializeField] private string bombTag = "Bomb";
-    [Tooltip("낙하 감지할 Draggable 오브젝트의 태그입니다.")]
     [SerializeField] private string draggableTag = "Draggable";
 
     [Header("Events")]
-    [Tooltip("충돌 시 발생하는 UnityEvent입니다. Inspector에서 연결할 수 있습니다.")]
     [SerializeField] private UnityEvent<GameObject> onBombCollision;
 
     [Header("Visual Effects")]
-    [Tooltip("충돌 지점에 생성할 폭발 이펙트 프리팹입니다.")]
     [SerializeField] private GameObject explosionVFX;
     [Tooltip("VFX가 자동으로 소멸되는 시간(초)입니다. 0이면 자동 소멸 안 함.")]
     [SerializeField] private float vfxLifetime = 3.0f;
@@ -58,33 +54,43 @@ public class BombCollisionDetector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 충돌체의 '루트 오브젝트' 태그를 검사합니다.
+    /// </summary>
     private void OnTriggerEnter(Collider other)
     {
-        if (string.IsNullOrEmpty(other.gameObject.tag) || other.gameObject.tag == "Untagged")
+        // [디버그 1] (주석 처리)
+        // Debug.LogWarning($"[DEBUG] OnTriggerEnter: 충돌 감지! 충돌체: {other.name}, 충돌체 태그: {other.tag}");
+
+        // 1. 충돌체의 Rigidbody 루트를 찾습니다.
+        Rigidbody rb = other.GetComponentInParent<Rigidbody>();
+        GameObject rootObject = (rb != null) ? rb.gameObject : other.gameObject;
+
+        if (rootObject == null)
+        {
+            // Debug.LogError("[DEBUG] 루트 오브젝트를 찾을 수 없습니다!");
             return;
-
-        // Bomb 태그 체크
-        if (other.CompareTag(bombTag))
-        {
-            GameObject bomb = other.gameObject;
-            HandleBombTrigger(bomb, other.ClosestPoint(transform.position));
         }
-        // Draggable 태그 체크
-        else if (other.CompareTag(draggableTag))
-        {
-            GameObject draggable = other.gameObject;
-            HandleDraggableTrigger(draggable, other.ClosestPoint(transform.position));
-        }
-    }
 
-    /// <summary>
-    /// 외부에서 폭탄 폭발을 트리거할 수 있는 public 메서드
-    /// </summary>
-    public void TriggerBombExplosion(GameObject bomb)
-    {
-        if (bomb != null)
+        // [디버그 2] (주석 처리)
+        // Debug.LogWarning($"[DEBUG] 루트 오브젝트 확인: {rootObject.name}, 루트 태그: {rootObject.tag}");
+
+        // 2. '루트 오브젝트'의 태그를 기준으로 분기합니다.
+        if (rootObject.CompareTag(bombTag))
         {
-            HandleBombTrigger(bomb, bomb.transform.position);
+            // Debug.LogWarning($"[DEBUG] 'Bomb' 루트 태그 감지됨: {rootObject.name}");
+            HandleBombTrigger(rootObject, other.ClosestPoint(transform.position));
+        }
+        else if (rootObject.CompareTag(draggableTag))
+        {
+            // [디버그 3] (주석 처리)
+            // Debug.LogWarning($"[DEBUG] 'Draggable' 루트 태그 확인! (충돌체: {other.name})");
+            HandleDraggableTrigger(rootObject, other.ClosestPoint(transform.position));
+        }
+        else
+        {
+            // [디버그 4] (주석 처리)
+            // Debug.LogWarning($"[DEBUG] 설정된 태그({bombTag}, {draggableTag})가 아닙니다. 무시. (감지된 루트 태그: {rootObject.tag})");
         }
     }
 
@@ -111,7 +117,6 @@ public class BombCollisionDetector : MonoBehaviour
                 }
 
                 particleSystem.Play();
-                Debug.Log($"[BombCollisionDetector] ParticleSystem 재생: {contactPoint}");
             }
             else
             {
@@ -131,7 +136,6 @@ public class BombCollisionDetector : MonoBehaviour
 
                         ps.Play();
                     }
-                    Debug.Log($"[BombCollisionDetector] {particleSystems.Length}개의 ParticleSystem 재생: {contactPoint}");
                 }
                 else
                 {
@@ -153,27 +157,36 @@ public class BombCollisionDetector : MonoBehaviour
         OnBombCollisionDetected?.Invoke(bomb);
     }
 
-    private void HandleDraggableTrigger(GameObject draggable, Vector3 contactPoint)
+    private void HandleDraggableTrigger(GameObject draggableRootObject, Vector3 contactPoint)
     {
-        // 이미 트리거된 오브젝트인지 확인
-        if (triggeredDraggables.Contains(draggable))
+        // [디버그 6] (주석 처리)
+        // Debug.LogError($"[DEBUG] HandleDraggableTrigger: '{draggableRootObject.name}' 처리 시작.");
+
+        // 이미 트리거된 오브젝트(루트 기준)인지 확인
+        if (triggeredDraggables.Contains(draggableRootObject))
         {
+            // [디버그 7] (주석 처리)
+            // Debug.LogWarning($"[DEBUG] {draggableRootObject.name}은(는) 이미 처리 목록에 있습니다. (현재 카운트: {triggeredDraggables.Count}). 중복 실행 방지.");
             return;
         }
 
-        // 트리거된 Draggable 기록
-        triggeredDraggables.Add(draggable);
+        // 트리거된 Draggable 기록 (루트 오브젝트 기준)
+        triggeredDraggables.Add(draggableRootObject);
 
-        Debug.Log($"[BombCollisionDetector] Draggable 감지: {draggable.name} | 총 트리거된 개수: {triggeredDraggables.Count}");
+        // [디버그 8] (주석 처리)
+        // Debug.LogError($"[DEBUG] {draggableRootObject.name}을(를) 처리 목록에 추가. (새 카운트: {triggeredDraggables.Count})");
 
         // BombManager에 알림
         if (BombManager.Instance != null)
         {
-            BombManager.Instance.NotifyDraggableTriggered(draggable);
+            BombManager.Instance.NotifyDraggableTriggered(draggableRootObject);
         }
 
-        // 지연 후 파괴
-        Destroy(draggable, draggableDestroyDelay);
+        // [디버그 9] (주석 처리)
+        // Debug.LogError($"[DEBUG] {draggableRootObject.name}을(를) {draggableDestroyDelay}초 후 'Destroy' 하도록 예약합니다.");
+
+        // 지연 후 파괴 (루트 오브젝트 기준)
+        Destroy(draggableRootObject, draggableDestroyDelay);
     }
 
     /// <summary>
@@ -182,7 +195,7 @@ public class BombCollisionDetector : MonoBehaviour
     public void ResetDraggableCount()
     {
         triggeredDraggables.Clear();
-        Debug.Log($"[BombCollisionDetector] Draggable 카운트 초기화됨.");
+        // Debug.LogWarning($"[BombCollisionDetector] Draggable 카운트 초기화됨.");
     }
 
 #if UNITY_EDITOR
@@ -211,10 +224,11 @@ public class BombCollisionDetector : MonoBehaviour
     {
         try
         {
+            // 태그가 존재하는지 테스트
             GameObject.FindGameObjectWithTag(tag);
             return true;
         }
-        catch
+        catch (UnityException) // 태그가 없으면 UnityException 발생
         {
             return false;
         }
@@ -233,21 +247,27 @@ public class BombCollisionDetector : MonoBehaviour
             {
                 Gizmos.matrix = transform.localToWorldMatrix;
                 Gizmos.DrawWireCube(boxCol.center, boxCol.size);
+                Gizmos.matrix = Matrix4x4.identity; // Gizmos.matrix 복원
             }
             // Sphere Collider
             else if (col is SphereCollider sphereCol)
             {
-                Gizmos.DrawWireSphere(transform.position + sphereCol.center, sphereCol.radius * transform.lossyScale.x);
+                // 스케일을 고려한 반지름 계산
+                float maxScale = Mathf.Max(transform.lossyScale.x, transform.lossyScale.y, transform.lossyScale.z);
+                Vector3 worldCenter = transform.TransformPoint(sphereCol.center);
+                Gizmos.DrawWireSphere(worldCenter, sphereCol.radius * maxScale);
             }
             // Capsule Collider
             else if (col is CapsuleCollider capsuleCol)
             {
-                Gizmos.DrawWireSphere(transform.position + capsuleCol.center, capsuleCol.radius * transform.lossyScale.x);
+                // 캡슐은 복잡하므로 여기서는 간단한 구로 대체하거나 생략합니다.
+                // 여기서는 간단히 bounds를 사용합니다.
+                Gizmos.DrawWireCube(col.bounds.center, col.bounds.size);
             }
             // 기타 Collider
             else
             {
-                Gizmos.DrawWireSphere(transform.position, col.bounds.extents.magnitude);
+                Gizmos.DrawWireCube(col.bounds.center, col.bounds.size);
             }
         }
     }

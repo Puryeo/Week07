@@ -1443,6 +1443,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Managers
       objectReference: {fileID: 0}
+    - target: {fileID: 2211033014074681901, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2509778737029387331, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
       propertyPath: genPosYmax
       value: 45
@@ -1836,6 +1840,10 @@ PrefabInstance:
     - target: {fileID: 8705765393074527574, guid: 9a32c43089e80484486b07e652f5671e, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8994686936911106184, guid: 9a32c43089e80484486b07e652f5671e, type: 3}
+      propertyPath: m_BlockingMask.m_Bits
+      value: 127
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2575,7 +2583,7 @@ MonoBehaviour:
   blockSpawner: {fileID: 2109197363}
   lineChecker: {fileID: 779700501}
   spawnBombOnLineClear: 1
-  maxLinesForBombSpawn: 2
+  linesToStopNormalSpawn: 2
 --- !u!4 &2113413149
 Transform:
   m_ObjectHideFlags: 0

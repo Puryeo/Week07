@@ -15,7 +15,7 @@ MonoBehaviour:
   _stageImage: {fileID: 10911, guid: 0000000000000000f000000000000000, type: 0}
   _stageName: "\uD14C\uD2B8\uB9AC\uC2A4"
   _sceneName: TetrisMap
-  _clearStar: 3
+  _clearStar: 0
   _isTried: 0
-  _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/TertisMap.png
+  _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/TetrisMap.png
   _scenePath: Assets/Scenes/OSH/TetrisMap.unity
