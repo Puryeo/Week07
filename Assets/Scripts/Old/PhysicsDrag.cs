@@ -57,10 +57,17 @@ public class PhysicsDrag : SingletonObject<PhysicsDrag>
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
+        {
             TryGrab();
 
+
+        }
+
         if (Input.GetMouseButtonUp(0))
+        {
             ReleaseAll(); // <<< 변경: Release() 대신 ReleaseAll()을 호출하여 모든 상태를 확실히 초기화합니다.
+
+        }
 
     }
 
@@ -196,6 +203,7 @@ public class PhysicsDrag : SingletonObject<PhysicsDrag>
                     line1.SetPosition(1, targetPoint);
                 }
                 CursorManager.Instance.SetCursorToGrab();
+                LogSystem.PushLog(LogLevel.INFO, "InputGrab", grabbedRb.gameObject.name ,true);
             }
         }
     }
@@ -220,6 +228,7 @@ public class PhysicsDrag : SingletonObject<PhysicsDrag>
             {
                 RestoreOriginalSettings(grabbedRb);
             }
+            LogSystem.PushLog(LogLevel.INFO, "InputGrabBreak", grabbedRb != null ? grabbedRb.gameObject.name : "null", true);
             Destroy(grabJoint);
             grabJoint = null;
             grabbedRb = null;
