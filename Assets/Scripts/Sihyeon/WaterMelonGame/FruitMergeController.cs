@@ -369,15 +369,7 @@ public class FruitMergeController : MonoBehaviour
             spawnPosition
         );
         
-        // 병합 후 면역 설정
-        if (newFruit != null)
-        {
-            FruitMergeData newFruitData = newFruit.GetComponent<FruitMergeData>();
-            if (newFruitData != null)
-            {
-                newFruitData.SetMergeImmunity(fruitData.MergeImmunityDuration);  // public 프로퍼티로 접근
-            }
-        }
+        // 병합으로 생성된 과일에는 면역 적용하지 않음 (요청에 따라 제거)
         
         LogDebug($"다음 과일 생성: {fruitData.NextFruitType} at {spawnPosition} (오프셋: +{dynamicOffset:F2}Y)");
     }

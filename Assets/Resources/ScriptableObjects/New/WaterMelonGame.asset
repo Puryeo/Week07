@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3fc10894df3b3c742a44a1a61aacb4bd, type: 3}
-  m_Name: RushHour 1
+  m_Name: WaterMelonGame
   m_EditorClassIdentifier: 
-  _stageImage: {fileID: 0}
-  _stageName: "\uB7EC\uC2DC\uC544\uC6CC : 1\uB2E8\uACC4"
-  _sceneName: RushHour 1
+  _stageImage: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  _stageName: "\uC218\uBC15\uAC8C\uC784"
+  _sceneName: WaterMelon3D
   _clearStar: 3
   _isTried: 0
-  _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/RushHour
-    1.png
-  _scenePath: Assets/Scenes/LBC/RushHour 1.unity
+  _stageImagePath: 
+  _scenePath: Assets/Resources/Scenes/Sihyeon/WaterMelon3D.unity
