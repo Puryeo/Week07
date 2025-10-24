@@ -257,7 +257,7 @@ public class ClearManager : MonoBehaviour
     {
         // 스냅샷 로드
         _snapShotPath = _snapShotPath.Replace("\\", "/");
-
+        Debug.Log("클리어 패널 활성화");
         if (!string.IsNullOrEmpty(_snapShotPath))
         {
 #if UNITY_EDITOR
@@ -279,7 +279,7 @@ public class ClearManager : MonoBehaviour
                 new Vector2(0.5f, 0.5f)
             );
         }
-
+        Debug.Log("클리어 패널 활성화 직전");
         _clearPanel.SetActive(true);
 
         // 별 개수 그리기
