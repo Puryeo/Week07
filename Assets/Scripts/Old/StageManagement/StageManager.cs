@@ -11,6 +11,7 @@ public class StageManager : MonoBehaviour
     #region Public Methods
     public void SetStageData(StageDataSO data, List<StageDataSO> datum)
     {
+        LogSystem.PushLog(LogLevel.INFO, "StageBegin", data.StageName);
         CurrentStageData = data;
         data.IsTried = true;
 
@@ -22,6 +23,9 @@ public class StageManager : MonoBehaviour
     public void UpdateClearData(int starCount, string snapShotPath)
     {
         StageSaveManager.UpdateStageData(CurrentStageData, starCount, snapShotPath);
+        
+        LogSystem.PushLog(LogLevel.INFO, "StageStar", starCount );
+        LogSystem.PushLog(LogLevel.INFO, "StageClear", CurrentStageData.StageName);
     }
     #endregion
 

@@ -1,4 +1,6 @@
-﻿// LogSystemUnityTypeTests.cs
+
+#if UNITY_EDITOR
+// LogSystemUnityTypeTests.cs
 using NUnit.Framework;
 using UnityEngine;
 
@@ -142,3 +144,4 @@ public class LogSystemUnityTypeTests
     }
     #endregion
 }
+#endif

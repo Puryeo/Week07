@@ -1,4 +1,5 @@
-﻿// LogSystemLoggableTests.cs
+#if UNITY_EDITOR
+// LogSystemLoggableTests.cs
 using NUnit.Framework;
 using System.Linq;
 using UnityEngine;
@@ -213,3 +214,4 @@ public class LogSystemLoggableTests
     }
     #endregion
 }
+#endif

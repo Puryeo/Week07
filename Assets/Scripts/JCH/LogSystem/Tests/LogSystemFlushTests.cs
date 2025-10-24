@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+#if UNITY_EDITOR
+using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using System.Collections;
@@ -245,3 +246,4 @@ public class LogSystemFlushTests
     }
     #endregion
 }
+#endif

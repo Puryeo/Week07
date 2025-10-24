@@ -1,4 +1,6 @@
-﻿// LogSystemCsvTests.cs
+
+#if UNITY_EDITOR
+// LogSystemCsvTests.cs
 using NUnit.Framework;
 using UnityEngine;
 using System.IO;
@@ -239,3 +241,4 @@ public class LogSystemCsvTests
     }
     #endregion
 }
+#endif
