@@ -16,7 +16,7 @@ MonoBehaviour:
   _stageName: "\uB7EC\uC2DC\uC544\uC6CC : 1\uB2E8\uACC4"
   _sceneName: RushHour 1
   _clearStar: 3
-  _isTried: 1
+  _isTried: 0
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/RushHour
     1.png
   _scenePath: Assets/Scenes/LBC/RushHour 1.unity
