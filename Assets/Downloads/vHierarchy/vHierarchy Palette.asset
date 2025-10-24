@@ -79,3 +79,18 @@ MonoBehaviour:
     - Settings Icon
     customIcons: []
     enabled: 1
+  - builtinIcons: []
+    customIcons:
+    - Transform Icon
+    - Image Icon
+    - Text Icon
+    - Button Icon
+    - RectTransform Icon
+    enabled: 1
+  - builtinIcons: []
+    customIcons:
+    - LightProbeProxyVolume Gizmo
+    enabled: 1
+  - builtinIcons: []
+    customIcons: []
+    enabled: 1
