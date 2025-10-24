@@ -16,6 +16,6 @@ MonoBehaviour:
   _stageName: "\uB300\uD55C\uBBFC\uAD6D : \uCCA8\uC131\uB300"
   _sceneName: JMObservatory
   _clearStar: 0
-  _isTried: 1
+  _isTried: 0
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/JMObservatory.png
   _scenePath: Assets/Scenes/JML/JMObservatory.unity
