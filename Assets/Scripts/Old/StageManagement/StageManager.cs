@@ -11,12 +11,12 @@ public class StageManager : MonoBehaviour
     #region Public Methods
     public void SetStageData(StageDataSO data, List<StageDataSO> datum)
     {
+        LogSystem.PushLog(LogLevel.INFO, "StageBegin", data.StageName);
         CurrentStageData = data;
         data.IsTried = true;
 
         // 전체 Save가 아니라, isTried만 갱신
         StageSaveManager.SaveSingleStage(data);
-        LogSystem.PushLog(LogLevel.INFO, "StageBegin", data.StageName );
     }
 
     // 스테이지 이미지 및 별 업데이트
