@@ -307,7 +307,6 @@ public class ClearManager : MonoBehaviour
 
         // 중도 포기 코드 값 10000
         ClearStarChange(10000);
-
     }
 
 

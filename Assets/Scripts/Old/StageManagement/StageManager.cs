@@ -16,12 +16,16 @@ public class StageManager : MonoBehaviour
 
         // 전체 Save가 아니라, isTried만 갱신
         StageSaveManager.SaveSingleStage(data);
+        LogSystem.PushLog(LogLevel.INFO, "StageBegin", data.StageName );
     }
 
     // 스테이지 이미지 및 별 업데이트
     public void UpdateClearData(int starCount, string snapShotPath)
     {
         StageSaveManager.UpdateStageData(CurrentStageData, starCount, snapShotPath);
+        
+        LogSystem.PushLog(LogLevel.INFO, "StageStar", starCount );
+        LogSystem.PushLog(LogLevel.INFO, "StageClear", CurrentStageData.StageName);
     }
     #endregion
 
