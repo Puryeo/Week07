@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -128,7 +128,13 @@ public class StageUIManager : MonoBehaviour
 
             Stage objStage = obj.GetComponent<Stage>();
             objStage.Init(stage);
-            objStage.RePosition(stageOffsets[i], stageRotations[i]);
+
+            if(i < stageRotations.Length)
+            {
+                objStage.RePosition(stageOffsets[i], stageRotations[i]);
+            }
+
+                
             i++;
             // 버튼 씬 전환 이벤트 등록
             Button objBtn = obj.GetComponentInChildren<Button>();

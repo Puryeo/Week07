@@ -16,6 +16,6 @@ MonoBehaviour:
   _stageName: "\uC774\uD0C8\uB9AC\uC544 : \uCF5C\uB85C\uC138\uC6C0"
   _sceneName: Coloseum
   _clearStar: 0
-  _isTried: 1
+  _isTried: 0
   _stageImagePath: 
   _scenePath: Assets/Scenes/Coloseum.unity

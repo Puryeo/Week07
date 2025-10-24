@@ -16,6 +16,6 @@ MonoBehaviour:
   _stageName: "\uBBF8\uAD6D : \uC790\uC720\uC758 \uC5EC\uC2E0\uC0C1"
   _sceneName: Freedom
   _clearStar: 0
-  _isTried: 1
+  _isTried: 0
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/Freedom.png
   _scenePath: Assets/Scenes/Freedom.unity

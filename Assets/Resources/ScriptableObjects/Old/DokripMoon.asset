@@ -16,6 +16,6 @@ MonoBehaviour:
   _stageName: "\uD504\uB791\uC2A4 : \uAC1C\uC120\uBB38"
   _sceneName: DokripMoon
   _clearStar: 0
-  _isTried: 1
+  _isTried: 0
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/DokripMoon.png
   _scenePath: Assets/Scenes/DokripMoon.unity
