@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// 수박 게임의 과일 스폰 전담 매니저입니다.
@@ -27,18 +28,39 @@ public class SpawnManager : MonoBehaviour
     [SerializeField] private float spawnMargin = 0.2f;
     
     [Tooltip("스폰 위치 찾기 최대 시도 횟수입니다.")]
-    [SerializeField] private int maxSpawnAttempts = 20;
+    [SerializeField] private int maxSpawnAttempts = 10;
     
     [Tooltip("스폰 위치 검증을 수행합니다. (false면 검증 없이 즉시 스폰)")]
     [SerializeField] private bool enableSpawnValidation = true;
     
+    [Header("Spawn Frequency Settings")]
+    [Tooltip("스폰 단계별 설정 (spawnCount 범위에 따라 확률 조정)")]
+    [SerializeField] private List<SpawnStage> spawnStages = new List<SpawnStage>
+    {
+        new SpawnStage { minCount = 0, maxCount = 15, fruitProbabilities = new List<FruitProbability>
+            { new FruitProbability { type = FruitMergeData.FruitType.Grape, probability = 0.7f },
+              new FruitProbability { type = FruitMergeData.FruitType.Apple, probability = 0.25f },
+              new FruitProbability { type = FruitMergeData.FruitType.Orange, probability = 0.05f } } }, 
+        new SpawnStage { minCount = 15, maxCount = 30, fruitProbabilities = new List<FruitProbability>
+            { new FruitProbability { type = FruitMergeData.FruitType.Grape, probability = 0.5f },
+              new FruitProbability { type = FruitMergeData.FruitType.Apple, probability = 0.3f },
+              new FruitProbability { type = FruitMergeData.FruitType.Orange, probability = 0.2f } } },
+        new SpawnStage { minCount = 30, maxCount = int.MaxValue, fruitProbabilities = new List<FruitProbability>
+            { new FruitProbability { type = FruitMergeData.FruitType.Grape, probability = 0.3f },
+              new FruitProbability { type = FruitMergeData.FruitType.Apple, probability = 0.3f },
+              new FruitProbability { type = FruitMergeData.FruitType.Orange, probability = 0.4f } } }
+    };
+
     [Header("Debug Settings")]
     [Tooltip("디버그 로그를 출력합니다.")]
     [SerializeField] private bool showDebugLogs = false;
-    
+
     [Tooltip("스폰 지점과 범위를 Gizmo로 표시합니다.")]
     [SerializeField] private bool showGizmos = true;
-    
+
+    // 마지막으로 로그를 출력한 마일스톤 값 (중복 출력 방지용)
+    private int lastLoggedMilestone = 0;
+
     // 참조
     private WatermelonObjectPool objectPool;
     
@@ -56,7 +78,30 @@ public class SpawnManager : MonoBehaviour
     }
     
     /// <summary>
+    /// 현재 스폰된 총 과일 개수를 반환합니다.
+    /// </summary>
+    public int SpawnCount
+    {
+        get
+        {
+            if (objectPool == null) return 0;
+            
+            int total = 0;
+            foreach (FruitMergeData.FruitType type in System.Enum.GetValues(typeof(FruitMergeData.FruitType)))
+            {
+                total += objectPool.GetActiveFruitCount(type);
+            }
+            
+            // SpawnCount가 증가하여 5의 배수가 되었을 때 로그 출력
+            LogSpawnCountMilestone(total);
+            
+            return total;
+        }
+    }
+    
+    /// <summary>
     /// 랜덤한 위치에 랜덤한 과일을 생성합니다.
+    /// spawnCount에 따라 낮은 단계 과일 빈도 조정.
     /// </summary>
     public GameObject SpawnRandomFruit()
     {
@@ -66,11 +111,73 @@ public class SpawnManager : MonoBehaviour
             return null;
         }
         
-        // 랜덤 과일 타입 선택
-        int randomTypeIndex = Random.Range(0, (int)maxSpawnFruitType + 1);
-        FruitMergeData.FruitType randomType = (FruitMergeData.FruitType)randomTypeIndex;
+        // spawnCount에 따른 확률 계산
+        FruitMergeData.FruitType selectedType = GetWeightedRandomFruitType();
         
-        return SpawnFruit(randomType);
+        return SpawnFruit(selectedType);
+    }
+    
+    /// <summary>
+    /// spawnCount에 따라 가중치가 적용된 랜덤 과일 타입을 반환합니다.
+    /// maxSpawnFruitType을 고려하여 필터링합니다.
+    /// </summary>
+    private FruitMergeData.FruitType GetWeightedRandomFruitType()
+    {
+        // spawnCount에 맞는 단계 찾기
+        SpawnStage currentStage = null;
+        foreach (var stage in spawnStages)
+        {
+            if (SpawnCount >= stage.minCount && SpawnCount < stage.maxCount)
+            {
+                currentStage = stage;
+                break;
+            }
+        }
+
+        if (currentStage == null || currentStage.fruitProbabilities.Count == 0)
+        {
+            // fallback (균등)
+            return FruitMergeData.FruitType.Apple;
+        }
+
+        // maxSpawnFruitType 이하의 확률만 필터링
+        List<FruitProbability> filteredProbabilities = new List<FruitProbability>();
+        foreach (var prob in currentStage.fruitProbabilities)
+        {
+            if ((int)prob.type <= (int)maxSpawnFruitType)
+            {
+                filteredProbabilities.Add(prob);
+            }
+        }
+
+        if (filteredProbabilities.Count == 0)
+        {
+            // 필터링 후 확률이 없으면 fallback
+            return FruitMergeData.FruitType.Apple;
+        }
+
+        // 확률 합산
+        float totalWeight = 0f;
+        foreach (var prob in filteredProbabilities)
+        {
+            totalWeight += prob.probability;
+        }
+
+        // 랜덤 선택
+        float randomValue = Random.Range(0f, totalWeight);
+        float cumulative = 0f;
+        
+        foreach (var prob in filteredProbabilities)
+        {
+            cumulative += prob.probability;
+            if (randomValue <= cumulative)
+            {
+                return prob.type;
+            }
+        }
+
+        // fallback
+        return FruitMergeData.FruitType.Apple;
     }
     
     /// <summary>
@@ -110,8 +217,12 @@ public class SpawnManager : MonoBehaviour
             
             if (!foundValidPosition)
             {
-                Debug.LogWarning($"[SpawnManager] {maxSpawnAttempts}회 시도 후에도 유효한 스폰 위치를 찾지 못했습니다.");
-                return null;
+                // 검증 실패 시에도 랜덤 위치에 생성
+                spawnPos = GetRandomSpawnPosition();
+                if (showDebugLogs)
+                {
+                    Debug.LogWarning($"[SpawnManager] {maxSpawnAttempts}회 시도 후에도 유효한 스폰 위치를 찾지 않았습니다. 랜덤 위치에 생성: {spawnPos}");
+                }
             }
         }
         else
@@ -120,9 +231,17 @@ public class SpawnManager : MonoBehaviour
             foundValidPosition = true;
         }
         
-        if (!foundValidPosition) return null;
-        
         GameObject fruit = objectPool.GetFruit(fruitType, spawnPos);
+        
+        // 스폰된 과일에 면역 설정 (처음 생성 시에만 적용)
+        if (fruit != null)
+        {
+            FruitMergeData fruitData = fruit.GetComponent<FruitMergeData>();
+            if (fruitData != null)
+            {
+                fruitData.SetMergeImmunity(0.5f);  // 0.5초 면역 적용
+            }
+        }
         
         if (fruit != null)
         {
@@ -272,4 +391,42 @@ public class SpawnManager : MonoBehaviour
         Gizmos.DrawWireCube(spawnPos, boxSize);
     }
 #endif
+
+    /// <summary>
+    /// 스폰 단계 설정 구조체
+    /// </summary>
+    [System.Serializable]
+    public class SpawnStage
+    {
+        [Tooltip("최소 spawnCount")]
+        public int minCount;
+        [Tooltip("최대 spawnCount (미포함)")]
+        public int maxCount;
+        [Tooltip("과일 타입별 확률 (합계 1.0 권장)")]
+        public List<FruitProbability> fruitProbabilities;
+    }
+
+    /// <summary>
+    /// 과일 타입별 확률 설정 클래스
+    /// </summary>
+    [System.Serializable]
+    public class FruitProbability
+    {
+        [Tooltip("과일 타입")]
+        public FruitMergeData.FruitType type;
+        [Tooltip("확률 값")]
+        public float probability;
+    }
+
+    /// <summary>
+    /// SpawnCount가 증가하여 5의 배수가 되었을 때 디버그 로그를 출력합니다.
+    /// </summary>
+    private void LogSpawnCountMilestone(int count)
+    {
+        if (count > lastLoggedMilestone && count % 5 == 0)
+        {
+            Debug.Log($"[SpawnManager] SpawnCount 마일스톤 도달: {count}개 (5의 배수)");
+            lastLoggedMilestone = count;
+        }
+    }
 }

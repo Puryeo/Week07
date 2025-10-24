@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 /// <summary>
 /// 수박 게임의 전체 흐름을 관리하는 게임 매니저입니다.
@@ -14,12 +15,21 @@ public class WatermelonGameManager : MonoBehaviour
     [Tooltip("디버그 로그를 출력합니다.")]
     [SerializeField] private bool showDebugLogs = false;
     
+    [Header("Spawn Repeat Settings")]
+    [Tooltip("과일 생성 간격 (초)")]
+    [SerializeField] private float spawnInterval = 0.2f;
+    [Tooltip("과일 생성 횟수")]
+    [SerializeField] private int spawnCount = 6;
+    
     // 싱글톤 인스턴스
     private static WatermelonGameManager instance;
     public static WatermelonGameManager Instance => instance;
     
     // 참조
     private WatermelonObjectPool objectPool;
+    
+    // SpawnManager 공개 프로퍼티 추가
+    public SpawnManager SpawnManager => spawnManager;
     
     private void Awake()
     {
@@ -73,10 +83,10 @@ public class WatermelonGameManager : MonoBehaviour
     /// </summary>
     private void HandleTestInput()
     {
-        // 스페이스바: 랜덤 과일 생성
+        // 스페이스바: 랜덤 과일 반복 생성
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            SpawnRandomFruit();
+            SpawnRandomFruitsRepeatedly();
         }
     }
     
@@ -96,6 +106,29 @@ public class WatermelonGameManager : MonoBehaviour
         if (fruit != null && showDebugLogs)
         {
             Debug.Log($"[WatermelonGameManager] 과일 생성 성공: {fruit.name}");
+        }
+    }
+    
+    /// <summary>
+    /// 지정된 간격으로 지정된 횟수만큼 랜덤 과일을 반복 생성합니다.
+    /// </summary>
+    public void SpawnRandomFruitsRepeatedly()
+    {
+        StartCoroutine(SpawnFruitsCoroutine());
+    }
+    
+    /// <summary>
+    /// 과일 반복 생성을 위한 코루틴입니다.
+    /// </summary>
+    private IEnumerator SpawnFruitsCoroutine()
+    {
+        for (int i = 0; i < spawnCount; i++)
+        {
+            SpawnRandomFruit();
+            if (i < spawnCount - 1) // 마지막 반복에서는 대기하지 않음
+            {
+                yield return new WaitForSeconds(spawnInterval);
+            }
         }
     }
     

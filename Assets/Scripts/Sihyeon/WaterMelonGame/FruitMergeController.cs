@@ -206,6 +206,12 @@ public class FruitMergeController : MonoBehaviour
         
         LogDebug($"🔒 원래 타입: {gameObject.name}({originalType1}), {other.gameObject.name}({originalType2})");
         
+        // 병합 전 SpawnCount 로그
+        if (WatermelonGameManager.Instance != null && WatermelonGameManager.Instance.SpawnManager != null)
+        {
+            LogDebug($"📊 병합 전 SpawnCount: {WatermelonGameManager.Instance.SpawnManager.SpawnCount}");
+        }
+        
         // 병합 애니메이션
         yield return StartCoroutine(PlayMergeAnimation(other));
         
@@ -216,8 +222,20 @@ public class FruitMergeController : MonoBehaviour
         // 다음 과일 생성
         SpawnNextFruit(midPoint);
         
+        // 병합 중간 SpawnCount 로그 (새 과일 생성 후)
+        if (WatermelonGameManager.Instance != null && WatermelonGameManager.Instance.SpawnManager != null)
+        {
+            LogDebug($"📊 새 과일 생성 후 SpawnCount: {WatermelonGameManager.Instance.SpawnManager.SpawnCount}");
+        }
+        
         // 풀로 반환
         ReturnToPool(other, originalType1, originalType2);
+        
+        // 병합 후 SpawnCount 로그
+        if (WatermelonGameManager.Instance != null && WatermelonGameManager.Instance.SpawnManager != null)
+        {
+            LogDebug($"📊 병합 후 SpawnCount: {WatermelonGameManager.Instance.SpawnManager.SpawnCount}");
+        }
     }
     
     /// <summary>
@@ -350,6 +368,16 @@ public class FruitMergeController : MonoBehaviour
             fruitData.NextFruitType, 
             spawnPosition
         );
+        
+        // 병합 후 면역 설정
+        if (newFruit != null)
+        {
+            FruitMergeData newFruitData = newFruit.GetComponent<FruitMergeData>();
+            if (newFruitData != null)
+            {
+                newFruitData.SetMergeImmunity(fruitData.MergeImmunityDuration);  // public 프로퍼티로 접근
+            }
+        }
         
         LogDebug($"다음 과일 생성: {fruitData.NextFruitType} at {spawnPosition} (오프셋: +{dynamicOffset:F2}Y)");
     }
