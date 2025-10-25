@@ -8,6 +8,12 @@ using UnityEngine.UI;
 /// <summary>
 /// 스테이지 클리어 조건 체크 및 결과 화면을 관리하는 스크립트입니다.
 /// StageConfig와 연동하여 목표 폭탄 개수를 확인하고, 별점 시스템을 관리합니다.
+/// 
+/// 폭탄 개수 개념:
+/// - 목표 폭탄: 클리어하기 위해 터트려야 하는 개수
+/// - 생성된 폭탄: 실제로 씬에 생성된 개수
+/// - 터진 폭탄: 생성된 폭탄 중 폭발한 개수
+/// - 남은 폭탄: 생성된 폭탄 - 터진 폭탄
 /// </summary>
 public class ClearManager : MonoBehaviour
 {
@@ -20,7 +26,7 @@ public class ClearManager : MonoBehaviour
     [SerializeField] private Image _clearImage;
     [SerializeField] private GameObject _clearStarPanel;
     [SerializeField] private Sprite _emptyStar;
-    private int _maxBomb;
+    private int _goalBombCount; // 목표 폭탄 개수
 
     [Header("CountDown")]
     [SerializeField] private GameObject _countDownPanel;
@@ -47,7 +53,7 @@ public class ClearManager : MonoBehaviour
     [SerializeField] private ClimaxController_Advanced climax;
 
     /// <summary>
-    /// 초기화 시 StageConfig와 BombManager를 통해 목표 폭탄 개수를 설정하고,
+    /// 초기화 시 StageConfig를 통해 목표 폭탄 개수를 설정하고,
     /// 필요한 이벤트를 구독합니다.
     /// </summary>
     private void Awake()
@@ -58,25 +64,20 @@ public class ClearManager : MonoBehaviour
         // StageConfig를 통해 목표 폭탄 개수 가져오기
         if (StageConfig.Instance != null)
         {
-            _maxBomb = StageConfig.Instance.GetGoalBombCount();
+            _goalBombCount = StageConfig.Instance.GetGoalBombCount();
         }
         else
         {
             // StageConfig가 없으면 기존 방식 사용 (하위 호환성)
             Debug.LogWarning("[ClearManager] StageConfig를 찾을 수 없습니다. 기존 방식으로 폭탄 개수를 계산합니다.");
-            _maxBomb = BombManager.Instance.GetTotalBombCount();
+            _goalBombCount = BombManager.Instance.GetTotalBombCount();
         }
 
         // 초기 텍스트를 현재 실제 폭탄 개수로 설정
-        // 동적 생성 스테이지에서 0/2 같은 형태로 올바르게 표시
-        int initialRemaining = StageConfig.Instance != null
-            ? StageConfig.Instance.GetRemainingGoalBombCount()
-            : BombManager.Instance.GetActiveBombCount();
-
-        _remainBombText.text = $"{initialRemaining}/{_maxBomb}";
+        UpdateBombCountUI();
 
         // 폭탄 개수 변경 이벤트 구독
-        BombManager.Instance.OnBombCountChanged += RemainBombTextUpdate;
+        BombManager.Instance.OnBombCountChanged += OnBombCountChanged;
 
         // Draggable 개수 변경 이벤트 구독
         BombManager.Instance.OnDraggableCountChanged += ClearStarChange;
@@ -89,7 +90,7 @@ public class ClearManager : MonoBehaviour
 
         if (BombManager.Instance != null)
         {
-            BombManager.Instance.OnBombCountChanged -= RemainBombTextUpdate;
+            BombManager.Instance.OnBombCountChanged -= OnBombCountChanged;
             BombManager.Instance.OnDraggableCountChanged -= ClearStarChange;
         }
 
@@ -101,36 +102,68 @@ public class ClearManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 남은 폭탄 개수 텍스트를 업데이트합니다.
-    /// 목표 폭탄이 모두 폭발하면 클리어 체크를 시작합니다.
-    /// 동적 생성 스테이지를 위해 최소 1개 이상 폭발했는지도 확인합니다.
+    /// 폭탄 개수 UI를 업데이트합니다.
+    /// "남은 폭탄 / 목표 폭탄" 형태로 표시합니다.
     /// </summary>
-    /// <param name="remainBomb">남은 폭탄 개수</param>
-    void RemainBombTextUpdate(int remainBomb)
+    private void UpdateBombCountUI()
     {
-        // StageConfig 모드에 따라 남은 폭탄 개수 계산
-        int actualRemaining = remainBomb;
-
         if (StageConfig.Instance != null)
         {
-            actualRemaining = StageConfig.Instance.GetRemainingGoalBombCount();
+            int explodedCount = StageConfig.Instance.GetExplodedBombCount();
+            _remainBombText.text = $"{_goalBombCount - explodedCount}";
         }
-
-        _remainBombText.text = $"{actualRemaining}/{_maxBomb}";
-
-        // 폭발한 폭탄 개수 계산
-        int explodedCount = _maxBomb - actualRemaining;
-
-        // 디버그 로그 추가
-        Debug.Log($"<color=cyan>[ClearManager]</color> 폭탄 개수 업데이트\n" +
-                  $"목표: {_maxBomb} | 남은 개수: {actualRemaining} | 폭발: {explodedCount}\n" +
-                  $"조건 체크 - 남은개수<=0: {actualRemaining <= 0}, 폭발>0: {explodedCount > 0}, 퇴장X: {!_isExitClicked}");
-
-        // 클리어 조건
-        if (actualRemaining <= 0 && explodedCount > 0 && !_isExitClicked)
+        else
         {
-            Debug.Log("<color=green>[ClearManager]</color> 클리어 조건 만족! ClearChecker 호출");
-            ClearChecker();
+            Debug.LogWarning("StageConfig 할당 안됨");
+        }
+    }
+
+    /// <summary>
+    /// 폭탄 개수가 변경될 때 호출되는 이벤트 핸들러입니다.
+    /// UI를 업데이트하고 클리어 조건을 체크합니다.
+    /// </summary>
+    /// <param name="currentActiveBombCount">현재 활성화된 폭탄 개수 (BombManager 기준)</param>
+    private void OnBombCountChanged(int currentActiveBombCount)
+    {
+        // UI 업데이트
+        UpdateBombCountUI();
+
+        // StageConfig를 통해 상세 정보 가져오기
+        if (StageConfig.Instance != null)
+        {
+            int goalCount = StageConfig.Instance.GetGoalBombCount();
+            int spawnedCount = StageConfig.Instance.GetSpawnedBombCount();
+            int explodedCount = StageConfig.Instance.GetExplodedBombCount();
+            int remainingCount = StageConfig.Instance.GetRemainingBombCount();
+
+            // 디버그 로그
+            Debug.Log($"<color=cyan>[ClearManager]</color> 폭탄 개수 업데이트\n" +
+                      $"목표: {goalCount} | 생성: {spawnedCount} | 터짐: {explodedCount} | 남음: {remainingCount}\n" +
+                      $"클리어 조건 - 터짐>={goalCount}: {explodedCount >= goalCount}, 남음<=0: {remainingCount <= 0}, 퇴장X: {!_isExitClicked}");
+
+            // 클리어 조건 체크
+            // 1. 목표 개수만큼 폭탄이 터졌음
+            // 2. 남은 폭탄이 0개 (모든 생성된 폭탄이 처리됨)
+            // 3. 중도 퇴장 버튼을 누르지 않음
+            if (explodedCount >= goalCount && remainingCount <= 0 && !_isExitClicked)
+            {
+                Debug.Log("<color=green>[ClearManager]</color> 클리어 조건 만족! ClearChecker 호출");
+                ClearChecker();
+            }
+        }
+        else
+        {
+            // 하위 호환성: StageConfig가 없을 때
+            int explodedCount = BombManager.Instance.GetExplodedBombCount();
+
+            Debug.Log($"<color=cyan>[ClearManager]</color> 폭탄 개수 업데이트 (하위 호환 모드)\n" +
+                      $"목표: {_goalBombCount} | 터짐: {explodedCount} | 남음: {currentActiveBombCount}");
+
+            if (explodedCount >= _goalBombCount && currentActiveBombCount <= 0 && !_isExitClicked)
+            {
+                Debug.Log("<color=green>[ClearManager]</color> 클리어 조건 만족! ClearChecker 호출");
+                ClearChecker();
+            }
         }
     }
 
@@ -141,8 +174,13 @@ public class ClearManager : MonoBehaviour
     /// <param name="draggable">트리거된 Draggable 개수</param>
     void ClearStarChange(int draggable)
     {
+        // 3별 (기본값)
+        if (draggable <= _3star)
+        {
+            _clearStarCount = 3;
+        }
         // 2별
-        if (draggable <= _2star && draggable > _3star)
+        else if (draggable <= _2star && draggable > _3star)
         {
             var target = _starPanel.transform.GetChild(2);
             target.GetComponent<Image>().sprite = _emptyStar;
@@ -165,8 +203,9 @@ public class ClearManager : MonoBehaviour
             }
             _clearStarCount = 0;
         }
+
         // 포기 (중도 퇴장)
-        else if (draggable == 10000)
+        if (draggable == 10000)
         {
             for (int i = 0; i < 3; i++)
             {
