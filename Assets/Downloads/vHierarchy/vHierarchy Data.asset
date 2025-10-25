@@ -327,3 +327,4 @@ MonoBehaviour:
   bookmarks: []
   bookmarkedScenePaths:
   - Assets/Resources/Scenes/Old/Title.unity
+  - Assets/Resources/Scenes/Old/STAGE.unity

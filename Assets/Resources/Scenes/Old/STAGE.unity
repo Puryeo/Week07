@@ -1576,6 +1576,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Movable (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 2745187867334907740, guid: dcb353cfd224e1840a0c29113b88bdd5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2789240120291492577, guid: dcb353cfd224e1840a0c29113b88bdd5, type: 3}
       propertyPath: m_LocalScale.x
       value: 50
@@ -2191,7 +2195,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1764066414}
   m_Father: {fileID: 1603046793}
@@ -4199,14 +4203,14 @@ RectTransform:
   m_GameObject: {fileID: 1764066413}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.49000004, y: 0.49000004, z: 0.49000004}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 732979738}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 92, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1764066415
@@ -4232,7 +4236,7 @@ MonoBehaviour:
   m_CellSize: {x: 580, y: 600}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 1
-  m_ConstraintCount: 4
+  m_ConstraintCount: 5
 --- !u!1 &1787551634
 GameObject:
   m_ObjectHideFlags: 0
@@ -4506,7 +4510,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1876029514
 BoxCollider:
   m_ObjectHideFlags: 0
