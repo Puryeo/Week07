@@ -870,7 +870,7 @@ GameObject:
   - component: {fileID: 46880404}
   m_Layer: 0
   m_Name: UpperBody
-  m_TagString: Untagged
+  m_TagString: Draggable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7079,7 +7079,7 @@ Transform:
   m_GameObject: {fileID: 599785578}
   serializedVersion: 2
   m_LocalRotation: {x: -0.060769748, y: 0, z: 0, w: 0.99815184}
-  m_LocalPosition: {x: 11.05, y: 1.5799999, z: 1.32}
+  m_LocalPosition: {x: 11.05, y: 1.3599999, z: 1.35}
   m_LocalScale: {x: 0.16, y: 0.58, z: 0.16}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7110,7 +7110,7 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LinearLimit:
-    limit: 0.4
+    limit: 0.1
     bounciness: 0
     contactDistance: 0
   m_AngularXLimitSpring:
@@ -7506,7 +7506,7 @@ Transform:
   m_GameObject: {fileID: 616374904}
   serializedVersion: 2
   m_LocalRotation: {x: -0.060769748, y: 0, z: 0, w: 0.99815184}
-  m_LocalPosition: {x: 2.52, y: 1.5799999, z: 1.32}
+  m_LocalPosition: {x: 2.52, y: 1.3599999, z: 1.35}
   m_LocalScale: {x: 0.16, y: 0.58, z: 0.16}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7537,7 +7537,7 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LinearLimit:
-    limit: 0.4
+    limit: 0.1
     bounciness: 0
     contactDistance: 0
   m_AngularXLimitSpring:
@@ -11683,7 +11683,7 @@ Transform:
   m_GameObject: {fileID: 996416491}
   serializedVersion: 2
   m_LocalRotation: {x: -0.060769748, y: 0, z: 0, w: 0.99815184}
-  m_LocalPosition: {x: 2.56, y: 1.28, z: -1.14}
+  m_LocalPosition: {x: 2.56, y: 1.06, z: -1.11}
   m_LocalScale: {x: 0.16, y: 0.58, z: 0.16}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11714,7 +11714,7 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LinearLimit:
-    limit: 0.4
+    limit: 0.1
     bounciness: 0
     contactDistance: 0
   m_AngularXLimitSpring:
@@ -17446,7 +17446,7 @@ GameObject:
   - component: {fileID: 1547097597}
   m_Layer: 0
   m_Name: LowerBody
-  m_TagString: Untagged
+  m_TagString: Draggable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17819,8 +17819,8 @@ FixedJoint:
   serializedVersion: 1
   m_ConnectedBody: {fileID: 46880404}
   m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: 500
-  m_BreakTorque: 500
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
   m_MassScale: 1
@@ -23113,7 +23113,7 @@ Transform:
   m_GameObject: {fileID: 2097520273}
   serializedVersion: 2
   m_LocalRotation: {x: -0.060769748, y: 0, z: 0, w: 0.99815184}
-  m_LocalPosition: {x: 11.05, y: 1.27, z: -1.18}
+  m_LocalPosition: {x: 11.05, y: 1.05, z: -1.15}
   m_LocalScale: {x: 0.16, y: 0.58, z: 0.16}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -23144,7 +23144,7 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LinearLimit:
-    limit: 0.4
+    limit: 0.1
     bounciness: 0
     contactDistance: 0
   m_AngularXLimitSpring:
