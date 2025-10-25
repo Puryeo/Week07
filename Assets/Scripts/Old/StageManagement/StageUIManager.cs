@@ -64,31 +64,31 @@ public class StageUIManager : MonoBehaviour
     {
         _exitBtn.onClick.RemoveAllListeners();
 
-        // 코루틴 정리
-        if (unlockDelayCoroutine != null)
-        {
-            StopCoroutine(unlockDelayCoroutine);
-            unlockDelayCoroutine = null;
-        }
+        // 코루틴 정리 // 해금 로직 비활성화
+        // if (unlockDelayCoroutine != null)
+        // {
+        //     StopCoroutine(unlockDelayCoroutine);
+        //     unlockDelayCoroutine = null;
+        // }
 
-        if (fillStarsCoroutine != null)
-        {
-            StopCoroutine(fillStarsCoroutine);
-            fillStarsCoroutine = null;
-        }
+        // if (fillStarsCoroutine != null)
+        // {
+        //     StopCoroutine(fillStarsCoroutine);
+        //     fillStarsCoroutine = null;
+        // }
     }
 
     private void Update()
     {
 #if UNITY_EDITOR
-        HandleDebugInput();
+        // HandleDebugInput(); // 해금 로직 비활성화
 #endif
 
-        // HiddenObj_2 위치 모니터링
-        if (isMonitoringHiddenObj2 && _hiddenObj2 != null)
-        {
-            MonitorHiddenObj2Position();
-        }
+        // HiddenObj_2 위치 모니터링 // 해금 로직 비활성화
+        // if (isMonitoringHiddenObj2 && _hiddenObj2 != null)
+        // {
+        //     MonitorHiddenObj2Position();
+        // }
     }
     #endregion
 
@@ -119,7 +119,7 @@ public class StageUIManager : MonoBehaviour
     #region Private Methods
     void SetStageUI()
     {
-        AllStagesCleared();
+        // AllStagesCleared(); // 해금 로직 비활성화
         int i = 0;
         // 스테이지 프리팹 Instantiage 및 초기화
         foreach (var stage in stageDataSOs)
@@ -129,12 +129,12 @@ public class StageUIManager : MonoBehaviour
             Stage objStage = obj.GetComponent<Stage>();
             objStage.Init(stage);
 
-            if(i < stageRotations.Length)
+            if (i < stageRotations.Length)
             {
                 objStage.RePosition(stageOffsets[i], stageRotations[i]);
             }
 
-                
+
             i++;
             // 버튼 씬 전환 이벤트 등록
             Button objBtn = obj.GetComponentInChildren<Button>();
@@ -142,18 +142,18 @@ public class StageUIManager : MonoBehaviour
 
             objBtn.onClick.AddListener(() => SetStageBtnEvent(stage.SceneName, stage));
 
-            // 히든 스테이지 처리
-            if (stage.SceneName == _hiddenStageName)
-            {
-                hiddenStage = obj;
-                hiddenStageButton = objBtn;
+            // 히든 스테이지 처리 // 해금 로직 비활성화
+            // if (stage.SceneName == _hiddenStageName)
+            // {
+            //     hiddenStage = obj;
+            //     hiddenStageButton = objBtn;
 
-                // 항상 비활성화 상태로 시작
-                objBtn.interactable = false;
+            //     // 항상 비활성화 상태로 시작
+            //     objBtn.interactable = false;
 
-                // 이미 해금 완료 상태여도 HiddenObj_2 위치 변화 + 5초 대기 필요
-                // (즉시 활성화 로직 제거)
-            }
+            //     // 이미 해금 완료 상태여도 HiddenObj_2 위치 변화 + 5초 대기 필요
+            //     // (즉시 활성화 로직 제거)
+            // }
         }
     }
 
@@ -174,40 +174,40 @@ public class StageUIManager : MonoBehaviour
         }
     }
 
-    // 히든 스테이지 해제 조건 및 투명도 업데이트
-    void AllStagesCleared()
-    {
-        int starCount = 0;
-        int normalStageCount = 0;
-        bool allStagesFullyCleared = true;  // 모든 스테이지 3별 여부
+    // 히든 스테이지 해제 조건 및 투명도 업데이트 // 해금 로직 비활성화
+    // void AllStagesCleared()
+    // {
+    //     int starCount = 0;
+    //     int normalStageCount = 0;
+    //     bool allStagesFullyCleared = true;  // 모든 스테이지 3별 여부
 
-        // 모든 스테이지를 순회하여 누적 별 개수 계산
-        foreach (var stage in stageDataSOs)
-        {
-            // 히든 스테이지 제외
-            if (stage.SceneName == _hiddenStageName)
-                continue;
+    //     // 모든 스테이지를 순회하여 누적 별 개수 계산
+    //     foreach (var stage in stageDataSOs)
+    //     {
+    //         // 히든 스테이지 제외
+    //         if (stage.SceneName == _hiddenStageName)
+    //             continue;
 
-            normalStageCount++;
-            starCount += stage.ClearStar;
+    //         normalStageCount++;
+    //         starCount += stage.ClearStar;
 
-            // 3별 미달 스테이지가 있는지 체크 (즉시 return 안 함)
-            if (stage.ClearStar < 3)
-            {
-                allStagesFullyCleared = false;
-            }
-        }
+    //         // 3별 미달 스테이지가 있는지 체크 (즉시 return 안 함)
+    //         if (stage.ClearStar < 3)
+    //         {
+    //             allStagesFullyCleared = false;
+    //         }
+    //     }
 
-        int maxStar = normalStageCount * 3;
+    //     int maxStar = normalStageCount * 3;
 
-        // 모든 스테이지 3별 여부 판단
-        isAllCleared = allStagesFullyCleared && (starCount >= maxStar);
+    //     // 모든 스테이지 3별 여부 판단
+    //     isAllCleared = allStagesFullyCleared && (starCount >= maxStar);
 
-        // 항상 가림막 업데이트 (누적 비율 기반)
-        UpdateHiddenStageLock(starCount, maxStar);
+    //     // 항상 가림막 업데이트 (누적 비율 기반)
+    //     UpdateHiddenStageLock(starCount, maxStar);
 
-        Debug.Log($"[AllStagesCleared] 총 별: {starCount}/{maxStar}, 전체 해금: {isAllCleared}");
-    }
+    //     Debug.Log($"[AllStagesCleared] 총 별: {starCount}/{maxStar}, 전체 해금: {isAllCleared}");
+    // }
 
     private void ExitGame()
     {
@@ -219,6 +219,7 @@ public class StageUIManager : MonoBehaviour
     }
     #endregion
 
+    /* // 해금 로직 비활성화
     #region Hidden Stage Lock Management
     /// <summary>
     /// 가림막 투명도 업데이트 및 비활성화
@@ -396,7 +397,9 @@ public class StageUIManager : MonoBehaviour
         }
     }
     #endregion
+    */ // 해금 로직 비활성화
 
+    /* // 해금 로직 비활성화
     #region Hidden Object Monitoring
     /// <summary>
     /// HiddenObj_2 위치 모니터링 시작
@@ -463,7 +466,9 @@ public class StageUIManager : MonoBehaviour
         unlockDelayCoroutine = null;
     }
     #endregion
+    */ // 해금 로직 비활성화
 
+    /* // 해금 로직 비활성화
     #region Debug
     /// <summary>
     /// 디버깅용 키 입력 처리
@@ -686,4 +691,5 @@ public class StageUIManager : MonoBehaviour
         SetStageUI();
     }
     #endregion
+    */ // 해금 로직 비활성화
 }
