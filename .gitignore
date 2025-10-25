@@ -98,3 +98,10 @@ InitTestScene*.unity*
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 .vscode
+Assets/Downloads/vFolders/vFolders Data.asset
+Assets/Downloads/vHierarchy/vHierarchy Data.asset
+
+/Assets/Downloads/vFolders/vFolders Data.asset
+/Assets/Downloads/vHierarchy/vHierarchy Data.asset
+/Assets/Downloads/vHierarchy/vHierarchy Palette.asset
+/Assets/Downloads/vHierarchy
