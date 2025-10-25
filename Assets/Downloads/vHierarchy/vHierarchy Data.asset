@@ -20,6 +20,7 @@ MonoBehaviour:
     - 6258708990ffd9e43bb293a2dbd8ff76
     - 7df707152b803de4bb0ac9023c2e0b9b
     - da1b9f6783733c0429b2defbac566eae
+    - 6ee4b70fa2ba34b42a69aaff7647a4f0
     values:
     - goDatas_byGlobalId:
         keys:
@@ -324,6 +325,39 @@ MonoBehaviour:
     - goDatas_byGlobalId:
         keys: []
         values: []
+    - goDatas_byGlobalId:
+        keys:
+        - globalObjectIdString: GlobalObjectId_V1-2-6ee4b70fa2ba34b42a69aaff7647a4f0-1835446223-0
+        - globalObjectIdString: GlobalObjectId_V1-2-6ee4b70fa2ba34b42a69aaff7647a4f0-410087039-0
+        - globalObjectIdString: GlobalObjectId_V1-2-6ee4b70fa2ba34b42a69aaff7647a4f0-1278429828051546335-937523960
+        - globalObjectIdString: GlobalObjectId_V1-2-6ee4b70fa2ba34b42a69aaff7647a4f0-8170384220303628758-595348327
+        - globalObjectIdString: GlobalObjectId_V1-2-6ee4b70fa2ba34b42a69aaff7647a4f0-7295409225842125869-1279849347
+        - globalObjectIdString: GlobalObjectId_V1-2-6ee4b70fa2ba34b42a69aaff7647a4f0-6541014786362501161-127535782
+        values:
+        - colorIndex: 0
+          iconNameOrGuid: Terrain Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: DirectionalLight Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 2
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 1
+        - colorIndex: 0
+          iconNameOrGuid: Camera Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 7
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 1
+        - colorIndex: 2
+          iconNameOrGuid: 
+          isIconRecursive: 0
+          isColorRecursive: 1
   bookmarks: []
   bookmarkedScenePaths:
   - Assets/Resources/Scenes/Old/Title.unity
