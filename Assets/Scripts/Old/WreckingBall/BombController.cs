@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 /// <summary>
@@ -83,6 +83,10 @@ public class BombController : MonoBehaviour
     public void Explode()
     {
         StopTicking();
+
+        // 폭발 알림 추가!
+        BombManager.Instance.NotifyBombExploded(gameObject);
+
         gameObject.SetActive(false);
     }
 
