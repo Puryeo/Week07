@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +13,6 @@ public class Stage : MonoBehaviour
     [SerializeField] private Sprite _emptyStar;
     [SerializeField] private int _maxStars = 3;
     [SerializeField] private TextMeshProUGUI _stageNameText;
-    [SerializeField] private RectTransform _stagePivotTransform;
     #endregion
 
     private StageDataSO _stageDataSO;
@@ -50,12 +49,6 @@ public class Stage : MonoBehaviour
         }
 
         DrawClearStar(_stageDataSO.ClearStar);
-    }
-
-    public void RePosition(Vector2 pos, float rot)
-    {
-        _stagePivotTransform.localPosition = new Vector3(pos.x, pos.y, _stagePivotTransform.localScale.z);
-        _stagePivotTransform.localRotation = Quaternion.Euler(0f, 0f, rot);
     }
 
     private void DrawClearStar(int earnedStar)
