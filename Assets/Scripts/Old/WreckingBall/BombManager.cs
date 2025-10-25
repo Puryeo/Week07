@@ -4,8 +4,7 @@ using System;
 
 /// <summary>
 /// 씬에 존재하는 폭탄 및 Draggable 오브젝트의 개수를 관리하는 싱글톤 매니저입니다.
-/// UI 등에서 현재 남은 폭탄 개수 및 트리거된 Draggable 개수를 확인할 때 사용합니다.
-/// StageConfig와 연동하여 목표 폭탄 관리 기능을 제공합니다.
+/// 이벤트 기반으로 폭탄 생성/폭발을 추적합니다.
 /// </summary>
 public class BombManager : MonoBehaviour
 {
@@ -16,7 +15,6 @@ public class BombManager : MonoBehaviour
     {
         get
         {
-            // Don't create new instance if application is quitting or during scene unload
             if (isQuitting)
             {
                 return null;
@@ -47,13 +45,17 @@ public class BombManager : MonoBehaviour
     [Tooltip("폭탄 개수 변경 시 자동으로 로그를 출력합니다.")]
     [SerializeField] private bool enableAutoDebugLog = true;
 
-    private int lastActiveBombCount = -1;
     private HashSet<GameObject> triggeredDraggables = new HashSet<GameObject>();
 
     // 목표 폭탄 등록 시스템
     private HashSet<GameObject> registeredGoalBombs = new HashSet<GameObject>();
 
-    // 폭탄 개수 변경 이벤트
+    // 폭탄 생성 추적
+    private int totalSpawnedBombs = 0; // 게임 시작 후 생성된 총 폭탄 수
+    private int totalExplodedBombs = 0; // 게임 시작 후 폭발한 총 폭탄 수
+    private int currentActiveBombs = 0; // 현재 활성화된 폭탄 수
+
+    // 이벤트
     public event Action<int> OnBombCountChanged;
     public event Action<int> OnDraggableCountChanged;
 
@@ -95,28 +97,14 @@ public class BombManager : MonoBehaviour
 
     private void Start()
     {
-        // 초기 상태 로그
+        // 초기 상태: 씬에 이미 존재하는 폭탄 카운트
+        int initialBombCount = GetTotalBombCount();
+        totalSpawnedBombs = initialBombCount;
+        currentActiveBombs = initialBombCount;
+
         if (enableAutoDebugLog)
         {
-            LogBombStatus("게임 시작");
-            lastActiveBombCount = GetActiveBombCount();
-        }
-    }
-
-    private void Update()
-    {
-        // 매 프레임 폭탄 개수 변경 감지
-        if (enableAutoDebugLog)
-        {
-            int currentCount = GetActiveBombCount();
-            if (currentCount != lastActiveBombCount)
-            {
-                LogBombStatus("폭탄 개수 변경 감지");
-                lastActiveBombCount = currentCount;
-
-                // 폭탄 개수 변경 이벤트 발생
-                OnBombCountChanged?.Invoke(currentCount);
-            }
+            Debug.Log($"<color=yellow>[BombManager]</color> 게임 시작 | 초기 폭탄: {initialBombCount}개");
         }
     }
 
@@ -140,7 +128,6 @@ public class BombManager : MonoBehaviour
                 Debug.Log($"<color=cyan>[BombManager]</color> [Draggable 트리거 감지] 활성 Draggable: <color=green>{active}</color> | " +
                           $"트리거된 개수: <color=orange>{triggered}</color>");
 
-                // Draggable 개수 변경 이벤트 발생
                 OnDraggableCountChanged?.Invoke(triggered);
             }
         }
@@ -161,34 +148,165 @@ public class BombManager : MonoBehaviour
 
     #endregion
 
-    #region Basic Bomb Counting (씬 전체 기준)
+    #region Bomb Spawn Tracking (폭탄 생성 추적)
 
     /// <summary>
-    /// 현재 씬에 존재하는 활성화된 폭탄의 개수를 반환합니다.
+    /// 폭탄이 생성되었음을 알립니다.
+    /// 동적으로 폭탄을 생성하는 스크립트에서 호출해야 합니다.
     /// </summary>
-    public int GetActiveBombCount()
+    public void NotifyBombSpawned()
     {
-        GameObject[] bombs = GameObject.FindGameObjectsWithTag(bombTag);
+        totalSpawnedBombs++;
+        currentActiveBombs++;
 
-        if (bombs == null || bombs.Length == 0)
+        if (enableAutoDebugLog)
         {
-            return 0;
+            Debug.Log($"<color=yellow>[BombManager]</color> 폭탄 생성 알림 | " +
+                      $"총 생성: {totalSpawnedBombs} | 현재 활성: {currentActiveBombs}");
         }
 
-        int activeCount = 0;
-        foreach (var bomb in bombs)
-        {
-            if (bomb != null && bomb.activeInHierarchy)
-            {
-                activeCount++;
-            }
-        }
-
-        return activeCount;
+        // 이벤트 발생
+        OnBombCountChanged?.Invoke(currentActiveBombs);
     }
 
     /// <summary>
+    /// 폭탄이 생성되었음을 알립니다. (GameObject 버전)
+    /// 생성된 폭탄 오브젝트를 전달하여 추가 검증을 수행합니다.
+    /// </summary>
+    /// <param name="bomb">생성된 폭탄 GameObject</param>
+    public void NotifyBombSpawned(GameObject bomb)
+    {
+        if (bomb == null)
+        {
+            Debug.LogWarning("[BombManager] 생성 알림을 받았지만 폭탄이 null입니다.");
+            return;
+        }
+
+        if (!bomb.CompareTag(bombTag))
+        {
+            Debug.LogWarning($"[BombManager] {bomb.name}은(는) '{bombTag}' 태그가 아닙니다.");
+            return;
+        }
+
+        totalSpawnedBombs++;
+        currentActiveBombs++;
+
+        if (enableAutoDebugLog)
+        {
+            Debug.Log($"<color=yellow>[BombManager]</color> 폭탄 생성 알림: {bomb.name} | " +
+                      $"총 생성: {totalSpawnedBombs} | 현재 활성: {currentActiveBombs}");
+        }
+
+        // 이벤트 발생
+        OnBombCountChanged?.Invoke(currentActiveBombs);
+    }
+
+    /// <summary>
+    /// 폭탄이 폭발했음을 알립니다.
+    /// BombController나 ClimaxController에서 폭탄을 비활성화할 때 호출해야 합니다.
+    /// </summary>
+    public void NotifyBombExploded()
+    {
+        totalExplodedBombs++;
+        currentActiveBombs--;
+
+        // 음수 방지
+        if (currentActiveBombs < 0)
+        {
+            Debug.LogWarning("[BombManager] 활성 폭탄 개수가 음수가 되었습니다. 0으로 보정합니다.");
+            currentActiveBombs = 0;
+        }
+
+        if (enableAutoDebugLog)
+        {
+            Debug.Log($"<color=red>[BombManager]</color> 폭탄 폭발 알림 | " +
+                      $"총 폭발: {totalExplodedBombs} | 현재 활성: {currentActiveBombs}");
+        }
+
+        // 이벤트 발생
+        OnBombCountChanged?.Invoke(currentActiveBombs);
+    }
+
+    /// <summary>
+    /// 폭탄이 폭발했음을 알립니다. (GameObject 버전)
+    /// </summary>
+    /// <param name="bomb">폭발한 폭탄 GameObject</param>
+    public void NotifyBombExploded(GameObject bomb)
+    {
+        if (bomb == null)
+        {
+            Debug.LogWarning("[BombManager] 폭발 알림을 받았지만 폭탄이 null입니다.");
+            return;
+        }
+
+        totalExplodedBombs++;
+        currentActiveBombs--;
+
+        // 음수 방지
+        if (currentActiveBombs < 0)
+        {
+            Debug.LogWarning("[BombManager] 활성 폭탄 개수가 음수가 되었습니다. 0으로 보정합니다.");
+            currentActiveBombs = 0;
+        }
+
+        if (enableAutoDebugLog)
+        {
+            Debug.Log($"<color=red>[BombManager]</color> 폭탄 폭발 알림: {bomb.name} | " +
+                      $"총 폭발: {totalExplodedBombs} | 현재 활성: {currentActiveBombs}");
+        }
+
+        // 이벤트 발생
+        OnBombCountChanged?.Invoke(currentActiveBombs);
+    }
+
+    /// <summary>
+    /// 게임 시작 후 생성된 총 폭탄 개수를 반환합니다.
+    /// </summary>
+    public int GetTotalSpawnedBombs()
+    {
+        return totalSpawnedBombs;
+    }
+
+    /// <summary>
+    /// 게임 시작 후 폭발한 총 폭탄 개수를 반환합니다.
+    /// </summary>
+    public int GetTotalExplodedBombs()
+    {
+        return totalExplodedBombs;
+    }
+
+    /// <summary>
+    /// 현재 활성화된 폭탄 개수를 반환합니다.
+    /// 매번 씬을 검색하지 않고 추적된 값을 반환합니다.
+    /// </summary>
+    public int GetActiveBombCount()
+    {
+        return currentActiveBombs;
+    }
+
+    /// <summary>
+    /// 폭탄 생성 및 폭발 카운터를 초기화합니다.
+    /// 스테이지 재시작 시 호출하세요.
+    /// </summary>
+    public void ResetSpawnTracking()
+    {
+        totalSpawnedBombs = 0;
+        totalExplodedBombs = 0;
+        currentActiveBombs = 0;
+
+        if (enableAutoDebugLog)
+        {
+            Debug.Log($"<color=yellow>[BombManager]</color> 생성 추적 초기화됨.");
+        }
+    }
+
+    #endregion
+
+    #region Basic Bomb Counting (씬 전체 기준 - 초기화용)
+
+    /// <summary>
     /// 현재 씬에 존재하는 전체 폭탄의 개수를 반환합니다. (비활성화 포함)
+    /// 초기화 시에만 사용하세요. 런타임에는 GetActiveBombCount()를 사용하세요.
     /// </summary>
     public int GetTotalBombCount()
     {
@@ -198,6 +316,7 @@ public class BombManager : MonoBehaviour
 
     /// <summary>
     /// 폭발한 폭탄의 개수를 반환합니다.
+    /// 씬 검색 방식 (비추천 - 디버그용)
     /// </summary>
     public int GetExplodedBombCount()
     {
@@ -258,7 +377,6 @@ public class BombManager : MonoBehaviour
     /// </summary>
     public int GetRegisteredGoalBombCount()
     {
-        // null 체크 및 정리
         registeredGoalBombs.RemoveWhere(bomb => bomb == null);
         return registeredGoalBombs.Count;
     }
@@ -268,7 +386,6 @@ public class BombManager : MonoBehaviour
     /// </summary>
     public int GetActiveRegisteredGoalBombCount()
     {
-        // null 체크 및 정리
         registeredGoalBombs.RemoveWhere(bomb => bomb == null);
 
         int activeCount = 0;
@@ -331,17 +448,14 @@ public class BombManager : MonoBehaviour
     /// <summary>
     /// 폭탄 상태를 로그로 출력합니다.
     /// </summary>
-    /// <param name="eventName">이벤트 이름 (예: "폭발", "게임 시작")</param>
+    /// <param name="eventName">이벤트 이름</param>
     public void LogBombStatus(string eventName = "")
     {
-        int total = GetTotalBombCount();
-        int active = GetActiveBombCount();
-        int exploded = GetExplodedBombCount();
-
         string prefix = string.IsNullOrEmpty(eventName) ? "" : $"[{eventName}] ";
-        Debug.Log($"<color=yellow>[BombManager]</color> {prefix}전체: <color=cyan>{total}</color> | " +
-                  $"남은 폭탄: <color=green>{active}</color> | " +
-                  $"폭발한 폭탄: <color=red>{exploded}</color>");
+        Debug.Log($"<color=yellow>[BombManager]</color> {prefix}" +
+                  $"생성된 총 폭탄: <color=orange>{totalSpawnedBombs}</color> | " +
+                  $"터진 총 폭탄: <color=magenta>{totalExplodedBombs}</color> | " +
+                  $"현재 활성: <color=green>{currentActiveBombs}</color>");
     }
 
     /// <summary>

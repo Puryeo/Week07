@@ -4,6 +4,12 @@ using UnityEngine;
 /// 스테이지별 설정을 관리하는 스크립트입니다.
 /// 각 스테이지 씬마다 1개씩 배치하여 사용합니다.
 /// 목표 폭탄 개수, 자동 카운팅 모드 등을 설정할 수 있습니다.
+/// 
+/// 폭탄 개수 구분:
+/// - 목표 폭탄: 클리어를 위해 터트려야 하는 폭탄 개수
+/// - 생성된 폭탄: 실제로 씬에 생성된 폭탄 개수
+/// - 터진 폭탄: 생성된 폭탄 중 폭발한 개수
+/// - 남은 폭탄: 생성된 폭탄 - 터진 폭탄
 /// </summary>
 public class StageConfig : MonoBehaviour
 {
@@ -108,7 +114,7 @@ public class StageConfig : MonoBehaviour
 
     /// <summary>
     /// 현재 스테이지의 목표 폭탄 개수를 반환합니다.
-    /// BombManager와 연동하여 모드에 따라 적절한 값을 계산합니다.
+    /// 클리어하기 위해 터트려야 하는 폭탄의 개수입니다.
     /// </summary>
     /// <returns>목표 폭탄 개수</returns>
     public int GetGoalBombCount()
@@ -148,10 +154,73 @@ public class StageConfig : MonoBehaviour
     }
 
     /// <summary>
-    /// 현재 남은 목표 폭탄 개수를 반환합니다.
+    /// 게임 시작 후 생성된 총 폭탄 개수를 반환합니다.
     /// </summary>
-    /// <returns>남은 목표 폭탄 개수</returns>
-    public int GetRemainingGoalBombCount()
+    /// <returns>생성된 총 폭탄 개수</returns>
+    public int GetSpawnedBombCount()
+    {
+        if (BombManager.Instance == null)
+        {
+            return 0;
+        }
+
+        int spawnedCount = 0;
+
+        switch (goalBombMode)
+        {
+            case GoalBombMode.AutoCount:
+            case GoalBombMode.Manual:
+                // 생성 추적 시스템 사용
+                spawnedCount = BombManager.Instance.GetTotalSpawnedBombs();
+                break;
+
+            case GoalBombMode.RegisterOnly:
+                // 등록된 폭탄 개수 (등록 = 생성으로 간주)
+                spawnedCount = BombManager.Instance.GetRegisteredGoalBombCount();
+                break;
+        }
+
+        return spawnedCount;
+    }
+
+    /// <summary>
+    /// 게임 시작 후 폭발한 총 폭탄 개수를 반환합니다.
+    /// </summary>
+    /// <returns>폭발한 총 폭탄 개수</returns>
+    public int GetExplodedBombCount()
+    {
+        if (BombManager.Instance == null)
+        {
+            return 0;
+        }
+
+        int explodedCount = 0;
+
+        switch (goalBombMode)
+        {
+            case GoalBombMode.AutoCount:
+            case GoalBombMode.Manual:
+                // 생성 추적 시스템 사용
+                explodedCount = BombManager.Instance.GetTotalExplodedBombs();
+                break;
+
+            case GoalBombMode.RegisterOnly:
+                // 등록된 폭탄 중 비활성화된 개수
+                int totalRegistered = BombManager.Instance.GetRegisteredGoalBombCount();
+                int activeRegistered = BombManager.Instance.GetActiveRegisteredGoalBombCount();
+                explodedCount = totalRegistered - activeRegistered;
+                break;
+        }
+
+        return explodedCount;
+    }
+
+    /// <summary>
+    /// 현재 남은 폭탄 개수를 반환합니다.
+    /// 생성된 폭탄 - 터진 폭탄 = 남은 폭탄
+    /// </summary>
+    /// <returns>남은 폭탄 개수</returns>
+    public int GetRemainingBombCount()
     {
         if (BombManager.Instance == null)
         {
@@ -163,12 +232,8 @@ public class StageConfig : MonoBehaviour
         switch (goalBombMode)
         {
             case GoalBombMode.AutoCount:
-                // 활성화된 모든 폭탄
-                remainingCount = BombManager.Instance.GetActiveBombCount();
-                break;
-
             case GoalBombMode.Manual:
-                // 수정: Manual 모드도 씬의 전체 폭탄을 카운트
+                // 현재 씬에 활성화된 폭탄 개수
                 remainingCount = BombManager.Instance.GetActiveBombCount();
                 break;
 
@@ -181,14 +246,46 @@ public class StageConfig : MonoBehaviour
         return remainingCount;
     }
 
+    /// <summary>
+    /// 스테이지 클리어 조건을 만족하는지 확인합니다.
+    /// 조건: 목표 개수만큼 폭탄이 터졌는지 확인
+    /// </summary>
+    /// <returns>클리어 조건 만족 여부</returns>
+    public bool IsClearConditionMet()
+    {
+        int goalCount = GetGoalBombCount();
+        int explodedCount = GetExplodedBombCount();
+        int remainingCount = GetRemainingBombCount();
+
+        // 클리어 조건:
+        // 1. 목표 개수만큼 폭탄이 터졌음
+        // 2. 남은 폭탄이 0개 (모든 생성된 폭탄이 처리됨)
+        bool isClear = (explodedCount >= goalCount) && (remainingCount <= 0);
+
+        if (enableDebugLog && isClear)
+        {
+            Debug.Log($"<color=green>[StageConfig]</color> 클리어 조건 만족!\n" +
+                      $"목표: {goalCount} | 터진 폭탄: {explodedCount} | 남은 폭탄: {remainingCount}");
+        }
+
+        return isClear;
+    }
+
 #if UNITY_EDITOR
     [ContextMenu("목표 폭탄 개수 확인")]
     private void DebugGoalBombCount()
     {
         int goalCount = GetGoalBombCount();
-        int remainingCount = GetRemainingGoalBombCount();
+        int spawnedCount = GetSpawnedBombCount();
+        int explodedCount = GetExplodedBombCount();
+        int remainingCount = GetRemainingBombCount();
 
-        Debug.Log($"<color=green>[StageConfig]</color> 목표: {goalCount} | 남은 개수: {remainingCount}");
+        Debug.Log($"<color=green>[StageConfig]</color> 폭탄 현황\n" +
+                  $"목표: {goalCount}\n" +
+                  $"생성: {spawnedCount}\n" +
+                  $"터짐: {explodedCount}\n" +
+                  $"남음: {remainingCount}\n" +
+                  $"클리어 가능: {IsClearConditionMet()}");
     }
 
     private void OnValidate()

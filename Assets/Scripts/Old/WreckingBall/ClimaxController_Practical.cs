@@ -1,4 +1,4 @@
-﻿using Unity.Cinemachine;
+using Unity.Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -376,6 +376,9 @@ public class ClimaxController_Advanced : MonoBehaviour
                 // floor 처리 생략 ✅
                 break;
         }
+
+        // 폭탄 비활성화 전에 알림!
+        BombManager.Instance.NotifyBombExploded(bombObject);
 
         // 폭탄 비활성화
         BombController controller = bombObject.GetComponent<BombController>();
