@@ -16,6 +16,6 @@ MonoBehaviour:
   _stageName: "\uC601\uAD6D : \uD0C0\uC6CC\uBE0C\uB9BF\uC9C0"
   _sceneName: London
   _clearStar: 0
-  _isTried: 1
+  _isTried: 0
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/London.png
   _scenePath: Assets/Scenes/London.unity
