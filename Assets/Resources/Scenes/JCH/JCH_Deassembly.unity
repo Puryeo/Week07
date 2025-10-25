@@ -382,9 +382,9 @@ GameObject:
   - component: {fileID: 238182128}
   - component: {fileID: 238182127}
   - component: {fileID: 238182126}
-  m_Layer: 0
+  m_Layer: 30
   m_Name: Pin
-  m_TagString: Draggable
+  m_TagString: Pin
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
