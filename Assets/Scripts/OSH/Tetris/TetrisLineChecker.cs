@@ -9,6 +9,7 @@ using UnityEngine.Events;
 /// - 라인 제거 안정성 향상 (일부만 제거되는 문제 해결)
 /// - 블록 분리 시스템 통합
 /// - 물리 동기화 강화
+/// - 폭탄 블록(bombBlockSize 설정값만큼)과 일반 블록 함께 카운트 (10개 = 라인 완성)
 /// </summary>
 public class TetrisLineChecker : MonoBehaviour
 {
@@ -29,6 +30,9 @@ public class TetrisLineChecker : MonoBehaviour
 
     [Tooltip("블록이 정지했다고 판단하는 속도 임계값")]
     [SerializeField] private float stopThreshold = 0.01f; // 0.001에서 0.01로 완화
+
+    [Tooltip("폭탄 블록이 차지하는 칸 수 (예: 3칸 폭탄)")]
+    [SerializeField] private int bombBlockSize = 3;
 
     [Header("Line Removal Settings")]
     [Tooltip("라인 제거 전 대기 시간 (물리 안정화)")]
@@ -125,8 +129,8 @@ public class TetrisLineChecker : MonoBehaviour
     /// 특정 높이에서 라인 체크 및 제거
     /// 
     /// [로직]
-    /// 1. 수평 레이캐스트로 모든 큐브 감지
-    /// 2. 정확히 10개의 큐브가 있는지 확인
+    /// 1. 수평 레이캐스트로 모든 큐브/폭탄 감지
+    /// 2. 정확히 10개의 오브젝트가 있는지 확인 (일반 블록 1개 = 1칸, 폭탄 블록 1개 = bombBlockSize칸)
     /// 3. 모든 블록이 정지 상태인지 확인
     /// 4. 조건 만족 시 라인 제거 시작
     /// </summary>
@@ -135,41 +139,81 @@ public class TetrisLineChecker : MonoBehaviour
         Vector3 rayStart = new Vector3(rayStartX, yHeight, 0f);
         RaycastHit[] hits = Physics.RaycastAll(rayStart, Vector3.right, rayLength);
 
-        // 이 라인에 있는 큐브들을 저장
-        HashSet<GameObject> cubesInLine = new HashSet<GameObject>();
+        if (showDebugLogs)
+        {
+            Debug.Log($"[LineChecker] ===== 높이 {yHeight} 레이캐스트 시작 =====");
+            Debug.Log($"[LineChecker] 총 {hits.Length}개의 hit 발견");
+        }
+
+        // 이 라인에 있는 오브젝트들을 저장 (일반 블록 + 폭탄 모두 포함)
+        // List 사용: 폭탄을 여러 번 추가하여 3칸으로 카운트하기 위함
+        List<GameObject> objectsInLine = new List<GameObject>();
+        // 폭탄 블록들을 따로 저장 (중복 방지용)
+        HashSet<GameObject> bombsInLine = new HashSet<GameObject>();
         // 부모 블록들도 따로 저장 (정지 체크용)
         HashSet<GameObject> blocksInLine = new HashSet<GameObject>();
 
         foreach (RaycastHit hit in hits)
         {
-            // "Cube" 태그인지 확인
-            if (!hit.collider.CompareTag("Cube"))
-                continue;
+            if (showDebugLogs)
+            {
+                Debug.Log($"[LineChecker] Hit: {hit.collider.gameObject.name}, Tag: '{hit.collider.tag}', X위치: {hit.point.x:F2}, Parent: {(hit.collider.transform.parent != null ? hit.collider.transform.parent.name : "없음")}");
+            }
 
-            // 자식 큐브 추가
-            cubesInLine.Add(hit.collider.gameObject);
+            // "Cube" 태그인지 확인 (일반 테트리스 블록)
+            if (hit.collider.CompareTag("Cube"))
+            {
+                // 자식 큐브 추가
+                objectsInLine.Add(hit.collider.gameObject);
 
-            // 부모 블록 가져오기
-            Transform parent = hit.collider.transform.parent;
-            if (parent == null)
-                continue;
+                // 부모 블록 가져오기
+                Transform parent = hit.collider.transform.parent;
+                if (parent != null)
+                {
+                    GameObject block = parent.gameObject;
 
-            GameObject block = parent.gameObject;
+                    // Rigidbody가 있는지 확인
+                    if (block.GetComponent<Rigidbody>() != null)
+                    {
+                        blocksInLine.Add(block);
+                    }
+                }
+            }
+            // "Bomb" 태그인지 확인 (폭탄 블록 - bombBlockSize칸 크기)
+            else if (hit.collider.CompareTag("Bomb"))
+            {
+                GameObject bomb = hit.collider.gameObject;
 
-            // Rigidbody가 있는지 확인
-            if (block.GetComponent<Rigidbody>() == null)
-                continue;
+                // 중복 카운트 방지: 이미 추가된 폭탄인지 확인
+                if (!bombsInLine.Contains(bomb))
+                {
+                    // 먼저 bombsInLine에 추가하여 다음 hit에서 스킵되도록 함
+                    bombsInLine.Add(bomb);
 
-            blocksInLine.Add(block);
+                    // 폭탄 크기만큼 반복하여 카운트
+                    for (int i = 0; i < bombBlockSize; i++)
+                    {
+                        objectsInLine.Add(bomb);
+                    }
+
+                    // 폭탄은 자체가 Rigidbody를 가진 블록
+                    if (bomb.GetComponent<Rigidbody>() != null)
+                    {
+                        blocksInLine.Add(bomb);
+                    }
+                }
+            }
         }
 
         if (showDebugLogs)
         {
-            Debug.Log($"[LineChecker] 높이 {yHeight}에서 감지된 큐브: {cubesInLine.Count}개");
+            int bombCount = bombsInLine.Count;
+            int normalCount = objectsInLine.Count - (bombCount * bombBlockSize);
+            Debug.Log($"[LineChecker] 높이 {yHeight}에서 감지: 총 {objectsInLine.Count}개 카운트 (일반: {normalCount}개, 폭탄: {bombCount}개 x {bombBlockSize}칸)");
         }
 
-        // 큐브가 정확히 10개인지 확인 (테트리스 가로 라인)
-        if (cubesInLine.Count != 10)
+        // 오브젝트가 정확히 10개인지 확인 (일반 블록 + 폭탄 합쳐서)
+        if (objectsInLine.Count != 10)
             return;
 
         // 모든 블록이 정지 상태인지 확인
@@ -182,8 +226,17 @@ public class TetrisLineChecker : MonoBehaviour
             return;
         }
 
+        // 폭탄이 있는지 체크
+        bool isBombLine = bombsInLine.Count > 0;
+
+        if (showDebugLogs)
+        {
+            string lineType = isBombLine ? "폭탄 포함" : "일반";
+            Debug.Log($"[LineChecker] ✓ 라인 완성! ({lineType}) 높이: {yHeight}");
+        }
+
         // 조건을 모두 만족하면 라인 제거 시작
-        StartCoroutine(RemoveLineWithDelay(cubesInLine, blocksInLine, yHeight));
+        StartCoroutine(RemoveLineWithDelay(objectsInLine, bombsInLine, blocksInLine, yHeight, isBombLine));
     }
 
     /// <summary>
@@ -217,20 +270,41 @@ public class TetrisLineChecker : MonoBehaviour
     #region Line Removal
 
     /// <summary>
+    /// 폭탄 블록의 터지는 로직을 호출합니다.
+    /// </summary>
+    private void TriggerBombExplosion(GameObject bomb)
+    {
+        if (bomb == null) return;
+
+        // 폭탄 블록에 Explode 메서드가 있는지 확인
+        var bombComponent = bomb.GetComponent<BombC>();
+        if (bombComponent != null)
+        {
+            bombComponent.Explode();
+        }
+        else
+        {
+            Debug.LogWarning($"[LineChecker] 폭탄 블록 {bomb.name}에 Explode 메서드가 없습니다.");
+        }
+    }
+
+    /// <summary>
     /// 지연 후 라인 제거 (물리 안정화 대기)
     /// 
     /// [처리 순서]
     /// 1. 중복 처리 방지 플래그 설정
     /// 2. 물리 안정화 대기
-    /// 3. 큐브 제거
+    /// 3. 오브젝트 제거 (일반 블록 + 폭탄)
     /// 4. 블록 분리 처리
     /// 5. 빈 부모 블록 정리
     /// 6. 물리 시스템 동기화
     /// </summary>
     private System.Collections.IEnumerator RemoveLineWithDelay(
-        HashSet<GameObject> cubes,
+        List<GameObject> objects,
+        HashSet<GameObject> bombs,
         HashSet<GameObject> blocks,
-        float height)
+        float height,
+        bool isBombLine)
     {
         // 중복 처리 방지
         processingHeights.Add(height);
@@ -240,21 +314,43 @@ public class TetrisLineChecker : MonoBehaviour
 
         if (showDebugLogs)
         {
-            Debug.Log($"[LineChecker] 라인 제거 시작 - 높이: {height}, 큐브 수: {cubes.Count}");
+            Debug.Log($"[LineChecker] 라인 제거 시작 - 높이: {height}, 오브젝트 수: {objects.Count}");
         }
 
-        // 1단계: 큐브 제거 및 부모 블록별로 분류
+        // 1단계: 폭탄 블록 제거 (단일 오브젝트이므로 바로 파괴)
+        foreach (GameObject bomb in bombs)
+        {
+            if (bomb != null)
+            {
+                if (showDebugLogs)
+                {
+                    Debug.Log($"[LineChecker] 💣 폭탄 블록 제거: {bomb.name}");
+                }
+
+                // 폭탄 터지는 로직 호출
+                TriggerBombExplosion(bomb);
+
+                Destroy(bomb);
+            }
+        }
+
+        // 2단계: 일반 블록의 큐브 제거 및 부모 블록별로 분류
         Dictionary<GameObject, List<GameObject>> blockToCubes = new Dictionary<GameObject, List<GameObject>>();
 
-        foreach (GameObject cube in cubes)
+        foreach (GameObject obj in objects)
         {
-            if (cube == null) continue;
+            // 폭탄은 이미 제거했으므로 스킵
+            if (bombs.Contains(obj))
+                continue;
 
-            Transform parent = cube.transform.parent;
+            if (obj == null)
+                continue;
+
+            Transform parent = obj.transform.parent;
             if (parent == null)
             {
                 // 부모가 없는 경우 바로 비활성화
-                cube.SetActive(false);
+                obj.SetActive(false);
                 continue;
             }
 
@@ -265,13 +361,13 @@ public class TetrisLineChecker : MonoBehaviour
             {
                 blockToCubes[parentBlock] = new List<GameObject>();
             }
-            blockToCubes[parentBlock].Add(cube);
+            blockToCubes[parentBlock].Add(obj);
 
             // 큐브 비활성화
-            cube.SetActive(false);
+            obj.SetActive(false);
         }
 
-        // 2단계: 각 블록 처리 (분리 또는 제거)
+        // 3단계: 각 블록 처리 (분리 또는 제거)
         foreach (var kvp in blockToCubes)
         {
             GameObject block = kvp.Key;
@@ -301,11 +397,11 @@ public class TetrisLineChecker : MonoBehaviour
             }
         }
 
-        // 3단계: 물리 시스템 동기화
+        // 4단계: 물리 시스템 동기화
         Physics.SyncTransforms();
 
         // 이벤트 발생
-        onLineRemoved?.Invoke(height, false);
+        onLineRemoved?.Invoke(height, isBombLine);
 
         // 처리 완료
         processingHeights.Remove(height);
@@ -386,7 +482,7 @@ public class TetrisLineChecker : MonoBehaviour
             newBlock.transform.position = block.transform.position;
             newBlock.transform.rotation = block.transform.rotation;
 
-            // "Cube" 태그 자동 할당
+            // 태그 자동 할당
             newBlock.tag = block.tag;
 
             // Rigidbody 추가
@@ -399,6 +495,28 @@ public class TetrisLineChecker : MonoBehaviour
             foreach (GameObject cube in group)
             {
                 cube.transform.SetParent(newBlock.transform, true);
+
+                // 큐브 상태 검증 및 복구
+                if (!cube.CompareTag("Cube"))
+                {
+                    cube.tag = "Cube";
+                    if (showDebugLogs)
+                        Debug.LogWarning($"[LineChecker] 큐브 태그 복구: {cube.name}");
+                }
+
+                // Collider 확인
+                Collider cubeCollider = cube.GetComponent<Collider>();
+                if (cubeCollider == null)
+                {
+                    if (showDebugLogs)
+                        Debug.LogWarning($"[LineChecker] 큐브에 Collider 없음: {cube.name}");
+                }
+                else if (!cubeCollider.enabled)
+                {
+                    cubeCollider.enabled = true;
+                    if (showDebugLogs)
+                        Debug.LogWarning($"[LineChecker] 큐브 Collider 활성화: {cube.name}");
+                }
             }
 
             // 분리 효과: 약간의 힘 추가
