@@ -65,6 +65,7 @@ public class TetrisBlockSpawner : MonoBehaviour
     {
         ValidateSettings();
         InitializeQueue();
+        SpawnBlock();
         StartSpawning();
     }
 
