@@ -20,6 +20,7 @@ MonoBehaviour:
     - 6258708990ffd9e43bb293a2dbd8ff76
     - 7df707152b803de4bb0ac9023c2e0b9b
     - da1b9f6783733c0429b2defbac566eae
+    - 280ceb9f40525d54fa6268d00dba650e
     values:
     - goDatas_byGlobalId:
         keys:
@@ -321,6 +322,9 @@ MonoBehaviour:
           iconNameOrGuid: 
           isIconRecursive: 0
           isColorRecursive: 0
+    - goDatas_byGlobalId:
+        keys: []
+        values: []
     - goDatas_byGlobalId:
         keys: []
         values: []
