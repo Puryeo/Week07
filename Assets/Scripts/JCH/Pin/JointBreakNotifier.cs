@@ -10,6 +10,11 @@ public class JointBreakNotifier : MonoBehaviour
     #region Serialized Fields
     [TabGroup("Debug")]
     [SerializeField] private bool _isDebugLogging = true;
+
+    [TabGroup("Settings")]
+    [SerializeField, Range(0f, 1f)]
+    [Tooltip("파괴 비율 임계값 (0~1). 이 비율을 초과하면 남은 모든 Joint 파괴")]
+    private float _autoBreakThresholdRatio = 0.8f;
     #endregion
 
     #region Fields
@@ -24,6 +29,7 @@ public class JointBreakNotifier : MonoBehaviour
 
     #region Event
     public event System.Action<int, int> OnJointBreakEvent;
+    public event System.Action OnAllJointsDestroyedEvent;
     #endregion
 
     #region Properties
@@ -122,7 +128,47 @@ public class JointBreakNotifier : MonoBehaviour
 
             _lastValidJointCount = currentValidCount;
             NotifyJointBreak(currentValidCount, _initialJointCount);
+
+            // 파괴 비율 체크
+            CheckAutoBreakThreshold(currentValidCount);
         }
+    }
+
+    /// <summary>파괴 비율 임계값 체크 및 전체 파괴</summary>
+    /// <param name="currentValidCount">현재 유효한 Joint 개수</param>
+    private void CheckAutoBreakThreshold(int currentValidCount)
+    {
+        if (_initialJointCount <= 0) return;
+
+        float destroyedRatio = (float)(_initialJointCount - currentValidCount) / _initialJointCount;
+
+        if (destroyedRatio >= _autoBreakThresholdRatio && currentValidCount > 0)
+        {
+            Log($"파괴 임계값 도달 - 비율: {destroyedRatio:P1} (임계값: {_autoBreakThresholdRatio:P1}), 남은 Joint 전체 파괴 시작", true);
+            DestroyAllRemainingJoints();
+        }
+    }
+
+    /// <summary>남은 모든 Joint 강제 파괴</summary>
+    private void DestroyAllRemainingJoints()
+    {
+        int destroyedCount = 0;
+
+        for (int i = 0; i < _jointList.Count; i++)
+        {
+            if (_jointList[i] != null)
+            {
+                Destroy(_jointList[i]);
+                destroyedCount++;
+            }
+        }
+
+        _lastValidJointCount = 0;
+
+        Log($"전체 Joint 파괴 완료 - 파괴된 개수: {destroyedCount}", true);
+        // 일관성 있게 OnJointBreakEvent 호출
+        NotifyJointBreak(0, _initialJointCount);
+        OnAllJointsDestroyedEvent?.Invoke();
     }
     #endregion
 
