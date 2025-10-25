@@ -15,11 +15,11 @@ public class BombC : MonoBehaviour
     [SerializeField] private string bombTag = "Bomb";
     [Tooltip("낙하 감지할 Draggable 오브젝트의 태그입니다.")]
     [SerializeField] private string draggableTag = "Draggable";
-    
+
     [Header("Events")]
     [Tooltip("충돌 시 발생하는 UnityEvent입니다. Inspector에서 연결할 수 있습니다.")]
     [SerializeField] private UnityEvent<GameObject> onBombCollision;
-    
+
     [Header("Visual Effects")]
     [Tooltip("충돌 지점에 생성할 폭발 이펙트 프리팹입니다.")]
     [SerializeField] private GameObject explosionVFX;
@@ -66,7 +66,7 @@ public class BombC : MonoBehaviour
         if (explosionVFX != null)
         {
             GameObject vfxInstance = Instantiate(explosionVFX, contactPoint, Quaternion.identity);
-            
+
             // ParticleSystem 컴포넌트 찾아서 재생
             ParticleSystem particleSystem = vfxInstance.GetComponent<ParticleSystem>();
             if (particleSystem != null)
@@ -79,7 +79,7 @@ public class BombC : MonoBehaviour
                     var mainModule = particleSystem.main;
                     mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
                 }
-                
+
                 particleSystem.Play();
                 Debug.Log($"[BombCollisionDetector] ParticleSystem 재생: {contactPoint}");
             }
@@ -98,7 +98,7 @@ public class BombC : MonoBehaviour
                             var mainModule = ps.main;
                             mainModule.simulationSpace = ParticleSystemSimulationSpace.World;
                         }
-                        
+
                         ps.Play();
                     }
                     Debug.Log($"[BombCollisionDetector] {particleSystems.Length}개의 ParticleSystem 재생: {contactPoint}");
@@ -108,7 +108,7 @@ public class BombC : MonoBehaviour
                     Debug.LogWarning($"[BombCollisionDetector] VFX 프리팹에 ParticleSystem 컴포넌트가 없습니다!");
                 }
             }
-            
+
             // 자동 소멸
             if (vfxLifetime > 0)
             {
@@ -155,6 +155,40 @@ public class BombC : MonoBehaviour
         Debug.Log($"[BombCollisionDetector] Draggable 카운트 초기화됨.");
     }
 
+    /// <summary>
+    /// 폭탄이 터질 때 호출되는 메서드입니다.
+    /// </summary>
+    public void Explode()
+    {
+        Debug.Log($"[BombC] 폭탄 {gameObject.name} 폭발!");
+
+        // 폭발 VFX 생성
+        if (explosionVFX != null)
+        {
+            GameObject vfxInstance = Instantiate(explosionVFX, transform.position, Quaternion.identity);
+
+            // VFX 자동 소멸 처리
+            if (vfxLifetime > 0)
+            {
+                Destroy(vfxInstance, vfxLifetime);
+            }
+        }
+
+        // 폭발 물리 효과 추가 (예: 주변 오브젝트 밀어내기)
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 5.0f); // 폭발 반경 5.0
+        foreach (var collider in colliders)
+        {
+            Rigidbody rb = collider.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddExplosionForce(1000.0f, transform.position, 5.0f, 1.0f, ForceMode.Impulse);
+            }
+        }
+
+        // 폭탄 오브젝트 제거 -> 따로 처리함
+        //Destroy(gameObject);
+    }
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -197,7 +231,7 @@ public class BombC : MonoBehaviour
         if (col != null)
         {
             Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
-            
+
             // Box Collider
             if (col is BoxCollider boxCol)
             {
