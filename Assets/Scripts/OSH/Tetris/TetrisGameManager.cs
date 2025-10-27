@@ -1,5 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
@@ -30,6 +31,14 @@ public class TetrisGameManager : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
 
+    #endregion
+
+    #region DebugButtons
+    [Button("Forcely Trgger LineBomb Explosion", ButtonSizes.Large)]
+    public void DebugTriggerLineBombExplosion()
+    {
+        TriggerBombExplosions(2.0f);
+    }
     #endregion
 
     #region Private Fields
@@ -116,13 +125,14 @@ public class TetrisGameManager : MonoBehaviour
                 if (bomb != null)
                 {
                     bomb.Explode();
+                    BombManager.Instance.NotifyBombExploded(bomb.gameObject);
 
-                    // 목표 폭탄 개수 감소
-                    ClearManager clearManager = Object.FindAnyObjectByType<ClearManager>();
-                    if (clearManager != null)
-                    {
-                        clearManager.DecreaseGoalBombCount();
-                    }
+                    //// 목표 폭탄 개수 감소
+                    //ClearManager clearManager = Object.FindAnyObjectByType<ClearManager>();
+                    //if (clearManager != null)
+                    //{
+                    //    clearManager.DecreaseGoalBombCount();
+                    //}
                 }
                 else
                 {
