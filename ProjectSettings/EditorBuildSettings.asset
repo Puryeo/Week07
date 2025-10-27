@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Resources/Scenes/Sihyeon/STAGE.unity
     guid: 32d72dfc0a377204c959c773f18d026d
   - enabled: 0
-    path: Assets/Resources/Scenes/Old/STAGE.unity
+    path: Assets/Scenes/Old/STAGE.unity
     guid: 42b55004bc5594441b0d1f027233aadd
   - enabled: 1
     path: Assets/Resources/Scenes/Old/JML/Tutorial.unity

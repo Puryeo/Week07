@@ -1,4 +1,4 @@
-﻿using Unity.Collections;
+using Unity.Collections;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "StageData", menuName = "Create SO/StageData", order = 1)]
@@ -12,6 +12,9 @@ public class StageDataSO : ScriptableObject
     [SerializeField] private bool _isTried = false;
     [SerializeField, HideInInspector] private string _stageImagePath;
     [SerializeField, ReadOnly] private string _scenePath;
+
+    [Header("Stage Goal")]
+    [SerializeField, TextArea(2, 4)] private string _goalText = "스테이지 목표를 입력하세요";
     #endregion
 
     #region 외부 전용 반환 메소드
@@ -46,6 +49,8 @@ public class StageDataSO : ScriptableObject
         get => _stageImagePath;
         set => _stageImagePath = value;
     }
+
+    public string GoalText => _goalText;
 
     #endregion
 
