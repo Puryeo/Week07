@@ -375,6 +375,10 @@ PrefabInstance:
       propertyPath: 'bombObjects.Array.data[2]'
       value: 
       objectReference: {fileID: 3956989075994855265}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: timeScaleRecoveryCurve.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6541014786362501161, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: m_Name
       value: BoomPre
