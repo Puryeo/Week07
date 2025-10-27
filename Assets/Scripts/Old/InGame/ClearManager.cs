@@ -143,7 +143,7 @@ public class ClearManager : MonoBehaviour
 
             // 클리어 조건 체크
             // 1. 목표 개수만큼 폭탄이 터졌음
-            // 2. 남은 폭탄이 0개 (모든 생성된 폭탄이 처리됨)
+            // 2. 남은 폭탄이 0개 (모든
             // 3. 중도 퇴장 버튼을 누르지 않음
             if (explodedCount >= goalCount && remainingCount <= 0 && !_isExitClicked)
             {
@@ -484,5 +484,23 @@ public class ClearManager : MonoBehaviour
         yield return new WaitForSeconds(_waitClimax);
 
         SceneManager.LoadScene("STAGE");
+    }
+
+    /// <summary>
+    /// 목표 폭탄 개수를 감소시키는 메서드입니다.
+    /// </summary>
+    public void DecreaseGoalBombCount()
+    {
+        if (_goalBombCount > 0)
+        {
+            _goalBombCount--;
+            UpdateBombCountUI();
+
+            Debug.Log($"[ClearManager] 목표 폭탄 개수 감소: {_goalBombCount}개 남음");
+        }
+        else
+        {
+            Debug.LogWarning("[ClearManager] 목표 폭탄 개수가 이미 0입니다.");
+        }
     }
 }
