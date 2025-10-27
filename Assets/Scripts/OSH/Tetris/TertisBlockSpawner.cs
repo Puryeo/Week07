@@ -425,12 +425,12 @@ public class TetrisBlockSpawner : MonoBehaviour
                     previewPoints[i].rotation
                 );
 
-                // 프리뷰는 물리 비활성화
+                // 프리뷰는 물리 활성화
                 Rigidbody rb = previewBlock.GetComponent<Rigidbody>();
                 if (rb != null)
                 {
-                    rb.isKinematic = true;
-                    rb.useGravity = false;
+                    rb.isKinematic = false;
+                    rb.useGravity = true;
                 }
 
                 Rigidbody2D rb2d = previewBlock.GetComponent<Rigidbody2D>();

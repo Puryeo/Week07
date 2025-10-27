@@ -361,6 +361,5 @@ MonoBehaviour:
   bookmarks: []
   bookmarkedScenePaths:
   - Assets/Resources/Scenes/Old/Title.unity
-  - Assets/Resources/Scenes/Old/STAGE.unity
   - Assets/Resources/Scenes/Old/JML/JMObservatory.unity
   - Assets/Resources/Scenes/JCH/JCH_Deassembly.unity
