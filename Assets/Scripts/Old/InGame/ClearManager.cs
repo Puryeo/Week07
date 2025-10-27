@@ -52,6 +52,10 @@ public class ClearManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private ClimaxController_Advanced climax;
 
+    [Header("Stage Goal UI")]
+    [Tooltip("스테이지 목표 UI 컴포넌트")]
+    [SerializeField] private StageGoalUI _stageGoalUI;
+
     /// <summary>
     /// 초기화 시 StageConfig를 통해 목표 폭탄 개수를 설정하고,
     /// 필요한 이벤트를 구독합니다.
@@ -81,6 +85,9 @@ public class ClearManager : MonoBehaviour
 
         // Draggable 개수 변경 이벤트 구독
         BombManager.Instance.OnDraggableCountChanged += ClearStarChange;
+
+        // 스테이지 목표 UI 표시
+        ShowStageGoal();
     }
 
     private void OnDisable()
@@ -502,5 +509,24 @@ public class ClearManager : MonoBehaviour
         {
             Debug.LogWarning("[ClearManager] 목표 폭탄 개수가 이미 0입니다.");
         }
+    }
+
+    /// <summary>
+    /// 스테이지 시작 시 목표 텍스트 UI를 표시합니다.
+    /// StageManager의 CurrentStageData에서 목표 텍스트를 가져와 애니메이션으로 표시합니다.
+    /// </summary>
+    private void ShowStageGoal()
+    {
+        Debug.Log("ClaerManager ShowStageGoal");
+
+        // StageGoalUI가 할당되지 않은 경우
+        if (_stageGoalUI == null)
+        {
+            Debug.LogWarning("[ClearManager] StageGoalUI가 할당되지 않았습니다. Inspector에서 할당해주세요.");
+            return;
+        }
+
+        // 목표 UI 애니메이션 시작
+        _stageGoalUI.ShowGoal();
     }
 }
