@@ -131,19 +131,30 @@ public class StageUIManager : MonoBehaviour
             Debug.DrawRay(hit.point, Vector3.up * 0.1f, Color.green, 2.0f); // 히트 포인트에 녹색 마커
             Debug.DrawRay(ray.origin, hit.point - ray.origin, Color.red, 2.0f); // 레이캐스트 레이 라인 (시작점에서 히트 포인트까지)
 
-            // Raycast에 맞은 오브젝트에서 WorldStageObject 컴포넌트 탐색
-            WorldStageObject stageObject = hit.collider.GetComponent<WorldStageObject>();
-            Debug.Log($"[StageUIManager] Raycast 히트: {hit.collider.gameObject.name}, 글로벌 포인트: {hit.point}");
-            if (stageObject != null)
-            {
-                Debug.Log("[StageUIManager] WorldStageObject 컴포넌트 발견 - 스테이지 선택 실행");
-                // 컴포넌트를 찾았다면, 해당 오브젝트의 선택 메서드 호출
-                stageObject.SelectStage();
-            }
-            else
-            {
-                Debug.Log("[StageUIManager] WorldStageObject 컴포넌트 없음 - 무시");
-            }
+            // Raycast에 맞은 오브젝트와 그 자식들에서 WorldStageObject 컴포넌트 재귀적으로 탐색
+            CheckForWorldStageObject(hit.collider.gameObject);
+        }
+    }
+
+    /// <summary>
+    /// 재귀적으로 오브젝트와 그 자식들에서 WorldStageObject 컴포넌트를 검사하고 스테이지 선택 실행
+    /// </summary>
+    /// <param name="obj">검사할 오브젝트</param>
+    private void CheckForWorldStageObject(GameObject obj)
+    {
+        // 현재 오브젝트에 WorldStageObject 컴포넌트가 있는지 검사
+        WorldStageObject stageObject = obj.GetComponent<WorldStageObject>();
+        if (stageObject != null)
+        {
+            Debug.Log($"[StageUIManager] WorldStageObject 컴포넌트 발견 - 스테이지 선택 실행: {obj.name}");
+            stageObject.SelectStage();
+            return; // 하나 찾으면 중지
+        }
+
+        // 자식 오브젝트들을 재귀적으로 검사
+        foreach (Transform child in obj.transform)
+        {
+            CheckForWorldStageObject(child.gameObject);
         }
     }
 
