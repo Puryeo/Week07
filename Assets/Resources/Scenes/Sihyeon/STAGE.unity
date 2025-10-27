@@ -1423,7 +1423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fcdf87484200c542b24bc6d3f8c41ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stageData: {fileID: 11400000, guid: f682dc6a2e9e3c54191b7e7239f0690a, type: 2}
+  _stageData: {fileID: 11400000, guid: 0f754683badd4c946ac3522c204b8ab1, type: 2}
   _stageUI: {fileID: 126356288}
 --- !u!23 &107284523
 MeshRenderer:
