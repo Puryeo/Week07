@@ -381,12 +381,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: vfxLifetime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: explosionForce
-      value: 500
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: upwardModifier
-      value: 1
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: explosionRadius
@@ -431,42 +435,42 @@ PrefabInstance:
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'bombObjects.Array.data[6]'
       value: 
-      objectReference: {fileID: 6649135342445694385}
+      objectReference: {fileID: 3821820591201175318}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'bombObjects.Array.data[7]'
       value: 
-      objectReference: {fileID: 3821820591201175318}
+      objectReference: {fileID: 6483916111999387309}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'bombObjects.Array.data[8]'
       value: 
-      objectReference: {fileID: 6483916111999387309}
+      objectReference: {fileID: 6649135342445694385}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: explosionDelayFrames.Array.size
       value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'explosionDelayFrames.Array.data[0]'
-      value: 200
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'explosionDelayFrames.Array.data[1]'
-      value: 150
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'explosionDelayFrames.Array.data[2]'
-      value: 150
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'explosionDelayFrames.Array.data[3]'
-      value: 150
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'explosionDelayFrames.Array.data[4]'
-      value: 150
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'explosionDelayFrames.Array.data[5]'
-      value: 40
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'explosionDelayFrames.Array.data[6]'
@@ -479,6 +483,14 @@ PrefabInstance:
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'explosionDelayFrames.Array.data[8]'
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: timeScaleRecoveryCurve.m_Curve.Array.data[0].time
+      value: -0.0015258789
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: timeScaleRecoveryCurve.m_Curve.Array.data[0].value
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 6541014786362501161, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: m_Name
