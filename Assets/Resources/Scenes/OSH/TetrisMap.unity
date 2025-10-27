@@ -2671,17 +2671,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   blockPrefabs:
-  - {fileID: 1126090451187679232, guid: b627d7fe5ae12254197cd5f247d1e26d, type: 3}
-  - {fileID: 6624879381614449972, guid: a40edc864b9799b459de88f5a9364f84, type: 3}
-  - {fileID: 7665447551836897990, guid: a7bf138c3cca42d47baa517d09d271ab, type: 3}
-  - {fileID: 4991464033143051549, guid: db56767cddcce9441a3fae0fe37a0c51, type: 3}
-  - {fileID: 851284856783602172, guid: 3a05924a329b983458cc68c4bd14e4cb, type: 3}
-  - {fileID: 2896711271147536227, guid: e8cceeeef7c9e0949aa2dd4d7fd2dcf5, type: 3}
-  - {fileID: 3878202742223218810, guid: 5708a9efecbb3b2489763bbba66025a5, type: 3}
+  - {fileID: 1126090451187679232, guid: a682543d44e624941accb640ae646635, type: 3}
+  - {fileID: 3878202742223218810, guid: eaf94b886c3d5b44cad4ae2fc069554c, type: 3}
+  - {fileID: 2896711271147536227, guid: 923b79b2d4302bf469f64f4c508b928e, type: 3}
+  - {fileID: 6624879381614449972, guid: 1bc5ef31cdbedef409550c1da6b5f01d, type: 3}
+  - {fileID: 7665447551836897990, guid: 859679603ccbff444bf4a99fe1bbb8d8, type: 3}
+  - {fileID: 851284856783602172, guid: 2f4669b7768c2914aa88ed37747a61da, type: 3}
+  - {fileID: 4991464033143051549, guid: 5677eeb7f339a864a9fa4cc2d769cc67, type: 3}
   bombBlockPrefab: {fileID: 4625163625286817132, guid: 3fcdc9de2c514564a8543b7f41e68103, type: 3}
   spawnPoint: {fileID: 2143035220}
+  spawnCheckRadius: 1
   initialSpawnDelay: 2
   bombSpawnPoint: {fileID: 778123635}
+  bombSpawnInterval: 1
   previewPoints:
   - {fileID: 949428763}
   - {fileID: 1258165889}
