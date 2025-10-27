@@ -175,7 +175,7 @@ public class BombC : MonoBehaviour
         }
 
         // 폭발 물리 효과 추가 (예: 주변 오브젝트 밀어내기)
-        Collider[] colliders = Physics.OverlapSphere(transform.position, 5.0f); // 폭발 반경 5.0
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 20.0f); // 폭발 반경 20.0
         foreach (var collider in colliders)
         {
             Rigidbody rb = collider.GetComponent<Rigidbody>();

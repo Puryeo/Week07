@@ -17,5 +17,6 @@ MonoBehaviour:
   _sceneName: Reverse London
   _clearStar: 0
   _isTried: 0
-  _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/London.png
+  _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week07/StageImages/Reverse
+    London.png
   _scenePath: Assets/Resources/Scenes/LBC/Reverse/Reverse London.unity

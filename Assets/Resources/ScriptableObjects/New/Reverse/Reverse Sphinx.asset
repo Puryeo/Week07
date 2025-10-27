@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc10894df3b3c742a44a1a61aacb4bd, type: 3}
   m_Name: Reverse Sphinx
   m_EditorClassIdentifier: 
-  _stageImage: {fileID: 21300000, guid: 5a3511de0cda2bd4191e0a68f293e6e0, type: 3}
+  _stageImage: {fileID: 21300000, guid: c902319c139d1ab49a9cf439ee1198bf, type: 3}
   _stageName: "\uB9AC\uBC84\uC2A4 : \uC2A4\uD551\uD06C\uC2A4"
-  _sceneName: Sphinx
+  _sceneName: Reverse Sphinx
   _clearStar: 0
   _isTried: 0
-  _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/Sphinx.png
-  _scenePath: Assets/Scenes/Sphinx.unity
+  _stageImagePath: 
+  _scenePath: Assets/Resources/Scenes/LBC/Reverse/Reverse Sphinx.unity

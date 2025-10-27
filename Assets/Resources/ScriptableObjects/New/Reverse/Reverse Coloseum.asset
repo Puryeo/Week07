@@ -17,5 +17,6 @@ MonoBehaviour:
   _sceneName: Reverse Coloseum
   _clearStar: 0
   _isTried: 0
-  _stageImagePath: 
+  _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week07/StageImages/Reverse
+    Coloseum.png
   _scenePath: Assets/Resources/Scenes/LBC/Reverse/Reverse Coloseum.unity

@@ -38,6 +38,10 @@ public class WorldStageObject : MonoBehaviour
             return;
         }
 
+        // 현재 씬 이름을 StageManager에 저장 (클리어 후 돌아올 씬)
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        StageManager.Instance.SetPreviousScene(currentSceneName);
+
         // StageManager에 현재 스테이지 정보 등록
         StageManager.Instance.SetStageData(_stageData, null);
 
