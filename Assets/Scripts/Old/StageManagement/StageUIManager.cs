@@ -1,3 +1,4 @@
+// StageUIManager.cs (Step 3 리팩터링 완료 + 주석 코드 복원)
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,8 +8,13 @@ using UnityEngine.UI;
 public class StageUIManager : MonoBehaviour
 {
     #region Serialized Fields
-    [SerializeField] private GameObject _stagePrefab;
-    [SerializeField] private GameObject _stageTarget;
+    // --- [사용되지 않음] 기존 2D UI 필드 ---
+    [Header("!! [사용되지 않음] !!")]
+    [SerializeField] private GameObject _stagePrefab; // (더 이상 사용되지 않음)
+    [SerializeField] private GameObject _stageTarget; // (더 이상 사용되지 않음)
+    // ------------------------------------
+
+    [Header("스테이지 데이터")]
     [SerializeField] private StageGroupSO _stageGroupSO;
     [SerializeField] private Button _exitBtn;
 
@@ -28,34 +34,39 @@ public class StageUIManager : MonoBehaviour
 
     #region Private Fields
     private List<StageDataSO> stageDataSOs = new();
-    private List<Button> stageBtns = new();
-    private bool isAllCleared = false;  // 히든 스테이지 해금용도
-    private GameObject hiddenStage;
-    private Button hiddenStageButton;
 
-    // 가림막 관련
-    private Material lockMaterial;
-    private Renderer lockRenderer;
-    private bool lockDeactivated = false;
+    // --- 3D 상호작용용 ---
+    private Camera _mainCamera; // Raycast를 위한 카메라
 
-    // HiddenObj_2 모니터링 관련
-    private Vector3 lastHiddenObj2Position;
-    private bool isMonitoringHiddenObj2 = false;
-    private Coroutine unlockDelayCoroutine;
-
-    // 디버그 관련
-    private Coroutine fillStarsCoroutine;
+    // --- (추후 히든 스테이지/디버그 기능 복구 시 필요한 필드들) ---
+    // private List<Button> stageBtns = new();
+    // private bool isAllCleared = false;  // 히든 스테이지 해금용도
+    // private GameObject hiddenStage;
+    // private Button hiddenStageButton;
+    // 
+    // // 가림막 관련
+    // private Material lockMaterial;
+    // private Renderer lockRenderer;
+    // private bool lockDeactivated = false;
+    // 
+    // // HiddenObj_2 모니터링 관련
+    // private Vector3 lastHiddenObj2Position;
+    // private bool isMonitoringHiddenObj2 = false;
+    // private Coroutine unlockDelayCoroutine;
+    // 
+    // // 디버그 관련
+    // private Coroutine fillStarsCoroutine;
     #endregion
 
     #region Initialize Methods
 
-    // StageGroupSO 호출 및 UI 세팅
+    // StageGroupSO 호출
     void OnEnable()
     {
         stageDataSOs = _stageGroupSO.stages;
         StageSaveManager.Load(stageDataSOs);
 
-        SetStageUI();
+        // SetStageUI(); // ★ 삭제: UI는 씬에 수동 배치됨
 
         _exitBtn.onClick.AddListener(ExitGame);
     }
@@ -64,150 +75,77 @@ public class StageUIManager : MonoBehaviour
     {
         _exitBtn.onClick.RemoveAllListeners();
 
-        // 코루틴 정리 // 해금 로직 비활성화
-        // if (unlockDelayCoroutine != null)
-        // {
-        //     StopCoroutine(unlockDelayCoroutine);
-        //     unlockDelayCoroutine = null;
-        // }
+        // (추후 기능 복구 시 코루틴 정리 필요)
+        // if (unlockDelayCoroutine != null) ...
+        // if (fillStarsCoroutine != null) ...
+    }
 
-        // if (fillStarsCoroutine != null)
-        // {
-        //     StopCoroutine(fillStarsCoroutine);
-        //     fillStarsCoroutine = null;
-        // }
+    private void Start()
+    {
+        // 3D 클릭(Raycast)을 위해 메인 카메라 할당
+        _mainCamera = Camera.main;
+        if (_mainCamera == null)
+        {
+            Debug.LogError("[StageUIManager] 씬에 'MainCamera' 태그가 달린 카메라가 없습니다!");
+        }
     }
 
     private void Update()
     {
-#if UNITY_EDITOR
-        // HandleDebugInput(); // 해금 로직 비활성화
-#endif
+        // 매 프레임 마우스 클릭 감지
+        if (Input.GetMouseButtonDown(0))
+        {
+            HandleClick();
+        }
 
-        // HiddenObj_2 위치 모니터링 // 해금 로직 비활성화
-        // if (isMonitoringHiddenObj2 && _hiddenObj2 != null)
-        // {
-        //     MonitorHiddenObj2Position();
-        // }
+        // (추후 기능 복구 시 Update 로직 필요)
+        // #if UNITY_EDITOR
+        //     HandleDebugInput();
+        // #endif
+        // if (isMonitoringHiddenObj2 && _hiddenObj2 != null) ...
     }
     #endregion
 
-    private Vector2[] stageOffsets = new Vector2[]
-    {
-        new Vector2(-0.1f, 0.1f),
-        new Vector2(0.1f, -0.1f),
-        new Vector2(-0.1f, -0.1f),
-        new Vector2(0.1f, 0.1f),
-        new Vector2(0.0f, 0.1f),
-        new Vector2(0.0f, -0.1f),
-        new Vector2(-0.1f, 0.0f),
-        new Vector2(0.1f, 0.0f),
-    };
-
-    private float[] stageRotations = new float[]
-    {
-        -5f,
-        5f,
-        10f,
-        -10f,
-        0f,
-        7f,
-        -3f,
-        1f,
-    };
-
     #region Private Methods
-    void SetStageUI()
+
+    /// <summary>
+    /// ★ [신규] 3D 오브젝트 클릭을 감지하는 Raycast 메서드
+    /// </summary>
+    private void HandleClick()
     {
-        // AllStagesCleared(); // 해금 로직 비활성화
-        int i = 0;
-        // 스테이지 프리팹 Instantiage 및 초기화
-        foreach (var stage in stageDataSOs)
+        if (_mainCamera == null) return;
+
+        Ray ray = _mainCamera.ScreenPointToRay(CursorManager.Instance.CursorPosition);
+
+        // 2D UI (예: Exit 버튼)를 클릭했다면 3D Raycast 무시
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
-            GameObject obj = Instantiate(_stagePrefab, _stageTarget.transform);
+            Debug.Log("[StageUIManager] 2D UI 클릭 감지 - 3D Raycast 무시");
+            return;
+        }
 
-            Stage objStage = obj.GetComponent<Stage>();
-            objStage.Init(stage);
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
+            // 레이캐스트 히트 결과 디버깅용 그리기
+            Debug.DrawRay(hit.point, hit.normal * 0.5f, Color.blue, 2.0f); // 히트 포인트에서 노멀 방향으로 파란색 레이
+            Debug.DrawRay(hit.point, Vector3.up * 0.1f, Color.green, 2.0f); // 히트 포인트에 녹색 마커
+            Debug.DrawRay(ray.origin, hit.point - ray.origin, Color.red, 2.0f); // 레이캐스트 레이 라인 (시작점에서 히트 포인트까지)
 
-            if (i < stageRotations.Length)
+            // Raycast에 맞은 오브젝트에서 WorldStageObject 컴포넌트 탐색
+            WorldStageObject stageObject = hit.collider.GetComponent<WorldStageObject>();
+            Debug.Log($"[StageUIManager] Raycast 히트: {hit.collider.gameObject.name}, 글로벌 포인트: {hit.point}");
+            if (stageObject != null)
             {
-                objStage.RePosition(stageOffsets[i], stageRotations[i]);
+                Debug.Log("[StageUIManager] WorldStageObject 컴포넌트 발견 - 스테이지 선택 실행");
+                // 컴포넌트를 찾았다면, 해당 오브젝트의 선택 메서드 호출
+                stageObject.SelectStage();
             }
-
-
-            i++;
-            // 버튼 씬 전환 이벤트 등록
-            Button objBtn = obj.GetComponentInChildren<Button>();
-            stageBtns.Add(objBtn);
-
-            objBtn.onClick.AddListener(() => SetStageBtnEvent(stage.SceneName, stage));
-
-            // 히든 스테이지 처리 // 해금 로직 비활성화
-            // if (stage.SceneName == _hiddenStageName)
-            // {
-            //     hiddenStage = obj;
-            //     hiddenStageButton = objBtn;
-
-            //     // 항상 비활성화 상태로 시작
-            //     objBtn.interactable = false;
-
-            //     // 이미 해금 완료 상태여도 HiddenObj_2 위치 변화 + 5초 대기 필요
-            //     // (즉시 활성화 로직 제거)
-            // }
+            else
+            {
+                Debug.Log("[StageUIManager] WorldStageObject 컴포넌트 없음 - 무시");
+            }
         }
     }
-
-    // 버튼에 이벤트 할당(씬 전환)
-    void SetStageBtnEvent(string sceneName, StageDataSO stage)
-    {
-        StageManager.Instance.SetStageData(stage, stageDataSOs);
-        SceneManager.LoadScene(sceneName);
-        ClearStageBtnEvent();
-    }
-
-    // 버튼에 할당한 이벤트 해제
-    void ClearStageBtnEvent()
-    {
-        foreach (var stageBtn in stageBtns)
-        {
-            stageBtn.onClick.RemoveAllListeners();
-        }
-    }
-
-    // 히든 스테이지 해제 조건 및 투명도 업데이트 // 해금 로직 비활성화
-    // void AllStagesCleared()
-    // {
-    //     int starCount = 0;
-    //     int normalStageCount = 0;
-    //     bool allStagesFullyCleared = true;  // 모든 스테이지 3별 여부
-
-    //     // 모든 스테이지를 순회하여 누적 별 개수 계산
-    //     foreach (var stage in stageDataSOs)
-    //     {
-    //         // 히든 스테이지 제외
-    //         if (stage.SceneName == _hiddenStageName)
-    //             continue;
-
-    //         normalStageCount++;
-    //         starCount += stage.ClearStar;
-
-    //         // 3별 미달 스테이지가 있는지 체크 (즉시 return 안 함)
-    //         if (stage.ClearStar < 3)
-    //         {
-    //             allStagesFullyCleared = false;
-    //         }
-    //     }
-
-    //     int maxStar = normalStageCount * 3;
-
-    //     // 모든 스테이지 3별 여부 판단
-    //     isAllCleared = allStagesFullyCleared && (starCount >= maxStar);
-
-    //     // 항상 가림막 업데이트 (누적 비율 기반)
-    //     UpdateHiddenStageLock(starCount, maxStar);
-
-    //     Debug.Log($"[AllStagesCleared] 총 별: {starCount}/{maxStar}, 전체 해금: {isAllCleared}");
-    // }
 
     private void ExitGame()
     {
@@ -219,6 +157,8 @@ public class StageUIManager : MonoBehaviour
     }
     #endregion
 
+
+    #region 추후 추가될 기능 (히든 스테이지, 디버그)
     /* // 해금 로직 비활성화
     #region Hidden Stage Lock Management
     /// <summary>
@@ -575,7 +515,7 @@ public class StageUIManager : MonoBehaviour
                 DebugPartialRefreshUI(stageIndex, stage);
 
                 // 가림막 투명도 실시간 업데이트
-                AllStagesCleared();
+                // AllStagesCleared(); // (이 함수는 새 구조에서 다시 작성 필요)
 
                 // 딜레이
                 yield return new WaitForSeconds(starFillDelay);
@@ -593,25 +533,16 @@ public class StageUIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 특정 스테이지 UI만 부분 갱신
+    /// 특정 스테이지 UI만 부분 갱신 (★ 새 구조에서는 작동 안 함)
     /// </summary>
     private void DebugPartialRefreshUI(int stageIndex, StageDataSO stage)
     {
-        // stageIndex가 유효한지 확인
-        if (stageIndex < 0 || stageIndex >= stageBtns.Count)
-            return;
-
-        // 해당 버튼의 Stage 컴포넌트 찾기
-        GameObject stageObj = stageBtns[stageIndex].transform.parent?.gameObject;
-        if (stageObj == null)
-            return;
-
-        Stage stageComponent = stageObj.GetComponent<Stage>();
-        if (stageComponent != null)
-        {
-            // Stage의 Init 메서드로 UI 갱신
-            stageComponent.Init(stage);
-        }
+        // (이 로직은 stageBtns 리스트에 의존하므로 새 구조에서는 다시 작성해야 함)
+        // if (stageIndex < 0 || stageIndex >= stageBtns.Count)
+        //     return;
+        // 
+        // GameObject stageObj = stageBtns[stageIndex].transform.parent?.gameObject;
+        // ...
     }
 
     /// <summary>
@@ -641,55 +572,23 @@ public class StageUIManager : MonoBehaviour
             StageSaveManager.UpdateStageData(stage, 0, "");
         }
 
-        // UI 갱신
+        // UI 갱신 (★ 새 구조에서는 작동 안 함)
         DebugRefreshStageUI();
 
         Debug.Log("[Debug] 모든 스테이지 초기화 완료.");
     }
 
     /// <summary>
-    /// 디버깅용: 스테이지 UI 갱신
-    /// 기존 UI를 제거하고 새로 생성합니다.
+    /// 디버깅용: 스테이지 UI 갱신 (★ 새 구조에서는 작동 안 함)
     /// </summary>
     private void DebugRefreshStageUI()
     {
-        // 버튼 이벤트 제거
-        foreach (var btn in stageBtns)
-        {
-            if (btn != null)
-            {
-                btn.onClick.RemoveAllListeners();
-            }
-        }
-        stageBtns.Clear();
-
-        // 생성된 스테이지 UI 오브젝트 제거
-        if (_stageTarget != null)
-        {
-            foreach (Transform child in _stageTarget.transform)
-            {
-                Destroy(child.gameObject);
-            }
-        }
-
-        // 히든 스테이지 관련 참조 초기화
-        hiddenStage = null;
-        hiddenStageButton = null;
-
-        // 가림막 재활성화 (F3 초기화 시)
-        ReactivateLock();
-
-        // HiddenObj_2 모니터링 초기화
-        isMonitoringHiddenObj2 = false;
-        if (unlockDelayCoroutine != null)
-        {
-            StopCoroutine(unlockDelayCoroutine);
-            unlockDelayCoroutine = null;
-        }
-
-        // UI 재생성
-        SetStageUI();
+        // (이 로직은 _stageTarget에 UI를 재생성하는 로직이라 새 구조에서는 작동 안 함)
+        // foreach (var btn in stageBtns) ...
+        // foreach (Transform child in _stageTarget.transform) ...
+        // SetStageUI();
     }
     #endregion
     */ // 해금 로직 비활성화
+    #endregion
 }
