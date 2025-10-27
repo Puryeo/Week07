@@ -284,6 +284,11 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &83800310 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5323446902310525462, guid: 8fc4661ea3e2ed24f8a03478f25f3863, type: 3}
+  m_PrefabInstance: {fileID: 7472887704383204277}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &127535782
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -387,23 +392,47 @@ PrefabInstance:
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: jengaBlocksContainer
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1952141152}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: bombObjects.Array.size
-      value: 3
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'bombObjects.Array.data[0]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1181760284}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'bombObjects.Array.data[1]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 83800310}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: 'bombObjects.Array.data[2]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 341292715}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'bombObjects.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1454978675}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'bombObjects.Array.data[4]'
+      value: 
+      objectReference: {fileID: 1144856279}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'bombObjects.Array.data[5]'
+      value: 
+      objectReference: {fileID: 2025313065}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'bombObjects.Array.data[6]'
+      value: 
+      objectReference: {fileID: 193190793}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'bombObjects.Array.data[7]'
+      value: 
+      objectReference: {fileID: 435129469}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'bombObjects.Array.data[8]'
+      value: 
+      objectReference: {fileID: 2038285241}
     - target: {fileID: 6541014786362501161, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: m_Name
       value: BoomPre
@@ -589,6 +618,16 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &193190793 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4319935674714007044, guid: 8fc4661ea3e2ed24f8a03478f25f3863, type: 3}
+  m_PrefabInstance: {fileID: 7472887704383204277}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &341292715 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9187071311971947698, guid: 8fc4661ea3e2ed24f8a03478f25f3863, type: 3}
+  m_PrefabInstance: {fileID: 7472887704383204277}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -710,6 +749,11 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
+--- !u!1 &435129469 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5961871256494337187, guid: 8fc4661ea3e2ed24f8a03478f25f3863, type: 3}
+  m_PrefabInstance: {fileID: 7472887704383204277}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &595348327
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -776,7 +820,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2236946963330721911, guid: d3671a3f7aa7830488dbc0112272fb61, type: 3}
       propertyPath: Lens.ModeOverride
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2236946963330721911, guid: d3671a3f7aa7830488dbc0112272fb61, type: 3}
       propertyPath: Lens.NearClipPlane
@@ -971,6 +1015,16 @@ MonoBehaviour:
   goalBombMode: 0
   manualGoalBombCount: 5
   enableDebugLog: 1
+--- !u!1 &1144856279 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5947543867449938705, guid: 8fc4661ea3e2ed24f8a03478f25f3863, type: 3}
+  m_PrefabInstance: {fileID: 7472887704383204277}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1181760284 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7853401780296601310, guid: 8fc4661ea3e2ed24f8a03478f25f3863, type: 3}
+  m_PrefabInstance: {fileID: 7472887704383204277}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1279849347
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1103,6 +1157,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: InGameCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7295409225842125869, guid: 9a32c43089e80484486b07e652f5671e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8202580527004135970, guid: 9a32c43089e80484486b07e652f5671e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1223,6 +1281,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1454978675 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8038899848829550267, guid: 8fc4661ea3e2ed24f8a03478f25f3863, type: 3}
+  m_PrefabInstance: {fileID: 7472887704383204277}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1472066012
 Mesh:
   m_ObjectHideFlags: 0
@@ -1808,7 +1871,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6068312953294404978, guid: 416be317fdb9d2042b0bbde9d8df6902, type: 3}
       propertyPath: orthographic
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6068312953294404978, guid: 416be317fdb9d2042b0bbde9d8df6902, type: 3}
       propertyPath: near clip plane
@@ -1827,6 +1890,21 @@ PrefabInstance:
 Camera:
   m_CorrespondingSourceObject: {fileID: 6068312953294404978, guid: 416be317fdb9d2042b0bbde9d8df6902, type: 3}
   m_PrefabInstance: {fileID: 1938030076}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1952141152 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 226520590991702037, guid: 8fc4661ea3e2ed24f8a03478f25f3863, type: 3}
+  m_PrefabInstance: {fileID: 7472887704383204277}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2025313065 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6972283832401930925, guid: 8fc4661ea3e2ed24f8a03478f25f3863, type: 3}
+  m_PrefabInstance: {fileID: 7472887704383204277}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2038285241 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4489658506772933912, guid: 8fc4661ea3e2ed24f8a03478f25f3863, type: 3}
+  m_PrefabInstance: {fileID: 7472887704383204277}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3782139697822117864
 PrefabInstance:

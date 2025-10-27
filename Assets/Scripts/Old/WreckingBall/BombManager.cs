@@ -1,6 +1,7 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// 씬에 존재하는 폭탄 및 Draggable 오브젝트의 개수를 관리하는 싱글톤 매니저입니다.
@@ -51,8 +52,11 @@ public class BombManager : MonoBehaviour
     private HashSet<GameObject> registeredGoalBombs = new HashSet<GameObject>();
 
     // 폭탄 생성 추적
+    [ShowInInspector,ReadOnly]
     private int totalSpawnedBombs = 0; // 게임 시작 후 생성된 총 폭탄 수
+    [ShowInInspector, ReadOnly]
     private int totalExplodedBombs = 0; // 게임 시작 후 폭발한 총 폭탄 수
+    [ShowInInspector, ReadOnly]
     private int currentActiveBombs = 0; // 현재 활성화된 폭탄 수
 
     // 이벤트

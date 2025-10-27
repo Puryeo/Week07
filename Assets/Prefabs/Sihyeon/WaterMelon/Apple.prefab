@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_LocalScale: {x: 4.5, y: 4.5, z: 4.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -133,6 +133,7 @@ MonoBehaviour:
   nextFruitType: 2
   canMerge: 1
   mergeFXPrefab: {fileID: 0}
+  mergeImmunityDuration: 0.5
   showDebugLogs: 0
 --- !u!114 &3250346517340932803
 MonoBehaviour:
