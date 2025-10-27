@@ -52,6 +52,10 @@ public class ClearManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private ClimaxController_Advanced climax;
 
+    [Header("Stage Goal UI")]
+    [Tooltip("스테이지 목표 UI 컴포넌트")]
+    [SerializeField] private StageGoalUI _stageGoalUI;
+
     /// <summary>
     /// 초기화 시 StageConfig를 통해 목표 폭탄 개수를 설정하고,
     /// 필요한 이벤트를 구독합니다.
@@ -81,6 +85,9 @@ public class ClearManager : MonoBehaviour
 
         // Draggable 개수 변경 이벤트 구독
         BombManager.Instance.OnDraggableCountChanged += ClearStarChange;
+
+        // 스테이지 목표 UI 표시
+        ShowStageGoal();
     }
 
     private void OnDisable()
@@ -143,7 +150,7 @@ public class ClearManager : MonoBehaviour
 
             // 클리어 조건 체크
             // 1. 목표 개수만큼 폭탄이 터졌음
-            // 2. 남은 폭탄이 0개 (모든 생성된 폭탄이 처리됨)
+            // 2. 남은 폭탄이 0개 (모든
             // 3. 중도 퇴장 버튼을 누르지 않음
             if (explodedCount >= goalCount && remainingCount <= 0 && !_isExitClicked)
             {
@@ -453,14 +460,18 @@ public class ClearManager : MonoBehaviour
 
     /// <summary>
     /// 다음 스테이지로 이동하는 버튼입니다.
+    /// StageManager에 저장된 이전 씬으로 돌아갑니다.
     /// </summary>
     private void NextBtn()
     {
-        SceneManager.LoadScene("STAGE");
+        string previousScene = StageManager.Instance.PreviousSceneName;
+        Debug.Log($"[ClearManager] 이전 씬으로 이동: {previousScene}");
+        SceneManager.LoadScene(previousScene);
     }
 
     /// <summary>
     /// 중도 포기 시 클라이맥스 폭발 대기 후 스냅샷을 찍고 스테이지 선택 화면으로 이동합니다.
+    /// StageManager에 저장된 이전 씬으로 돌아갑니다.
     /// </summary>
     IEnumerator WaitForClimax()
     {
@@ -483,6 +494,45 @@ public class ClearManager : MonoBehaviour
         _nextStageBtn.gameObject.SetActive(false);
         yield return new WaitForSeconds(_waitClimax);
 
-        SceneManager.LoadScene("STAGE");
+        string previousScene = StageManager.Instance.PreviousSceneName;
+        Debug.Log($"[ClearManager] 이전 씬으로 이동: {previousScene}");
+        SceneManager.LoadScene(previousScene);
+    }
+
+    /// <summary>
+    /// 목표 폭탄 개수를 감소시키는 메서드입니다.
+    /// </summary>
+    public void DecreaseGoalBombCount()
+    {
+        if (_goalBombCount > 0)
+        {
+            _goalBombCount--;
+            UpdateBombCountUI();
+
+            Debug.Log($"[ClearManager] 목표 폭탄 개수 감소: {_goalBombCount}개 남음");
+        }
+        else
+        {
+            Debug.LogWarning("[ClearManager] 목표 폭탄 개수가 이미 0입니다.");
+        }
+    }
+
+    /// <summary>
+    /// 스테이지 시작 시 목표 텍스트 UI를 표시합니다.
+    /// StageManager의 CurrentStageData에서 목표 텍스트를 가져와 애니메이션으로 표시합니다.
+    /// </summary>
+    private void ShowStageGoal()
+    {
+        Debug.Log("ClaerManager ShowStageGoal");
+
+        // StageGoalUI가 할당되지 않은 경우
+        if (_stageGoalUI == null)
+        {
+            Debug.LogWarning("[ClearManager] StageGoalUI가 할당되지 않았습니다. Inspector에서 할당해주세요.");
+            return;
+        }
+
+        // 목표 UI 애니메이션 시작
+        _stageGoalUI.ShowGoal();
     }
 }

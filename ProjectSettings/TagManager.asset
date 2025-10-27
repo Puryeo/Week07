@@ -11,6 +11,10 @@ TagManager:
   - Coin
   - GhostHome
   - Ghost
+  - CannonBall
+  - Breakable
+  - Cube
+  - Pin
   layers:
   - Default
   - TransparentFX
@@ -42,7 +46,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Pin
   - 
   m_SortingLayers:
   - name: Default

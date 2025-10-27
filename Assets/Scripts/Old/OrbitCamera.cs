@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// 마우스와 키보드(WASD/QE) 입력을 사용해 타겟 주위를 공전하고 줌하는 카메라 스크립트입니다.
@@ -43,6 +43,13 @@ public class OrbitCamera : MonoBehaviour
 
     // 타겟 오프셋 (패닝으로 이동한 위치)
     private Vector3 targetOffset = Vector3.zero;
+
+    /// <summary>타겟으로부터의 현재 거리</summary>
+    public float Distance => distance;
+    /// <summary>최소 거리</summary>
+    public float DistanceMin => distanceMin;
+    /// <summary>최대 거리</summary>
+    public float DistanceMax => distanceMax;
 
     void Start()
     {

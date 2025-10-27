@@ -1,4 +1,4 @@
-﻿using Unity.Collections;
+using Unity.Collections;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "StageData", menuName = "Create SO/StageData", order = 1)]

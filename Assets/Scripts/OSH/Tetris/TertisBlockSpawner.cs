@@ -1,19 +1,15 @@
+﻿using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// 테트리스 7-Bag 시스템을 사용한 블록 스포너
-/// 일반 모드와 폭탄 모드 지원
+/// - 트리거 기반 생성: SpawnChecker가 SpawnBlockManually() 호출
+/// - 일반 모드와 폭탄 모드 지원
 /// </summary>
 public class TetrisBlockSpawner : MonoBehaviour
 {
-    #region Enums
-
-    // SpawnMode 제거 - 항상 일반 모드로만 동작
-
-    #endregion
-
     #region Serialized Fields
 
     [Header("Block Prefabs")]
@@ -27,16 +23,25 @@ public class TetrisBlockSpawner : MonoBehaviour
     [Tooltip("실제 블록이 소환될 위치")]
     [SerializeField] private Transform spawnPoint;
 
-    [Tooltip("블록 소환 간격 (초)")]
-    [SerializeField] private float spawnInterval = 1.0f;
+    [Tooltip("스폰 구역 검사 반지름")]
+    [SerializeField] private float spawnCheckRadius = 1f;
+
+    [Tooltip("첫 블록 소환 대기 시간 (초)")]
+    [SerializeField] private float initialSpawnDelay = 0.5f;
 
     [Header("Bomb Mode Settings")]
     [Tooltip("폭탄 블록 스폰 위치")]
     [SerializeField] private Transform bombSpawnPoint;
 
+    [Tooltip("폭탄 블록 소환 간격 (초)")]
+    [SerializeField] private float bombSpawnInterval = 1f;
+
     [Header("Preview Settings")]
     [Tooltip("미리보기 블록이 표시될 4개의 위치")]
     [SerializeField] private Transform[] previewPoints = new Transform[4];
+
+    [Header("Debug")]
+    [SerializeField] private bool showDebugLogs = true;
 
     #endregion
 
@@ -50,9 +55,12 @@ public class TetrisBlockSpawner : MonoBehaviour
     private Queue<GameObject> blockQueue = new Queue<GameObject>();
     private GameObject[] previewBlocks = new GameObject[4];
 
-    // 타이머
-    private float spawnTimer = 0f;
-    private bool isSpawning = false;
+    // 폭탄 큐 시스템
+    private Queue<GameObject> bombQueue = new Queue<GameObject>();
+    private bool isBombSpawning = false;
+
+    // 스폰 제어
+    private bool canSpawn = true; // 일반 블록 스폰 가능 여부
 
     // 생성된 폭탄 블록 리스트
     private List<GameObject> spawnedBombBlocks = new List<GameObject>();
@@ -65,20 +73,14 @@ public class TetrisBlockSpawner : MonoBehaviour
     {
         ValidateSettings();
         InitializeQueue();
-        SpawnBlock();
-        StartSpawning();
-    }
 
-    private void Update()
-    {
-        if (!isSpawning) return;
-
-        spawnTimer += Time.deltaTime;
-        if (spawnTimer >= spawnInterval)
+        // 첫 블록 자동 소환
+        if (showDebugLogs)
         {
-            spawnTimer = 0f;
-            SpawnBlock();
+            Debug.Log("[BlockSpawner] 초기화 완료, 첫 블록 생성 예약");
         }
+
+        Invoke(nameof(SpawnFirstBlock), initialSpawnDelay);
     }
 
     #endregion
@@ -89,6 +91,7 @@ public class TetrisBlockSpawner : MonoBehaviour
     {
         if (blockPrefabs == null || blockPrefabs.Length != 7)
         {
+            Debug.LogError("[BlockSpawner] 블록 프리팹이 7개가 아닙니다!");
             enabled = false;
             return;
         }
@@ -97,6 +100,7 @@ public class TetrisBlockSpawner : MonoBehaviour
         {
             if (blockPrefabs[i] == null)
             {
+                Debug.LogError($"[BlockSpawner] 블록 프리팹 {i}번이 없습니다!");
                 enabled = false;
                 return;
             }
@@ -104,12 +108,14 @@ public class TetrisBlockSpawner : MonoBehaviour
 
         if (spawnPoint == null)
         {
+            Debug.LogError("[BlockSpawner] Spawn Point가 없습니다!");
             enabled = false;
             return;
         }
 
         if (previewPoints == null || previewPoints.Length != 4)
         {
+            Debug.LogError("[BlockSpawner] Preview Points가 4개가 아닙니다!");
             enabled = false;
             return;
         }
@@ -118,6 +124,7 @@ public class TetrisBlockSpawner : MonoBehaviour
         {
             if (previewPoints[i] == null)
             {
+                Debug.LogError($"[BlockSpawner] Preview Point {i}번이 없습니다!");
                 enabled = false;
                 return;
             }
@@ -155,6 +162,11 @@ public class TetrisBlockSpawner : MonoBehaviour
         {
             CreateNewBag();
             ShuffleBag();
+
+            if (showDebugLogs)
+            {
+                Debug.Log("[BlockSpawner] 새로운 Bag 생성 및 셔플 완료");
+            }
         }
 
         int blockIndex = currentBag[bagIndex];
@@ -172,6 +184,7 @@ public class TetrisBlockSpawner : MonoBehaviour
         CreateNewBag();
         ShuffleBag();
 
+        // 큐에 5개의 블록 미리 채우기
         for (int i = 0; i < 5; i++)
         {
             int blockIndex = GetNextBlockFromBag();
@@ -180,6 +193,11 @@ public class TetrisBlockSpawner : MonoBehaviour
         }
 
         UpdatePreviewDisplay();
+
+        if (showDebugLogs)
+        {
+            Debug.Log($"[BlockSpawner] 큐 초기화 완료: {blockQueue.Count}개 블록 대기 중");
+        }
     }
 
     private void AddNewBlockToQueue()
@@ -191,6 +209,15 @@ public class TetrisBlockSpawner : MonoBehaviour
 
     #endregion
 
+    #region Debug Buttons
+
+    [Button("Spawn Bomb Queing", ButtonSizes.Large)]
+    private void DebugQueueBombBlock()
+    {
+        QueueBombBlock();
+    }
+    #endregion
+
     #region Bomb Block Spawning
 
     /// <summary>
@@ -200,11 +227,13 @@ public class TetrisBlockSpawner : MonoBehaviour
     {
         if (bombBlockPrefab == null)
         {
+            Debug.LogWarning("[BlockSpawner] 폭탄 블록 프리팹이 없습니다!");
             return;
         }
 
         if (bombSpawnPoint == null)
         {
+            Debug.LogWarning("[BlockSpawner] 폭탄 스폰 포인트가 없습니다!");
             return;
         }
 
@@ -215,36 +244,174 @@ public class TetrisBlockSpawner : MonoBehaviour
         );
 
         spawnedBombBlocks.Add(bombBlock);
+
+        if (showDebugLogs)
+        {
+            Debug.Log($"[BlockSpawner] 💣 폭탄 블록 생성! (총 {spawnedBombBlocks.Count}개)");
+        }
+    }
+
+    /// <summary>
+    /// 폭탄 블록을 큐에 추가
+    /// </summary>
+    public void QueueBombBlock()
+    {
+        if (bombBlockPrefab == null || bombSpawnPoint == null)
+        {
+            Debug.LogWarning("[BlockSpawner] 폭탄 블록 프리팹 또는 스폰 포인트가 설정되지 않았습니다!");
+            return;
+        }
+
+        bombQueue.Enqueue(bombBlockPrefab);
+
+        if (!isBombSpawning)
+        {
+            StartCoroutine(SpawnBombBlocksSequentially());
+        }
+    }
+
+    private IEnumerator SpawnBombBlocksSequentially()
+    {
+        isBombSpawning = true;
+
+        while (bombQueue.Count > 0)
+        {
+            GameObject bombBlock = Instantiate(
+                bombQueue.Dequeue(),
+                bombSpawnPoint.position,
+                bombSpawnPoint.rotation
+            );
+
+            spawnedBombBlocks.Add(bombBlock);
+
+            if (showDebugLogs)
+            {
+                Debug.Log($"[BlockSpawner] 💣 폭탄 블록 생성! (총 {spawnedBombBlocks.Count}개)");
+            }
+
+            yield return new WaitForSeconds(bombSpawnInterval);
+        }
+
+        isBombSpawning = false;
     }
 
     #endregion
 
     #region Spawning
 
-    public void StartSpawning()
+    /// <summary>
+    /// 일반 블록 생성 허용
+    /// </summary>
+    public void EnableSpawning()
     {
-        isSpawning = true;
-        spawnTimer = 0f;
+        canSpawn = true;
+
+        if (showDebugLogs)
+        {
+            Debug.Log("[BlockSpawner] 일반 블록 생성 활성화");
+        }
     }
 
-    public void StopSpawning()
+    /// <summary>
+    /// 일반 블록 생성 중지
+    /// </summary>
+    public void DisableSpawning()
     {
-        isSpawning = false;
+        canSpawn = false;
+
+        if (showDebugLogs)
+        {
+            Debug.Log("[BlockSpawner] 일반 블록 생성 비활성화");
+        }
     }
 
+    /// <summary>
+    /// 첫 블록 소환 (게임 시작 시)
+    /// </summary>
+    private void SpawnFirstBlock()
+    {
+        if (showDebugLogs)
+        {
+            Debug.Log("[BlockSpawner] 🎮 첫 블록 생성!");
+        }
+
+        SpawnBlock();
+    }
+
+    /// <summary>
+    /// 블록 생성 (내부 메서드)
+    /// </summary>
     private void SpawnBlock()
     {
-        if (blockQueue.Count == 0) return;
+        // 생성 불가 상태면 중단
+        if (!canSpawn)
+        {
+            if (showDebugLogs)
+            {
+                Debug.Log("[BlockSpawner] 생성 중지 상태 - 블록 생성 취소");
+            }
+            return;
+        }
 
+        // 스폰 구역 검사
+        Collider[] colliders = Physics.OverlapSphere(spawnPoint.position, spawnCheckRadius);
+        bool hasBlock = false;
+        foreach (var collider in colliders)
+        {
+            if (collider.CompareTag("Bomb") || collider.CompareTag("Block"))
+            {
+                hasBlock = true;
+                break;
+            }
+        }
+        if (hasBlock)
+        {
+            if (showDebugLogs)
+            {
+                Debug.Log("[BlockSpawner] 스폰 구역에 블록이 있어 생성 취소");
+            }
+            return;
+        }
+
+        // 큐가 비어있으면 중단
+        if (blockQueue.Count == 0)
+        {
+            Debug.LogWarning("[BlockSpawner] 블록 큐가 비어있습니다!");
+            return;
+        }
+
+        // 큐에서 블록 꺼내기
         GameObject blockPrefab = blockQueue.Dequeue();
-        GameObject spawnedBlock = Instantiate(blockPrefab, spawnPoint.position, spawnPoint.rotation);
 
+        // 블록 생성
+        GameObject spawnedBlock = Instantiate(
+            blockPrefab,
+            spawnPoint.position,
+            spawnPoint.rotation
+        );
+
+        if (showDebugLogs)
+        {
+            Debug.Log($"[BlockSpawner] ✓ 블록 생성: {spawnedBlock.name}");
+        }
+
+        // 큐에 새 블록 추가
         AddNewBlockToQueue();
+
+        // 미리보기 업데이트
         UpdatePreviewDisplay();
     }
 
+    /// <summary>
+    /// 외부에서 블록 생성 요청 (SpawnChecker에서 호출)
+    /// </summary>
     public void SpawnBlockManually()
     {
+        if (showDebugLogs)
+        {
+            Debug.Log("[BlockSpawner] 트리거 기반 블록 생성 요청");
+        }
+
         SpawnBlock();
     }
 
@@ -268,6 +435,7 @@ public class TetrisBlockSpawner : MonoBehaviour
                     previewPoints[i].rotation
                 );
 
+                // 프리뷰는 물리 활성화
                 Rigidbody rb = previewBlock.GetComponent<Rigidbody>();
                 if (rb != null)
                 {
@@ -278,8 +446,7 @@ public class TetrisBlockSpawner : MonoBehaviour
                 Rigidbody2D rb2d = previewBlock.GetComponent<Rigidbody2D>();
                 if (rb2d != null)
                 {
-                    rb2d.simulated = true;
-                    rb2d.gravityScale = 1.0f;
+                    rb2d.simulated = false;
                 }
 
                 previewBlocks[i] = previewBlock;
@@ -303,14 +470,12 @@ public class TetrisBlockSpawner : MonoBehaviour
 
     #region Public Utilities
 
-    public void SetSpawnInterval(float interval)
-    {
-        spawnInterval = Mathf.Max(0.1f, interval);
-    }
-
+    /// <summary>
+    /// 큐 정보 반환
+    /// </summary>
     public string GetQueueInfo()
     {
-        return $"Queue 크기: {blockQueue.Count}, Bag 위치: {bagIndex}/7, 폭탄 블록: {spawnedBombBlocks.Count}개";
+        return $"Queue: {blockQueue.Count}개 | Bag: {bagIndex}/7 | 폭탄: {spawnedBombBlocks.Count}개 | 생성가능: {canSpawn}";
     }
 
     /// <summary>
@@ -319,6 +484,14 @@ public class TetrisBlockSpawner : MonoBehaviour
     public List<GameObject> GetSpawnedBombBlocks()
     {
         return new List<GameObject>(spawnedBombBlocks);
+    }
+
+    /// <summary>
+    /// 현재 생성 가능 여부 반환
+    /// </summary>
+    public bool CanSpawn()
+    {
+        return canSpawn;
     }
 
     #endregion
@@ -358,6 +531,23 @@ public class TetrisBlockSpawner : MonoBehaviour
     {
         if (Application.isPlaying)
         {
+            Debug.Log(GetQueueInfo());
+        }
+    }
+
+    [ContextMenu("Test: Toggle Spawning")]
+    private void DebugToggleSpawning()
+    {
+        if (Application.isPlaying)
+        {
+            if (canSpawn)
+            {
+                DisableSpawning();
+            }
+            else
+            {
+                EnableSpawning();
+            }
         }
     }
 #endif
