@@ -381,6 +381,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: explosionForce
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: upwardModifier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: explosionRadius
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: explosionVFXPrefab
       value: 
       objectReference: {fileID: 417761080263594737, guid: 7800b8f6b712bfe49bd663eeb3ebe1e4, type: 3}
@@ -428,6 +440,46 @@ PrefabInstance:
       propertyPath: 'bombObjects.Array.data[8]'
       value: 
       objectReference: {fileID: 6483916111999387309}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: explosionDelayFrames.Array.size
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'explosionDelayFrames.Array.data[0]'
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'explosionDelayFrames.Array.data[1]'
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'explosionDelayFrames.Array.data[2]'
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'explosionDelayFrames.Array.data[3]'
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'explosionDelayFrames.Array.data[4]'
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'explosionDelayFrames.Array.data[5]'
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'explosionDelayFrames.Array.data[6]'
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'explosionDelayFrames.Array.data[7]'
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5564051036679696138, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
+      propertyPath: 'explosionDelayFrames.Array.data[8]'
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 6541014786362501161, guid: e3b815a1c38ec1c4e9646c4987b13013, type: 3}
       propertyPath: m_Name
       value: BoomPre
@@ -1746,6 +1798,11 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!4 &1685713832 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8871226167054988758, guid: 7868c6f565ad9004482723176f747121, type: 3}
+  m_PrefabInstance: {fileID: 3782139697822117864}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1835446223
 GameObject:
   m_ObjectHideFlags: 0
@@ -22498,7 +22555,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 7246789334458307488}
     m_Modifications:
     - target: {fileID: 3371744854300334320, guid: 7868c6f565ad9004482723176f747121, type: 3}
       propertyPath: m_Name
@@ -22522,15 +22579,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8871226167054988758, guid: 7868c6f565ad9004482723176f747121, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8871226167054988758, guid: 7868c6f565ad9004482723176f747121, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8871226167054988758, guid: 7868c6f565ad9004482723176f747121, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 8871226167054988758, guid: 7868c6f565ad9004482723176f747121, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -43161,6 +43218,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1685713832}
   - {fileID: 6607626274150364512}
   - {fileID: 9018450689654890437}
   m_Father: {fileID: 0}
@@ -54658,7 +54716,6 @@ SceneRoots:
   - {fileID: 9094144071010681064}
   - {fileID: 1366596745}
   - {fileID: 7246789334458307488}
-  - {fileID: 3782139697822117864}
   - {fileID: 3824695761030023619}
   - {fileID: 335308829983326899}
   - {fileID: 73718139117600775}
