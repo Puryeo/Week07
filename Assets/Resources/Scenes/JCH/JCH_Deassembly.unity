@@ -983,6 +983,10 @@ PrefabInstance:
       propertyPath: genPosYmin
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 2509778737029387331, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
+      propertyPath: cloudContainer
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2660148696074591189, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
       propertyPath: draggableTags.Array.size
       value: 3
@@ -1032,7 +1036,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2211033014074681901, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4685753656377830595, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
