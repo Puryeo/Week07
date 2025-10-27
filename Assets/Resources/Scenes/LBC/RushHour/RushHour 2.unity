@@ -2118,6 +2118,9 @@ MonoBehaviour:
   maxLineWidth: 0.2
   minLineWidth: 0.05
   dangerThreshold: 0.9
+  draggableTags:
+  - Draggable
+  - Bomb
   grabJoint: {fileID: 0}
   grabMaxDistance: 500
   grabAngularDrag: 2
@@ -3477,6 +3480,7 @@ MonoBehaviour:
   _1star: 10
   _waitClimax: 2
   climax: {fileID: 127535783}
+  _stageGoalUI: {fileID: 0}
 --- !u!1 &6914452548579162212
 GameObject:
   m_ObjectHideFlags: 0
@@ -4058,6 +4062,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9092322270481265072}
   - component: {fileID: 2660148696236155181}
+  - component: {fileID: 9092322270481265073}
   m_Layer: 0
   m_Name: PlayerController
   m_TagString: Untagged
@@ -4337,6 +4342,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6615268350920369860}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9092322270481265073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8771948727103894986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b559a3ac16420d44f8d7a37fce28242c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goalBombMode: 0
+  manualGoalBombCount: 5
+  enableDebugLog: 1
 --- !u!4 &9094144071010681064
 Transform:
   m_ObjectHideFlags: 0
