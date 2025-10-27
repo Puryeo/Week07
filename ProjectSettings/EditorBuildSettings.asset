@@ -11,27 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Resources/Scenes/Sihyeon/STAGE.unity
     guid: 32d72dfc0a377204c959c773f18d026d
-  - enabled: 0
-    path: Assets/Scenes/Old/STAGE.unity
-    guid: 42b55004bc5594441b0d1f027233aadd
   - enabled: 1
-    path: Assets/Resources/Scenes/Old/JML/Tutorial.unity
-    guid: 48b06755c8f8357458badc83f3018a3c
-  - enabled: 1
-    path: Assets/Resources/Scenes/Old/JML/JMObservatory.unity
-    guid: 8871ec25d86ff014f920371075652e31
-  - enabled: 1
-    path: Assets/Resources/Scenes/Old/Sphinx.unity
-    guid: 123974046093c9740ac46ac91d4b6285
-  - enabled: 1
-    path: Assets/Resources/Scenes/Old/Freedom.unity
-    guid: 141ca50bee2799c4fb0a360c28b4b8c9
-  - enabled: 1
-    path: Assets/Resources/Scenes/LBC/RushHour/RushHour 2.unity
-    guid: 2592ec47efa73194fa17f9c1d2fdb379
-  - enabled: 1
-    path: Assets/Resources/Scenes/LBC/RushHour/RushHour 3.unity
-    guid: eec1daea6f35eff4d9f8f4ed66e2bb04
+    path: Assets/Resources/Scenes/Sihyeon/WaterMelon3D.unity
+    guid: 7df707152b803de4bb0ac9023c2e0b9b
   - enabled: 1
     path: Assets/Resources/Scenes/OSH/TetrisMap.unity
     guid: da1b9f6783733c0429b2defbac566eae
@@ -39,11 +21,17 @@ EditorBuildSettings:
     path: Assets/Resources/Scenes/JCH/JCH_Deassembly.unity
     guid: 6ee4b70fa2ba34b42a69aaff7647a4f0
   - enabled: 1
-    path: Assets/Resources/Scenes/Sihyeon/WaterMelon3D.unity
-    guid: 7df707152b803de4bb0ac9023c2e0b9b
+    path: Assets/Resources/Scenes/Old/JML/JMObservatory.unity
+    guid: 8871ec25d86ff014f920371075652e31
   - enabled: 1
     path: Assets/Resources/Scenes/Old/JML/JMKey.unity
     guid: 51e12b8a8051ba440a091e60cfb70ae1
+  - enabled: 1
+    path: Assets/Resources/Scenes/Old/Sphinx.unity
+    guid: 123974046093c9740ac46ac91d4b6285
+  - enabled: 1
+    path: Assets/Resources/Scenes/Old/Freedom.unity
+    guid: 141ca50bee2799c4fb0a360c28b4b8c9
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
