@@ -1,9 +1,10 @@
 using UnityEngine;
-using System.Collections.Generic;
+using System.Collections;
 
 /// <summary>
 /// 블록이 스포너 영역을 완전히 벗어났을 때 다음 블록을 생성하는 트리거 체커
 /// EXIT 기반: 블록이 트리거 영역을 완전히 빠져나가면 생성
+/// 각 블록은 생애 동안 단 한 번만 스폰을 트리거합니다.
 /// </summary>
 public class SpawnChecker : MonoBehaviour
 {
@@ -21,8 +22,6 @@ public class SpawnChecker : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
 
-    // 이미 처리한 블록을 추적 (중복 방지)
-    private HashSet<GameObject> processedBlocks = new HashSet<GameObject>();
     private bool isActive = false; // 체커 활성화 여부
 
     private void Start()
@@ -114,14 +113,36 @@ public class SpawnChecker : MonoBehaviour
             return;
         }
 
-        // 4단계: 중복 처리 방지
-        if (processedBlocks.Contains(parentBlock))
+        // 4단계: BlockState 확인
+        BlockState blockState = parentBlock.GetComponent<BlockState>();
+        if (blockState == null)
+        {
+            if (showDebugLogs)
+            {
+                Debug.LogWarning($"[SpawnChecker] {parentBlock.name}에 BlockState가 없습니다!");
+            }
+            return;
+        }
+
+        // 5단계: 이미 스폰을 트리거한 블록인지 확인 (영구적 체크)
+        if (blockState.HasTriggeredSpawn)
+        {
+            if (showDebugLogs)
+            {
+                Debug.Log($"[SpawnChecker] ⚠️ {parentBlock.name}은 이미 스폰을 트리거했습니다. 무시.");
+            }
+            return;
+        }
+
+        // 6단계: 임시 중복 방지 (짧은 시간 내 여러 번 호출 방지)
+        if (blockState.IsProcessed)
         {
             return;
         }
 
-        // 5단계: 처리 목록에 추가
-        processedBlocks.Add(parentBlock);
+        // 7단계: 영구적 플래그 설정 (다시는 스폰 안 함)
+        blockState.HasTriggeredSpawn = true;
+        blockState.IsProcessed = true;
 
         if (showDebugLogs)
         {
@@ -129,38 +150,32 @@ public class SpawnChecker : MonoBehaviour
             Debug.Log($"[SpawnChecker] ✓ {blockType}이 영역을 벗어남: {parentBlock.name} → 다음 블록 생성!");
         }
 
-        // 6단계: 다음 블록 생성
+        // 8단계: 다음 블록 생성
         if (blockSpawner != null)
         {
             blockSpawner.SpawnBlockManually();
         }
 
-        // 7단계: 일정 시간 후 처리 목록에서 제거 (메모리 관리)
-        StartCoroutine(RemoveFromProcessedAfterDelay(parentBlock, debounceTime));
-    }
-
-    private System.Collections.IEnumerator RemoveFromProcessedAfterDelay(GameObject block, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-        if (block != null)
-        {
-            processedBlocks.Remove(block);
-
-            if (showDebugLogs)
-            {
-                Debug.Log($"[SpawnChecker] 블록 디바운스 해제: {block.name}");
-            }
-        }
+        // 9단계: 임시 플래그만 리셋 (HasTriggeredSpawn은 유지)
+        StartCoroutine(ResetTemporaryFlag(blockState, debounceTime));
     }
 
     /// <summary>
-    /// 처리된 블록 목록 초기화 (디버그용)
+    /// 임시 디바운스 플래그만 리셋 (영구 플래그는 유지)
     /// </summary>
-    public void ClearProcessedBlocks()
+    private IEnumerator ResetTemporaryFlag(BlockState blockState, float delay)
     {
-        processedBlocks.Clear();
-        Debug.Log("[SpawnChecker] 처리된 블록 목록 초기화!");
+        yield return new WaitForSeconds(delay);
+
+        if (blockState != null)
+        {
+            blockState.IsProcessed = false; // 임시 플래그만 리셋
+
+            if (showDebugLogs)
+            {
+                Debug.Log("[SpawnChecker] 임시 디바운스 해제 (HasTriggeredSpawn은 영구 유지)");
+            }
+        }
     }
 
     /// <summary>
@@ -200,12 +215,6 @@ public class SpawnChecker : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    [ContextMenu("Clear Processed Blocks")]
-    private void DebugClearProcessed()
-    {
-        ClearProcessedBlocks();
-    }
-
     [ContextMenu("Force Activate Checker")]
     private void DebugForceActivate()
     {

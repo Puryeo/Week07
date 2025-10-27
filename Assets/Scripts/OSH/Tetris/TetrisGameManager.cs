@@ -1,5 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
@@ -27,12 +28,17 @@ public class TetrisGameManager : MonoBehaviour
     [Tooltip("라인이 제거될 때마다 폭탄 블록 소환")]
     [SerializeField] private bool spawnBombOnLineClear = true;
 
-    [Tooltip("일반 블록 스폰을 중지할 라인 수")]
-    [SerializeField] private int linesToStopNormalSpawn = 2;
-
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
 
+    #endregion
+
+    #region DebugButtons
+    [Button("Forcely Trgger LineBomb Explosion", ButtonSizes.Large)]
+    public void DebugTriggerLineBombExplosion()
+    {
+        TriggerBombExplosions(2.0f);
+    }
     #endregion
 
     #region Private Fields
@@ -119,13 +125,14 @@ public class TetrisGameManager : MonoBehaviour
                 if (bomb != null)
                 {
                     bomb.Explode();
+                    BombManager.Instance.NotifyBombExploded(bomb.gameObject);
 
-                    // 목표 폭탄 개수 감소
-                    ClearManager clearManager = Object.FindAnyObjectByType<ClearManager>();
-                    if (clearManager != null)
-                    {
-                        clearManager.DecreaseGoalBombCount();
-                    }
+                    //// 목표 폭탄 개수 감소
+                    //ClearManager clearManager = Object.FindAnyObjectByType<ClearManager>();
+                    //if (clearManager != null)
+                    //{
+                    //    clearManager.DecreaseGoalBombCount();
+                    //}
                 }
                 else
                 {
@@ -160,15 +167,16 @@ public class TetrisGameManager : MonoBehaviour
         }
 
         // 설정한 라인 수 이상 지우면 일반 블록 스폰 중지
-        if (totalLinesCleared >= linesToStopNormalSpawn)
-        {
-            blockSpawner.DisableSpawning();
+        // if (totalLinesCleared >= linesToStopNormalSpawn)
+        // {
+        //     blockSpawner.DisableSpawning();
 
-            if (showDebugLogs)
-            {
-                Debug.Log($"[GameManager] ⚠️ {linesToStopNormalSpawn}줄 달성! 일반 블록 생성 중지");
-            }
-        }
+        //     if (showDebugLogs)
+        //     {
+        //         Debug.Log($"[GameManager] ⚠️ {linesToStopNormalSpawn}줄 달성! 일반 블록 생성 중지");
+        //     }
+        // }
+
     }
 
     #endregion
