@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿ using UnityEngine;
 using UnityEditor; // 에디터 스크립트 작성을 위해 필수
 using System.IO;   // 디렉토리(폴더) 관리를 위해 사용
 

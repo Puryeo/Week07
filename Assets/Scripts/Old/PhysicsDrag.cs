@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using NUnit.Framework;
+using UnityEngine;
+using System.Collections.Generic;
 
 public class PhysicsDrag : SingletonObject<PhysicsDrag>
 {
@@ -11,6 +13,10 @@ public class PhysicsDrag : SingletonObject<PhysicsDrag>
     [SerializeField] private float maxLineWidth = 0.05f;
     [SerializeField] private float minLineWidth = 0.01f;
     [SerializeField] private float dangerThreshold = 0.8f; // 위험 색상으로 바뀌는 임계값
+
+    [Header("드래그 가능 태그")]
+    [SerializeField] List<string> draggableTags = new List<string> { "Draggable", "Bomb" };
+
     private Camera cam;
     public SpringJoint grabJoint;
     private Rigidbody grabbedRb;
@@ -172,7 +178,7 @@ public class PhysicsDrag : SingletonObject<PhysicsDrag>
         Ray ray = cam.ScreenPointToRay(CursorManager.Instance.CursorPosition);
         if (Physics.Raycast(ray, out RaycastHit hit, grabMaxDistance))
         {
-            if (hit.collider.attachedRigidbody != null && (hit.transform.CompareTag("Draggable") || hit.transform.CompareTag("Bomb")))
+            if (hit.collider.attachedRigidbody != null && draggableTags.Contains(hit.rigidbody.gameObject.tag))
             {
                 grabbedRb = hit.collider.attachedRigidbody;
                 currentGrabDistance = hit.distance;
