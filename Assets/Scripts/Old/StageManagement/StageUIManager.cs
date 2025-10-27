@@ -115,23 +115,34 @@ public class StageUIManager : MonoBehaviour
     {
         if (_mainCamera == null) return;
 
-        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        Ray ray = _mainCamera.ScreenPointToRay(CursorManager.Instance.CursorPosition);
 
         // 2D UI (예: Exit 버튼)를 클릭했다면 3D Raycast 무시
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
         {
+            Debug.Log("[StageUIManager] 2D UI 클릭 감지 - 3D Raycast 무시");
             return;
         }
 
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
+            // 레이캐스트 히트 결과 디버깅용 그리기
+            Debug.DrawRay(hit.point, hit.normal * 0.5f, Color.blue, 2.0f); // 히트 포인트에서 노멀 방향으로 파란색 레이
+            Debug.DrawRay(hit.point, Vector3.up * 0.1f, Color.green, 2.0f); // 히트 포인트에 녹색 마커
+            Debug.DrawRay(ray.origin, hit.point - ray.origin, Color.red, 2.0f); // 레이캐스트 레이 라인 (시작점에서 히트 포인트까지)
+
             // Raycast에 맞은 오브젝트에서 WorldStageObject 컴포넌트 탐색
             WorldStageObject stageObject = hit.collider.GetComponent<WorldStageObject>();
-
+            Debug.Log($"[StageUIManager] Raycast 히트: {hit.collider.gameObject.name}, 글로벌 포인트: {hit.point}");
             if (stageObject != null)
             {
+                Debug.Log("[StageUIManager] WorldStageObject 컴포넌트 발견 - 스테이지 선택 실행");
                 // 컴포넌트를 찾았다면, 해당 오브젝트의 선택 메서드 호출
                 stageObject.SelectStage();
+            }
+            else
+            {
+                Debug.Log("[StageUIManager] WorldStageObject 컴포넌트 없음 - 무시");
             }
         }
     }
