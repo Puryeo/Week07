@@ -15,7 +15,7 @@ MonoBehaviour:
   _stageImage: {fileID: 21300000, guid: 422ab5dd8c7941a41b5af9aec4b97509, type: 3}
   _stageName: "\uB9AC\uBC84\uC2A4 : \uC790\uC720\uC758 \uC5EC\uC2E0\uC0C1"
   _sceneName: Reverse Freedom
-  _clearStar: 2
+  _clearStar: 0
   _isTried: 0
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week07/StageImages/Reverse
     Freedom.png

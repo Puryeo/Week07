@@ -15,7 +15,7 @@ MonoBehaviour:
   _stageImage: {fileID: 21300000, guid: ff03bac84b45a9e478069e3b20577071, type: 3}
   _stageName: "\uB9AC\uBC84\uC2A4 : \uAC1C\uC120\uBB38"
   _sceneName: Reverse DokripMoon
-  _clearStar: 3
+  _clearStar: 0
   _isTried: 0
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week07/StageImages/Reverse
     DokripMoon.png

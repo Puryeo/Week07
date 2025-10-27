@@ -16,6 +16,6 @@ MonoBehaviour:
   _stageName: "\uC218\uBC15\uAC8C\uC784"
   _sceneName: WaterMelon3D
   _clearStar: 0
-  _isTried: 1
+  _isTried: 0
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week07/StageImages/WaterMelon3D.png
   _scenePath: Assets/Resources/Scenes/Sihyeon/WaterMelon3D.unity

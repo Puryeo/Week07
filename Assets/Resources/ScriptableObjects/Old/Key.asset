@@ -16,6 +16,6 @@ MonoBehaviour:
   _stageName: "\uC5F4\uC1E0"
   _sceneName: JMKey
   _clearStar: 0
-  _isTried: 1
+  _isTried: 0
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week07/StageImages/JMKey.png
   _scenePath: Assets/Scenes/JML/JMKey.unity

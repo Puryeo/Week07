@@ -16,6 +16,6 @@ MonoBehaviour:
   _stageName: "\uD0A4\uBCF4\uB4DC"
   _sceneName: JCH_Deassembly
   _clearStar: 0
-  _isTried: 1
+  _isTried: 0
   _stageImagePath: 
   _scenePath: Assets/Resources/Scenes/JCH/JCH_Deassembly.unity
