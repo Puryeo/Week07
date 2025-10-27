@@ -16,6 +16,6 @@ MonoBehaviour:
   _stageName: "\uD14C\uD2B8\uB9AC\uC2A4"
   _sceneName: TetrisMap
   _clearStar: 0
-  _isTried: 0
+  _isTried: 1
   _stageImagePath: C:/Users/jungle/AppData/LocalLow/DefaultCompany/Week06/StageImages/TetrisMap.png
   _scenePath: Assets/Scenes/OSH/TetrisMap.unity

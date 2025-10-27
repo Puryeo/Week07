@@ -460,14 +460,18 @@ public class ClearManager : MonoBehaviour
 
     /// <summary>
     /// 다음 스테이지로 이동하는 버튼입니다.
+    /// StageManager에 저장된 이전 씬으로 돌아갑니다.
     /// </summary>
     private void NextBtn()
     {
-        SceneManager.LoadScene("STAGE");
+        string previousScene = StageManager.Instance.PreviousSceneName;
+        Debug.Log($"[ClearManager] 이전 씬으로 이동: {previousScene}");
+        SceneManager.LoadScene(previousScene);
     }
 
     /// <summary>
     /// 중도 포기 시 클라이맥스 폭발 대기 후 스냅샷을 찍고 스테이지 선택 화면으로 이동합니다.
+    /// StageManager에 저장된 이전 씬으로 돌아갑니다.
     /// </summary>
     IEnumerator WaitForClimax()
     {
@@ -490,7 +494,9 @@ public class ClearManager : MonoBehaviour
         _nextStageBtn.gameObject.SetActive(false);
         yield return new WaitForSeconds(_waitClimax);
 
-        SceneManager.LoadScene("STAGE");
+        string previousScene = StageManager.Instance.PreviousSceneName;
+        Debug.Log($"[ClearManager] 이전 씬으로 이동: {previousScene}");
+        SceneManager.LoadScene(previousScene);
     }
 
     /// <summary>
