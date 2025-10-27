@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 2335430306024295837}
   - component: {fileID: 7671466720160946079}
   - component: {fileID: 5874637000679663346}
+  - component: {fileID: 7240159435713908710}
   m_Layer: 0
-  m_Name: BigBomb
+  m_Name: 3By3Bomb
   m_TagString: Bomb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,8 +30,8 @@ Transform:
   m_GameObject: {fileID: 4625163625286817132}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 20.267818, y: 6.26, z: -2.572298}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2.99, y: 2.99, z: 0.99}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -95,7 +96,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4625163625286817132}
-  m_Material: {fileID: 13400000, guid: ac9fc8cc1fbb5724d82e74728cc0406d, type: 2}
+  m_Material: {fileID: 13400000, guid: b73050b073ca96047abc17efc4003ebf, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -136,3 +137,23 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &7240159435713908710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4625163625286817132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87fa128f3e33f564288032d80cfea9c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bombTag: Bomb
+  draggableTag: Draggable
+  onBombCollision:
+    m_PersistentCalls:
+      m_Calls: []
+  explosionVFX: {fileID: 417761080263594737, guid: 75fb28b0e13410546ab129e154dd95c6, type: 3}
+  vfxLifetime: 3
+  draggableDestroyDelay: 0.5
