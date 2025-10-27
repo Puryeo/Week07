@@ -983,6 +983,10 @@ PrefabInstance:
       propertyPath: genPosYmin
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 2509778737029387331, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
+      propertyPath: cloudContainer
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2660148696074591189, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
       propertyPath: draggableTags.Array.size
       value: 3
@@ -1032,8 +1036,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2211033014074681901, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6615268351107095612, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1070044657}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4685753656377830595, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
       insertIndex: -1
@@ -1059,6 +1067,80 @@ MonoBehaviour:
   goalBombMode: 0
   manualGoalBombCount: 5
   enableDebugLog: 1
+--- !u!4 &937523963 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6615268351107095612, guid: 2d956ff1a0b5f154892d61889bc1edaf, type: 3}
+  m_PrefabInstance: {fileID: 937523960}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1070044656
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1070044657}
+  - component: {fileID: 1070044658}
+  m_Layer: 0
+  m_Name: CloudManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1070044657
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070044656}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.13052619, y: 0.000000029547364, z: -0.000000003889984, w: 0.9914449}
+  m_LocalPosition: {x: 0, y: -3.8637037, z: 16.035276}
+  m_LocalScale: {x: 1, y: 1, z: 8}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 937523963}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1070044658
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1070044656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0f5f0299af78fd4ea1e822432b06ff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cloudGameobjects:
+  - cloudGameObject: {fileID: 100000, guid: 09062dc0008857b46aaacdb7206f1453, type: 3}
+    weight: 6
+  - cloudGameObject: {fileID: 100000, guid: 73ef0b63ffe19f94ab35e4475b345d70, type: 3}
+    weight: 5
+  - cloudGameObject: {fileID: 100000, guid: 2df72ec125264584faa40cb1beef0481, type: 3}
+    weight: 4
+  - cloudGameObject: {fileID: 100000, guid: 420bde364644a314396dc8ed24ee99d6, type: 3}
+    weight: 3
+  - cloudGameObject: {fileID: 100000, guid: c37b1ccfbc7ed274eb99f9d40e72c4e6, type: 3}
+    weight: 2
+  - cloudGameObject: {fileID: 100000, guid: c2391e8a6bdf5424194b61e41952a40a, type: 3}
+    weight: 1
+  cloudContainer: {fileID: 0}
+  genStart: 20
+  genMax: 20
+  genPosXmin: -200
+  genPosXmax: 200
+  genPosZmin: -200
+  genPosZmax: 200
+  genPosYmin: 40
+  genPosYmax: 45
+  genCoolmin: 20
+  genCoolmax: 25
+  canGenerate: 1
 --- !u!1001 &1279849347
 PrefabInstance:
   m_ObjectHideFlags: 0

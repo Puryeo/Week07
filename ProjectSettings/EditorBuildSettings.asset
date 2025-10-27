@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Resources/Scenes/Old/Title.unity
     guid: e8fa1d1d244712148bb20143b99386a1
   - enabled: 1
+    path: Assets/Resources/Scenes/JCH/TutorialPlus.unity
+    guid: 22ea7ce4443c5164e9b8ac2af4842d0e
+  - enabled: 1
     path: Assets/Resources/Scenes/Sihyeon/STAGE.unity
     guid: 32d72dfc0a377204c959c773f18d026d
   - enabled: 1
