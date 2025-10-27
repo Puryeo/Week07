@@ -776,7 +776,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2236946963330721911, guid: d3671a3f7aa7830488dbc0112272fb61, type: 3}
       propertyPath: Lens.ModeOverride
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2236946963330721911, guid: d3671a3f7aa7830488dbc0112272fb61, type: 3}
       propertyPath: Lens.NearClipPlane
@@ -1812,7 +1812,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6068312953294404978, guid: 416be317fdb9d2042b0bbde9d8df6902, type: 3}
       propertyPath: orthographic
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6068312953294404978, guid: 416be317fdb9d2042b0bbde9d8df6902, type: 3}
       propertyPath: near clip plane

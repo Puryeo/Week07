@@ -27,9 +27,6 @@ public class TetrisGameManager : MonoBehaviour
     [Tooltip("라인이 제거될 때마다 폭탄 블록 소환")]
     [SerializeField] private bool spawnBombOnLineClear = true;
 
-    [Tooltip("일반 블록 스폰을 중지할 라인 수")]
-    [SerializeField] private int linesToStopNormalSpawn = 2;
-
     [Header("Debug")]
     [SerializeField] private bool showDebugLogs = true;
 
@@ -160,15 +157,16 @@ public class TetrisGameManager : MonoBehaviour
         }
 
         // 설정한 라인 수 이상 지우면 일반 블록 스폰 중지
-        if (totalLinesCleared >= linesToStopNormalSpawn)
-        {
-            blockSpawner.DisableSpawning();
+        // if (totalLinesCleared >= linesToStopNormalSpawn)
+        // {
+        //     blockSpawner.DisableSpawning();
 
-            if (showDebugLogs)
-            {
-                Debug.Log($"[GameManager] ⚠️ {linesToStopNormalSpawn}줄 달성! 일반 블록 생성 중지");
-            }
-        }
+        //     if (showDebugLogs)
+        //     {
+        //         Debug.Log($"[GameManager] ⚠️ {linesToStopNormalSpawn}줄 달성! 일반 블록 생성 중지");
+        //     }
+        // }
+
     }
 
     #endregion
